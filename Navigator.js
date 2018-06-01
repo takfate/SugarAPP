@@ -17,12 +17,23 @@ import {
     WeightEditPanel
 } from './MeTabPanel/UserInfoEditPanel/InfoItemEditPanel'
 
+import {
+    MyWatchListPanel,
+    WatchMeListPanel
+} from './MeTabPanel/NormalListPanel';
+
+import ArticleSearchPanel from './SchoolTabPanel/ArticleSearchPanel';
+import ArticleDetailPanel from './SchoolTabPanel/ArticleDetailPanel';
+
 
 const StackNav = StackNavigator(
     {
+        // Main
         Main: {
             screen : MainF
         },
+
+        // Me
         Settings:{
             screen : SettingPanel
         },
@@ -52,6 +63,20 @@ const StackNav = StackNavigator(
         },
         WeightEdit :{
             screen : WeightEditPanel
+        },
+        MyWatchList:{
+            screen: MyWatchListPanel
+        },
+        WatchMeList:{
+            screen : WatchMeListPanel
+        },
+
+        // School
+        ArticleSearch : {
+            screen: ArticleSearchPanel
+        },
+        ArticleDetail : {
+            screen : ArticleDetailPanel
         }
     },
     {

@@ -45,18 +45,20 @@ const UserInfoCss = StyleSheet.create({
 });
 
 class UserInfoPanel extends Component{
-    static navigationOptions = {
-        headerTitle:"糖友信息",
+    static navigationOptions = ({ navigation }) =>({
+        headerTitle: navigation.state.params.IsLoginUser?"我的信息":"糖友信息",
         headerStyle:{
             height:55,
-        },
-    };
+        }
+    });
+
     constructor(props){
         super(props);
     }
 
     render(){
         const { navigate } = this.props.navigation;
+        const { params } = this.props.navigation.state;
         return(
             <ScrollView style={UserInfoCss.MainView}>
                 <List >
@@ -79,9 +81,9 @@ class UserInfoPanel extends Component{
                     <List.Item extra="180cm">身高</List.Item>
                     <List.Item extra="80kg">体重</List.Item>
                     <List.Item >
-                        <Button type="primary" onClick={()=>{navigate('UserInfoEdit')}}>编辑个人信息</Button>
-                        <Button type="ghost">关注</Button>
-                        <Button >私信</Button>
+                        {params.IsLoginUser? <Button type="primary" onClick={()=>{navigate('UserInfoEdit')}}>编辑个人信息</Button>:null }
+                        {!params.IsLoginUser? <Button type="ghost">关注</Button>:null }
+                        {!params.IsLoginUser? <Button >私信</Button>:null }
                     </List.Item>
                 </List>
 

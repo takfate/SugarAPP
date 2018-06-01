@@ -3,7 +3,7 @@ import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet} from 'react-native';
 import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace,InputItem,Picker} from 'antd-mobile';
-
+import * as ItemData from './Items';
 
 
 export class NickNameEditPanel extends  Component{
@@ -15,6 +15,9 @@ export class NickNameEditPanel extends  Component{
     };
     constructor(props){
         super(props);
+        this.state = {
+            NickName: "震天八荒"
+        }
     }
 
     render(){
@@ -23,7 +26,8 @@ export class NickNameEditPanel extends  Component{
                 <InputItem
                     clear
                     maxLength={8}
-                    value={"震天八荒"}
+                    value={this.state.NickName}
+
                 >
                     昵称
                 </InputItem>
@@ -32,16 +36,7 @@ export class NickNameEditPanel extends  Component{
     }
 }
 
-const genders = [
-    {
-        value:'male',
-        label:'男'
-    },
-    {
-        value:'female',
-        label:'女'
-    }
-];
+
 
 export class GenderEditPanel extends  Component{
     static navigationOptions = {
@@ -52,16 +47,20 @@ export class GenderEditPanel extends  Component{
     };
     constructor(props){
         super(props);
+        this.state = {
+            Gender: "男"
+        };
+
     }
 
     render(){
         return (
             <List style={{marginTop:15}}>
                 <Picker
-                    data={genders}
+                    data={ItemData.genders}
                     cols={1}
                     title="选择性别"
-                    extra="男"
+                    extra={this.state.Gender }
                 >
                     <List.Item arrow="horizontal">性别</List.Item>
                 </Picker>
@@ -71,16 +70,7 @@ export class GenderEditPanel extends  Component{
 }
 
 
-const ages = function () {
-    let li =  [];
-    for(let i=10;i<=150;i++){
-        li.push({
-            value:i.toString(),
-            label:i.toString()
-        });
-    }
-    return li;
-}();
+
 
 export class AgeEditPanel extends  Component{
     static navigationOptions = {
@@ -91,16 +81,19 @@ export class AgeEditPanel extends  Component{
     };
     constructor(props){
         super(props);
+        this.state = {
+            Age: "18"
+        };
     }
 
     render(){
         return (
             <List style={{marginTop:15}}>
                 <Picker
-                    data={ages}
+                    data={ItemData.ages}
                     cols={1}
                     title="选择年龄"
-                    extra="18"
+                    extra={this.state.Age}
                 >
                     <List.Item arrow="horizontal">年龄</List.Item>
                 </Picker>
@@ -118,6 +111,9 @@ export class JobEditPanel extends  Component{
     };
     constructor(props){
         super(props);
+        this.state = {
+            Job: "学生"
+        };
     }
 
     render(){
@@ -126,7 +122,7 @@ export class JobEditPanel extends  Component{
                 <InputItem
                     clear
                     maxLength={8}
-                    value={"学生"}
+                    value={this.state.Job }
                 >
                     职业
                 </InputItem>
@@ -134,6 +130,8 @@ export class JobEditPanel extends  Component{
         );
     }
 }
+
+
 
 
 export class LocationEditPanel extends  Component{
@@ -145,16 +143,22 @@ export class LocationEditPanel extends  Component{
     };
     constructor(props){
         super(props);
+        this.state = {
+            Location: "湖南省 衡阳市"
+        };
     }
 
     render(){
         return (
             <List style={{marginTop:15}}>
                 <Picker
-                    data={ages}
-                    cols={1}
+                    data={ItemData.Locations}
+                    cols={2}
                     title="选择所在地"
-                    extra="湖南省 衡阳市"
+                    extra={this.state.Location}
+                    itemStyle={{
+                        fontSize:15
+                    }}
                 >
                     <List.Item arrow="horizontal">所在地</List.Item>
                 </Picker>
@@ -163,16 +167,7 @@ export class LocationEditPanel extends  Component{
     }
 }
 
-const Heights = function () {
-    let li =  [];
-    for(let i=50;i<=250;i++){
-        li.push({
-            value:i.toString(),
-            label:i.toString()+"cm"
-        });
-    }
-    return li;
-}();
+
 
 export class HeightEditPanel extends  Component{
     static navigationOptions = {
@@ -183,16 +178,19 @@ export class HeightEditPanel extends  Component{
     };
     constructor(props){
         super(props);
+        this.state = {
+            Height: "180cm"
+        };
     }
 
     render(){
         return (
             <List style={{marginTop:15}}>
                 <Picker
-                    data={Heights}
+                    data={ItemData.Heights}
                     cols={1}
                     title="选择身高"
-                    extra="180cm"
+                    extra={this.state.Height}
                 >
                     <List.Item arrow="horizontal">身高</List.Item>
                 </Picker>
@@ -201,24 +199,6 @@ export class HeightEditPanel extends  Component{
     }
 }
 
-const Weights = function () {
-    let li =  [];
-    for(let i=20;i<=99;i++){
-        li.push({
-            value:i.toString()+'.0',
-            label:i.toString()+'.0 kg'
-        });
-        li.push({
-            value:i.toString()+'.5',
-            label:i.toString()+'.5 kg'
-        });
-    }
-    li.push({
-        value:'100.0',
-        label:'100.0 kg'
-    });
-    return li;
-}();
 
 
 export class WeightEditPanel extends  Component{
@@ -230,16 +210,19 @@ export class WeightEditPanel extends  Component{
     };
     constructor(props){
         super(props);
+        this.state = {
+            Weight: "76.6kg"
+        };
     }
 
     render(){
         return (
             <List style={{marginTop:15}}>
                 <Picker
-                    data={Weights}
+                    data={ItemData.Weights}
                     cols={1}
                     title="选择体重"
-                    extra="76.6kg"
+                    extra={this.state.Weight}
                 >
                     <List.Item arrow="horizontal">体重</List.Item>
                 </Picker>

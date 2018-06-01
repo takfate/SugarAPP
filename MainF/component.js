@@ -51,7 +51,7 @@ class MainF extends Component{
                         <Button>糖家</Button>
                     </TabBar.Item>
                     <TabBar.Item
-                        title="糖学院"
+                        title="糖学堂"
                         key="School"
                         selected={selectedTab==="School"}
                         onPress={()=>{SelectTab("School")}}

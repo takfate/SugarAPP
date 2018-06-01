@@ -2,7 +2,7 @@
 
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
-import {View,Text,ScrollView,Image,StyleSheet} from 'react-native';
+import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity  } from 'react-native';
 import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace,Badge} from 'antd-mobile';
 import {UserImage} from '../CommonComponent';
 
@@ -55,26 +55,34 @@ class MeTabPanel extends Component{
                 <View style={{height:55,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
                     <Text style={{fontSize:18,color:'white'}}>我的</Text>
-                    <Text style={{fontSize:18,color:'white'}} onPress={()=>{navigate('Settings')}}>设置</Text>
+                    <TouchableOpacity onPress={()=>{navigate('Settings')}}>
+                        <Text style={{fontSize:18,color:'white'}} >设置</Text>
+                    </TouchableOpacity>
                 </View>
                 <ScrollView style={MeCss.MainView}>
                     <List >
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('UserInfo')}} style={MeCss.HeaderItem}
-                                   thumb={
-                                       <Badge style={{marginRight:15}} text="Lv4">
-                                           <Image source={require('./head.jpg')} style={MeCss.HeaderImage}/>
-                                       </Badge>
-                                   }
+                        <List.Item
+                            arrow='horizontal'
+                            onClick={()=>{navigate('UserInfo',{
+                                IsLoginUser :true,
+                                UserId : '100'
+                            })}}
+                            style={MeCss.HeaderItem}
+                            thumb={
+                                <Badge style={{marginRight:15}} text="Lv4">
+                                    <Image source={require('./head.jpg')} style={MeCss.HeaderImage}/>
+                                </Badge>
+                            }
                         >
                             <Brief> </Brief>
                             <Text style={MeCss.HeaderItemText}>震天八荒</Text>
                             <Brief style={MeCss.HeaderItemBrief}>910904072@qq.com</Brief>
                             <Brief> </Brief>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{}} >
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyWatchList')}} >
                             <Text style={MeCss.CommonItemText}>我关注的人</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('WatchMeList')}}>
                             <Text style={MeCss.CommonItemText}>关注我的人</Text>
                         </List.Item>
 

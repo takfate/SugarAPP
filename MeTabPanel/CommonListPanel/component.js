@@ -22,7 +22,6 @@ class CommonListPanel extends Component{
     }
 
     render(){
-        const { navigate } = this.props.navigation;
         const {RealData,InitNum} = this.props;
         const {RenderItem,Separator} = this.props;
         return(
