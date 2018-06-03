@@ -11,6 +11,7 @@ import {
 import * as Actions from './actions';
 import MeTabPanel from '../MeTabPanel';
 import SchoolTabPanel from '../SchoolTabPanel';
+import BbsTabPanel from '../BbsTabPanel';
 
 function mapStateToProps(state) {
     return state.MainF;
@@ -64,7 +65,7 @@ class MainF extends Component{
                         selected={selectedTab==="Bbs"}
                         onPress={()=>{SelectTab("Bbs")}}
                     >
-                        <Button>糖圈</Button>
+                        <BbsTabPanel navigation={this.props.navigation}/>
                     </TabBar.Item>
                     <TabBar.Item
                         title="我的"

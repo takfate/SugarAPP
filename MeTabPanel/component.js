@@ -12,7 +12,7 @@ const Brief = List.Item.Brief;
 const MeCss = StyleSheet.create({
     MainView :{
         backgroundColor:'#F5F5F5',
-        paddingBottom:20
+        paddingBottom:20,
     },
     HeaderItem : {
         backgroundColor:"#108EE9"
@@ -51,7 +51,7 @@ class MeTabPanel extends Component{
         const { navigate } = this.props.navigation;
         return(
 
-            <View>
+            <View style={{width:'100%',height:'100%'}}>
                 <View style={{height:55,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
                     <Text style={{fontSize:18,color:'white'}}>我的</Text>

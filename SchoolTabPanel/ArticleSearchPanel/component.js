@@ -109,7 +109,7 @@ class ArticleSearchPanel extends Component{
 
             ],
             SelectedLabel :[],
-            Searched :false
+            SearchFocus :false
         };
     }
 
@@ -140,11 +140,13 @@ class ArticleSearchPanel extends Component{
                     <SearchBar
                         placeholder="输入关键字搜索文章"
                         maxLength={8}
+                        onFocus={()=>{this.setState({SearchFocus:true})}}
+                        onCancel={()=>{this.setState({SearchFocus:false})}}
                     />
                 </View>
 
                 {
-                    this.state.Searched?
+                    this.state.SearchFocus?
                         <FlatList
                             style={ArticleSearchCss.MainView}
                             data={this.state.SearchedData}
