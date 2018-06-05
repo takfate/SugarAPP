@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,FlatList,TouchableHighlight,TouchableOpacity} from 'react-native';
 import {Button, NavBar,Card,List,ListView,WhiteSpace} from 'antd-mobile';
 import * as Actions from "../MainF/actions";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 const Brief = List.Item.Brief;
@@ -87,7 +87,7 @@ class SchoolTabPanel extends Component{
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
                     <Text style={{fontSize:18,color:'white'}}>糖学堂</Text>
                     <TouchableOpacity onPress={()=>{navigate('ArticleSearch')}}>
-                        <Icon name="search" size={25} color="white" />
+                        <Icon name="search" size={23} color="white" />
                     </TouchableOpacity>
                 </View>
                 <FlatList

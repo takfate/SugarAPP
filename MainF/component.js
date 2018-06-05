@@ -2,7 +2,7 @@
 
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
-import {View} from 'react-native';
+import {View,Text} from 'react-native';
 import {TabBar,Button} from 'antd-mobile';
 import {
     StackNavigator,
@@ -12,6 +12,7 @@ import * as Actions from './actions';
 import MeTabPanel from '../MeTabPanel';
 import SchoolTabPanel from '../SchoolTabPanel';
 import BbsTabPanel from '../BbsTabPanel';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function mapStateToProps(state) {
     return state.MainF;
@@ -44,15 +45,16 @@ class MainF extends Component{
                     barTintColor="white"
                 >
                     <TabBar.Item
-                        title="糖家"
+                        title={<Text><Icon name="home" size={25}/>糖家</Text>}
                         key="Home"
                         selected={selectedTab==="Home"}
                         onPress={()=>{SelectTab("Home")}}
+
                     >
                         <Button>糖家</Button>
                     </TabBar.Item>
                     <TabBar.Item
-                        title="糖学堂"
+                        title={<Text><Icon name="graduation-cap" size={25}/>糖学院</Text>}
                         key="School"
                         selected={selectedTab==="School"}
                         onPress={()=>{SelectTab("School")}}
@@ -60,7 +62,7 @@ class MainF extends Component{
                         <SchoolTabPanel navigation={this.props.navigation}/>
                     </TabBar.Item>
                     <TabBar.Item
-                        title="糖圈"
+                        title={<Text><Icon name="compass" size={25}/>糖圈</Text>}
                         key="Bbs"
                         selected={selectedTab==="Bbs"}
                         onPress={()=>{SelectTab("Bbs")}}
@@ -68,7 +70,7 @@ class MainF extends Component{
                         <BbsTabPanel navigation={this.props.navigation}/>
                     </TabBar.Item>
                     <TabBar.Item
-                        title="我的"
+                        title={<Text><Icon name="user" size={25}/>我的</Text>}
                         key="Me"
                         selected={selectedTab==="Me"}
                         onPress={()=>{SelectTab("Me")}}

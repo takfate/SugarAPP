@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity,FlatList,TouchableHighlight  } from 'react-native';
 import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge} from 'antd-mobile';
 import {UserImage} from '../CommonComponent';
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import BbsSearchPanel from "./BbsSearchPanel/component";
 
 const Brief = List.Item.Brief;
@@ -81,18 +81,45 @@ class BbsTabPanel extends Component{
     _renderItem = (item) =>{
         const { navigate } = this.props.navigation;
         return (
-            <TouchableHighlight onPress={()=>{}} >
+            <TouchableHighlight onPress={()=>{navigate('PostDetail')}}>
                 <Card full>
                     <Card.Header
-                        title={<Text style={{color:'black'}}>{item.item.UserNickName}</Text>}
-                        thumb={<Image source={require('./head.jpg')} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>}
-                        extra={<Text style={{fontSize:10,textAlign:'right'}}>5分钟前</Text>}
+                        title={<View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
+                            <View style={{flex:1}}>
+                                <TouchableOpacity
+                                    onPress={()=>{navigate("UserInfo",{
+                                        IsLoginUser :false,
+                                        UserId : '100'
+                                    })}}
+                                >
+                                    <Text style={{color:'black'}}>{item.item.UserNickName}</Text>
+                                </TouchableOpacity>
+                                <Text style={{fontSize:10}}>5分钟前</Text>
+                            </View>
+                            <View style={{width:100,paddingLeft:15,flexDirection:'row',justifyContent:'flex-end'}}>
+                                <Icon name="comment" size={15}/>
+                                <Text style={{fontSize:12,marginLeft:3}}>12343</Text>
+
+                            </View>
+                        </View>}
+                        thumb={
+                            <TouchableOpacity
+                                onPress={()=>{navigate("UserInfo",{
+                                    IsLoginUser :false,
+                                    UserId : '100'
+                                })}}
+                            >
+                                <Image source={require('./head.jpg')} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
+                            </TouchableOpacity>
+                        }
                     />
-                    <Card.Body>
+
+                    <Card.Body >
                         <Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:15}}>
                             {item.item.PostTitle}
                         </Text>
                     </Card.Body>
+
                 </Card>
             </TouchableHighlight>
         );
@@ -114,11 +141,11 @@ class BbsTabPanel extends Component{
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
                     <Text style={{fontSize:18,color:'white'}}>糖圈</Text>
                     <View style={{width:50,height:45,flexDirection:'row',alignItems:'center'}}>
-                        <TouchableOpacity onPress={()=>{navigate('BbsSearch')}} style={{paddingRight:4}}>
-                            <Icon name="search" size={25} color="white"/>
+                        <TouchableOpacity onPress={()=>{navigate('BbsSearch')}} style={{paddingRight:10}}>
+                            <Icon name="search" size={23} color="white"/>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={()=>{navigate('NewPost')}}>
-                            <Icon name="plus" size={25} color="white"/>
+                            <Icon name="plus" size={23} color="white"/>
                         </TouchableOpacity>
                     </View>
                 </View>

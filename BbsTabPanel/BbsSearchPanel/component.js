@@ -97,7 +97,7 @@ class BbsSearchPanel extends Component{
             <View style={{width:"100%",height:"100%"}}>
                 <View style={{borderBottomColor:'#DDDDDD',borderBottomWidth:1}}>
                     <SearchBar
-                        placeholder="输入关键字搜索文章"
+                        placeholder="输入关键字搜索帖子"
                         maxLength={8}
                     />
                 </View>

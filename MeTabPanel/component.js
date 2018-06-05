@@ -93,24 +93,25 @@ class MeTabPanel extends Component{
                     <WhiteSpace size="xl"/>
                     <List >
                         <List.Item arrow='horizontal' onClick={()=>{}}>
-                            <Text style={MeCss.CommonItemText}>我发布的话题</Text>
+                            <Text style={MeCss.CommonItemText}>我收藏的文章</Text>
                         </List.Item>
                         <List.Item arrow='horizontal' onClick={()=>{}}>
-                            <Text style={MeCss.CommonItemText}>我回复的话题</Text>
-                        </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{}}>
-                            <Text style={MeCss.CommonItemText}>我收藏的话题</Text>
+                            <Text style={MeCss.CommonItemText}>我的评论</Text>
                         </List.Item>
                     </List>
                     <WhiteSpace size="xl"/>
                     <List >
                         <List.Item arrow='horizontal' onClick={()=>{}}>
-                            <Text style={MeCss.CommonItemText}>我收藏的文章</Text>
+                            <Text style={MeCss.CommonItemText}>我发布的话题</Text>
                         </List.Item>
                         <List.Item arrow='horizontal' onClick={()=>{}}>
-                            <Text style={MeCss.CommonItemText}>我评论的文章</Text>
+                            <Text style={MeCss.CommonItemText}>我收藏的话题</Text>
+                        </List.Item>
+                        <List.Item arrow='horizontal' onClick={()=>{}}>
+                            <Text style={MeCss.CommonItemText}>我的回复</Text>
                         </List.Item>
                     </List>
+
                 </ScrollView>
             </View>
         );

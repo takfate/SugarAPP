@@ -24,8 +24,11 @@ import {
 
 import ArticleSearchPanel from './SchoolTabPanel/ArticleSearchPanel';
 import ArticleDetailPanel from './SchoolTabPanel/ArticleDetailPanel';
+
 import BbsSearchPanel from "./BbsTabPanel/BbsSearchPanel";
 import NewPostPanel from './BbsTabPanel/NewPostPanel';
+import PostDetailPanel from './BbsTabPanel/PostDetailPanel';
+import ReturnPostPanel from './BbsTabPanel/ReturnPostPanel';
 
 const StackNav = StackNavigator(
     {
@@ -85,6 +88,12 @@ const StackNav = StackNavigator(
         },
         NewPost : {
             screen : NewPostPanel
+        },
+        PostDetail: {
+            screen : PostDetailPanel
+        },
+        ReturnPost : {
+            screen : ReturnPostPanel
         }
     },
     {
