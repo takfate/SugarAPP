@@ -16,10 +16,17 @@ import {
     HeightEditPanel,
     WeightEditPanel
 } from './MeTabPanel/UserInfoEditPanel/InfoItemEditPanel'
+import SecretSettingPanel from './MeTabPanel/SettingPanel/SecretSettingPanel';
+import ChatPanel from './MeTabPanel/ChatPanel';
 
 import {
     MyWatchListPanel,
-    WatchMeListPanel
+    WatchMeListPanel,
+    MyCollectedArticleListPanel,
+    MyCommentListPanel,
+    MyPublishedTopicListPanel,
+    MyCollectedTopicListPanel,
+    MyResponseListPanel
 } from './MeTabPanel/NormalListPanel';
 
 import ArticleSearchPanel from './SchoolTabPanel/ArticleSearchPanel';
@@ -73,6 +80,27 @@ const StackNav = StackNavigator(
         },
         WatchMeList:{
             screen : WatchMeListPanel
+        },
+        SecretSetting : {
+            screen : SecretSettingPanel
+        },
+        MyCollectedArticleList:{
+            screen : MyCollectedArticleListPanel
+        },
+        MyCommentList : {
+            screen : MyCommentListPanel
+        },
+        MyPublishedTopicList: {
+            screen : MyPublishedTopicListPanel
+        },
+        MyCollectedTopicList:{
+            screen : MyCollectedTopicListPanel
+        },
+        MyResponseList:{
+            screen : MyResponseListPanel
+        },
+        Chat : {
+            screen : ChatPanel
         },
 
         // School

@@ -83,7 +83,7 @@ class UserInfoPanel extends Component{
                     <List.Item >
                         {params.IsLoginUser? <Button type="primary" onClick={()=>{navigate('UserInfoEdit')}}>编辑个人信息</Button>:null }
                         {!params.IsLoginUser? <Button type="ghost">关注</Button>:null }
-                        {!params.IsLoginUser? <Button >私信</Button>:null }
+                        {!params.IsLoginUser? <Button onClick={()=>{navigate('Chat')}}>私信</Button>:null }
                     </List.Item>
                 </List>
 

@@ -1,2 +1,2 @@
-import NewPostPanel from './component';
-export default NewPostPanel;
+import NewTopicPanel from './component';
+export default NewTopicPanel;

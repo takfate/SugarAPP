@@ -33,43 +33,23 @@ class SettingPanel extends Component{
     }
 
     render(){
-
+        const {navigate} = this.props.navigation;
         return(
             <ScrollView style={SetCss.MainView}>
                 <List >
 
-                    <List.Item arrow='horizontal' onClick={()=>{}} >
-                        <Text style={SetCss.ItemText}>设置1</Text>
+                    <List.Item arrow='horizontal' onClick={()=>{navigate('SecretSetting')}} >
+                        <Text style={SetCss.ItemText}>隐私设置</Text>
                     </List.Item>
-                    <List.Item arrow='horizontal' onClick={()=>{}}>
-                        <Text style={SetCss.ItemText}>设置2</Text>
+                </List>
+                <WhiteSpace size="xl"/>
+                <List >
+                    <List.Item >
+                        <Button type="warning">登出账号</Button>
                     </List.Item>
 
-                    <List.Item arrow='horizontal' onClick={()=>{}}>
-                        <Text style={SetCss.ItemText}>设置3</Text>
-                    </List.Item>
                 </List>
-                <WhiteSpace size="xl"/>
-                <List >
-                    <List.Item arrow='horizontal' onClick={()=>{}}>
-                        <Text style={SetCss.ItemText}>设置4</Text>
-                    </List.Item>
-                    <List.Item arrow='horizontal' onClick={()=>{}}>
-                        <Text style={SetCss.ItemText}>设置5</Text>
-                    </List.Item>
-                    <List.Item arrow='horizontal' onClick={()=>{}}>
-                        <Text style={SetCss.ItemText}>设置6</Text>
-                    </List.Item>
-                </List>
-                <WhiteSpace size="xl"/>
-                <List >
-                    <List.Item arrow='horizontal' onClick={()=>{}}>
-                        <Text style={SetCss.ItemText}>设置7</Text>
-                    </List.Item>
-                    <List.Item arrow='horizontal' onClick={()=>{}}>
-                        <Text style={SetCss.ItemText}>设置8</Text>
-                    </List.Item>
-                </List>
+
             </ScrollView>
         );
     }

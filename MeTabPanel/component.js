@@ -5,6 +5,12 @@ import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity  } from 'react-native';
 import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace,Badge} from 'antd-mobile';
 import {UserImage} from '../CommonComponent';
+import {
+    MyCollectedArticleListPanel,
+    MyCollectedTopicListPanel,
+    MyCommentListPanel,
+    MyPublishedTopicListPanel, MyResponseListPanel
+} from "./NormalListPanel";
 
 const Brief = List.Item.Brief;
 
@@ -92,22 +98,22 @@ class MeTabPanel extends Component{
                     </List>
                     <WhiteSpace size="xl"/>
                     <List >
-                        <List.Item arrow='horizontal' onClick={()=>{}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyCollectedArticleList')}}>
                             <Text style={MeCss.CommonItemText}>我收藏的文章</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyCommentList')}}>
                             <Text style={MeCss.CommonItemText}>我的评论</Text>
                         </List.Item>
                     </List>
                     <WhiteSpace size="xl"/>
                     <List >
-                        <List.Item arrow='horizontal' onClick={()=>{}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyPublishedTopicList')}}>
                             <Text style={MeCss.CommonItemText}>我发布的话题</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyCollectedTopicList')}}>
                             <Text style={MeCss.CommonItemText}>我收藏的话题</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyResponseList')}}>
                             <Text style={MeCss.CommonItemText}>我的回复</Text>
                         </List.Item>
                     </List>
