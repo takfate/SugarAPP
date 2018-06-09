@@ -40,7 +40,7 @@ class MainF extends Component{
         const {sessionId} = this.props;
         if(sessionId === null){
             return (
-                <WelcomePanel />
+                <WelcomePanel navigation={this.props.navigation}/>
             );
         }else {
             return(

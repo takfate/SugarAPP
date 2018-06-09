@@ -4,6 +4,11 @@ import {
 } from 'react-navigation';
 
 import MainF from './MainF';
+import Register1Panel from './WelcomePanel/Register1Panel';
+import Register2Panel from './WelcomePanel/Register2Panel';
+import Forget1Panel from './WelcomePanel/Forget1Panel';
+import Forget2Panel from './WelcomePanel/Forget2Panel';
+
 import SettingPanel from './MeTabPanel/SettingPanel';
 import UserInfoPanel from './MeTabPanel/UserInfoPanel';
 import UserInfoEditPanel from './MeTabPanel/UserInfoEditPanel';
@@ -42,6 +47,20 @@ const StackNav = StackNavigator(
         // Main
         Main: {
             screen : MainF
+        },
+
+        // Welcome
+        Register1 : {
+            screen :Register1Panel
+        },
+        Register2 : {
+            screen :Register2Panel
+        },
+        Forget1 : {
+            screen: Forget1Panel
+        },
+        Forget2 : {
+            screen :Forget2Panel
         },
 
         // Me
