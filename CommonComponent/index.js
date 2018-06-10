@@ -29,3 +29,9 @@ export class UserImage extends Component{
         );
     }
 }
+
+export const BaseUrl = 'http://120.27.48.66/';
+
+export const GridImageURL  = (name)=>{
+    return BaseUrl+'static/appImg/'+name+'.png';
+};

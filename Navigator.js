@@ -20,7 +20,7 @@ import {
     LocationEditPanel,
     HeightEditPanel,
     WeightEditPanel
-} from './MeTabPanel/UserInfoEditPanel/InfoItemEditPanel'
+} from './MeTabPanel/UserInfoEditPanel/InfoItemEditPanel';
 import SecretSettingPanel from './MeTabPanel/SettingPanel/SecretSettingPanel';
 import ChatPanel from './MeTabPanel/ChatPanel';
 
@@ -31,7 +31,8 @@ import {
     MyCommentListPanel,
     MyPublishedTopicListPanel,
     MyCollectedTopicListPanel,
-    MyResponseListPanel
+    MyResponseListPanel,
+    SubPostDetailPanel
 } from './MeTabPanel/NormalListPanel';
 
 import ArticleSearchPanel from './SchoolTabPanel/ArticleSearchPanel';
@@ -41,6 +42,12 @@ import BbsSearchPanel from "./BbsTabPanel/BbsSearchPanel";
 import NewPostPanel from './BbsTabPanel/NewPostPanel';
 import PostDetailPanel from './BbsTabPanel/PostDetailPanel';
 import ReturnPostPanel from './BbsTabPanel/ReturnPostPanel';
+
+import KinLinkListPanel from './HomeTabPanel/KinLinkListPanel';
+import KinLinkPanel from './HomeTabPanel/KinLinkPanel';
+import SugarRecordPanel from './HomeTabPanel/SugarRecordPanel';
+import HealthRecordPanel from './HomeTabPanel/HealthRecordPanel';
+
 
 const StackNav = StackNavigator(
     {
@@ -121,6 +128,9 @@ const StackNav = StackNavigator(
         Chat : {
             screen : ChatPanel
         },
+        SubPostDetail : {
+            screen :SubPostDetailPanel
+        },
 
         // School
         ArticleSearch : {
@@ -141,6 +151,20 @@ const StackNav = StackNavigator(
         },
         ReturnPost : {
             screen : ReturnPostPanel
+        },
+
+        // Home
+        KinLinkList : {
+            screen : KinLinkListPanel
+        },
+        KinLink : {
+            screen : KinLinkPanel
+        },
+        SugarRecord : {
+            screen : SugarRecordPanel
+        },
+        HealthRecord : {
+            screen : HealthRecordPanel
         }
     },
     {

@@ -13,6 +13,7 @@ import MeTabPanel from '../MeTabPanel';
 import SchoolTabPanel from '../SchoolTabPanel';
 import BbsTabPanel from '../BbsTabPanel';
 import WelcomePanel from '../WelcomePanel';
+import HomeTabPanel from '../HomeTabPanel';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 function mapStateToProps(state) {
@@ -58,7 +59,7 @@ class MainF extends Component{
                             onPress={()=>{SelectTab("Home")}}
 
                         >
-                            <Button>糖家</Button>
+                            <HomeTabPanel navigation={this.props.navigation}/>
                         </TabBar.Item>
                         <TabBar.Item
                             title={<Text><Icon name="graduation-cap" size={25}/>糖学院</Text>}

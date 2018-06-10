@@ -11,7 +11,7 @@ import {
     TouchableNativeFeedback,
     TouchableHighlight
 } from 'react-native';
-import {Button, NavBar,Card,List,ListView,WhiteSpace} from 'antd-mobile';
+import {Button, NavBar,Card,List,ListView,WhiteSpace,InputItem} from 'antd-mobile';
 import CommonListPanel from '../CommonListPanel';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const Brief = List.Item.Brief;
@@ -900,80 +900,87 @@ export class MyResponseListPanel extends Component{
                 {
                     type:'comment',
                     CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
+                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    SubPostId : '12',
                     Score: '15',
+                    Floor : '12',
                     key : "1"
                 },
                 {
                     type:'comment',
                     CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
+                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    SubPostId : '12',
                     Score: '15',
+                    Floor : '12',
                     key : "2"
                 },
                 {
                     type:'comment',
                     CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
+                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    SubPostId : '12',
                     Score: '15',
+                    Floor : '12',
                     key : "3"
                 },
                 {
                     type:'comment',
                     CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
+                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    SubPostId : '12',
                     Score: '15',
+                    Floor : '12',
                     key : "4"
                 },
                 {
                     type:'comment',
                     CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
+                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    SubPostId : '12',
                     Score: '15',
+                    Floor : '12',
                     key : "5"
                 },
                 {
                     type:'comment',
                     CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
+                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    SubPostId : '12',
                     Score: '15',
+                    Floor : '12',
                     key : "6"
                 },
                 {
                     type:'comment',
                     CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
+                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    SubPostId : '12',
                     Score: '15',
+                    Floor : '12',
                     key : "7"
                 },
                 {
-                    type:'post',
-                    PostContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    TopicId : '12',
+                    type:'subPost',
+                    SubPostContent : "我的好菜啊，我好菜啊，我好菜啊",
+                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    PostId : '12',
                     Score: '15',
                     key : "8"
                 },
                 {
-                    type:'post',
-                    PostContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    TopicId : '12',
+                    type:'subPost',
+                    SubPostContent : "我的好菜啊，我好菜啊，我好菜啊",
+                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    PostId : '12',
                     Score: '15',
                     key : "9"
                 },
                 {
-                    type:'post',
-                    PostContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    TopicId : '12',
+                    type:'subPost',
+                    SubPostContent : "我的好菜啊，我好菜啊，我好菜啊",
+                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
+                    PostId : '12',
                     Score: '-15',
                     key : "10"
                 }
@@ -1018,7 +1025,7 @@ export class MyResponseListPanel extends Component{
             return (
 
                 <TouchableHighlight
-                    onPress={()=>{}}
+                    onPress={()=>{navigate('SubPostDetail',{Floor:'23'})}}
                 >
                     <Card full>
                         <Card.Body>
@@ -1028,7 +1035,7 @@ export class MyResponseListPanel extends Component{
                         <Card.Footer
                             content={
                                 <Text >
-                                    原贴：{item.item.PostContent}
+                                    原贴：{item.item.SubPostContent}
                                 </Text>
                             }
                             style={{borderTopWidth:1,borderTopColor:'#DDDDDD'}}
@@ -1041,17 +1048,17 @@ export class MyResponseListPanel extends Component{
             return (
 
                 <TouchableHighlight
-                    onPress={()=>{}}
+                    onPress={()=>{navigate('PostDetail')}}
                 >
                     <Card full>
                         <Card.Body>
-                            <Text style={{color:'black',paddingLeft:15}}>回复：{item.item.PostContent}</Text>
+                            <Text style={{color:'black',paddingLeft:15}}>回复：{item.item.SubPostContent}</Text>
                             {FooterContent}
                         </Card.Body>
                         <Card.Footer
                             content={
                                 <Text >
-                                    原贴：{item.item.TopicContent}
+                                    原贴：{item.item.PostContent}
                                 </Text>
                             }
                             style={{borderTopWidth:1,borderTopColor:'#DDDDDD'}}
@@ -1081,6 +1088,242 @@ export class MyResponseListPanel extends Component{
         );
     }
 }
+
+
+export class SubPostDetailPanel extends Component{
+
+    static navigationOptions = ({ navigation }) =>({
+        headerTitle: navigation.state.params.Floor+"楼回复",
+        headerRight:
+            <TouchableOpacity>
+                <Text style={{fontSize:18,color:'black',marginRight:10}}>查看话题</Text>
+            </TouchableOpacity>,
+        headerStyle:{
+            height:55,
+        }
+    });
+    constructor(props){
+        super(props);
+        this.state =  {
+            Data : [
+                {
+                    key: '0',
+                    UserId:'1',
+                    UserNickName:'震天八荒',
+                    UserImageUrl :'',
+                    PostTime : '5',
+                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
+                    Images : []
+                },
+                {
+                    key:'1',
+                    UserId:'1',
+                    UserImageUrl :'',
+                    UserNickName : '震天八荒',
+                    Content : '你是真的牛批',
+                    PostTime : '2018-03-02 18:78'
+                },
+                {
+                    key:'2',
+                    UserId:'1',
+                    UserImageUrl :'',
+                    UserNickName : '震天八荒',
+                    Content : '你是真的牛批',
+                    PostTime : '2018-03-02 18:78'
+                }
+                ,
+                {
+                    key:'3',
+                    UserId:'1',
+                    UserImageUrl :'',
+                    UserNickName : '震天八荒',
+                    Content : '你是真的牛批',
+                    PostTime : '2018-03-02 18:78'
+                }
+                ,
+                {
+                    key:'4',
+                    UserId:'1',
+                    UserImageUrl :'',
+                    UserNickName : '震天八荒',
+                    Content : '你是真的牛批',
+                    PostTime : '2018-03-02 18:78'
+                },
+                {
+                    key:'5',
+                    UserId:'1',
+                    UserImageUrl :'',
+                    UserNickName : '震天八荒',
+                    Content : '你是真的牛批',
+                    PostTime : '2018-03-02 18:78'
+                },
+                {
+                    key:'5',
+                    UserId:'1',
+                    UserImageUrl :'',
+                    UserNickName : '震天八荒',
+                    Content : '你是真的牛批',
+                    PostTime : '2018-03-02 18:78'
+                }
+            ]
+        };
+    }
+    _renderItem = (item)=>{
+        const { navigate } = this.props.navigation;
+        if(item.item.key==='0'){
+            return (
+                <View>
+                    <Card full>
+                        <Card.Header
+                            title={
+                                <View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
+                                    <View style={{flex:1}}>
+                                        <TouchableOpacity
+                                            onPress={()=>{navigate("UserInfo",{
+                                                IsLoginUser :false,
+                                                UserId : '100'
+                                            })}}
+                                        >
+                                            <Text style={{color:'black'}}>{item.item.UserNickName}</Text>
+                                        </TouchableOpacity>
+                                        <Text style={{fontSize:10}}>楼主 {item.item.PostTime}</Text>
+                                    </View>
+                                    <View style={{width:100,paddingLeft:85}}>
+                                        <TouchableOpacity onPress={()=>{}} >
+                                            <Icon name="trash" size={14} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+
+                            }
+                            thumb={
+                                <TouchableOpacity
+                                    onPress={()=>{navigate("UserInfo",{
+                                        IsLoginUser :false,
+                                        UserId : '100'
+                                    })}}
+                                >
+                                    <Image source={require('./head.jpg')} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
+                                </TouchableOpacity>
+                            }
+                        />
+                        <Card.Body>
+                            <Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:13}}>
+                                {item.item.PostTitle}
+                            </Text>
+                        </Card.Body>
+                        <Card.Footer
+                            content={
+                                <View
+                                    style={{
+                                        width:120,
+                                        height:45,
+                                        flexDirection:'row',
+                                        alignItems:'center'
+                                    }}
+                                >
+                                    <Button size="small" >
+                                        <Icon name="caret-up" size={15}/>
+                                        <Text>  1213</Text>
+                                    </Button>
+                                    <Button size="small" style={{marginLeft:5}}>
+                                        <Icon name="caret-down" size={15}/>
+                                    </Button>
+                                </View>
+                            }
+                            style={{
+                                height:30,
+                                width:'100%',
+                                flexDirection:'row',
+                                alignItems:'center',
+                                borderTopWidth:1,
+                                borderTopColor:'#DDDDDD',
+                                paddingTop:5
+                            }}
+                        />
+                    </Card>
+                    <WhiteSpace size="lg"/>
+                </View>
+            );
+        }else{
+            return (
+
+                <Card>
+                    <Card.Header
+                        title={
+                            <TouchableOpacity
+                                onPress={()=>{navigate("UserInfo",{
+                                    IsLoginUser :false,
+                                    UserId : '100'
+                                })}}
+                            >
+                                <Text>{item.item.UserNickName}</Text>
+                            </TouchableOpacity>
+                        }
+                        thumb={
+                            <TouchableOpacity
+                                onPress={()=>{navigate("UserInfo",{
+                                    IsLoginUser :false,
+                                    UserId : '100'
+                                })}}
+                            >
+                                <Image source={require('./head.jpg')} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
+                            </TouchableOpacity>
+                        }
+                    />
+
+                    <Card.Body>
+                        <Text>{item.item.Content}</Text>
+                    </Card.Body>
+                    <Card.Footer content = {"上 10000, 下 200"} extra={item.item.PostTime} />
+                </Card>
+            );
+        }
+
+
+    };
+
+    render(){
+        return (
+            <View style={{height:'100%',width:'100%'}}>
+
+                <FlatList
+                    data={this.state.Data}
+                    initialNumToRender={3}
+                    renderItem = {this._renderItem}
+                    ItemSeparatorComponent = {this._separator}
+                />
+                <View
+                    style={{
+                        width:'100%',
+                        height:40,
+                        backgroundColor:"white",
+                        flexDirection:'row',
+                        alignItems:'center',
+                        borderTopColor:'#DDDDDD',
+                        borderTopWidth:1
+                    }}
+                >
+                    <View style={{flex:1,height:45,paddingTop:0}}>
+                        <InputItem
+                            placeholder="写下你的看法...."
+                            maxLength={50}
+                        />
+                    </View>
+                    <View style={{width:50,height:45,paddingTop:11}}>
+                        <TouchableOpacity onPress={()=>{}} style={{paddingLeft:10}}>
+                            <Text style={{fontSize:15,color:'black'}} >发送</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                </View>
+            </View>
+        );
+    }
+}
+
+
+
 
 
 
