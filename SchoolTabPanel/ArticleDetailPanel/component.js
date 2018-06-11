@@ -3,8 +3,10 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,FlatList,TouchableOpacity,WebView} from 'react-native';
-import {Button, NavBar,Card,List,ListView,WhiteSpace,TextareaItem,Drawer } from 'antd-mobile';
-import Icon from 'react-native-vector-icons/Feather';
+import {Button, NavBar,Card,List,ListView,WhiteSpace,TextareaItem,Drawer ,Toast,Badge } from 'antd-mobile';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import httpRequest from '../../httpRequest';
+import {makeCommonImageUrl} from '../../CommonComponent';
 
 const Brief = List.Item.Brief;
 
@@ -54,59 +56,70 @@ class CommentListPanel extends Component {
         super(props);
         this.state = {
             Data :[
-                {
-                    key:'1',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                },
-                {
-                    key:'2',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                }
-                ,
-                {
-                    key:'3',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                }
-                ,
-                {
-                    key:'4',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                },
-                {
-                    key:'5',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                },
-                {
-                    key:'5',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                }
-            ]
+
+            ],
+            Refreshing:false,
+
         };
     }
+
+    _dataWrapper = (initData) =>{
+        return {
+            key : initData['commentId'].toString(),
+            Content : initData['content'],
+            PostTime : initData['commentTime'],
+            ImageUrl : initData['iconUrl'],
+            UserId : initData['userId'],
+            UserScore : initData['likes'],
+            UserNickName :initData['username']
+        };
+    };
+
+    requestGetCommentList = (Data,sessionId,articleId,x,n)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/GetFromXGetNComment', {
+            session_id:sessionId,
+            articleId:articleId,
+            x:x,
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {sessionId,articleId}  = this.props;
+        this.requestGetCommentList([],sessionId,articleId,0,10);
+    };
+
+    componentDidMount(){
+        const {sessionId,articleId}  = this.props;
+        this.requestGetCommentList(this.state.Data.slice(),sessionId,articleId,0,10);
+    }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {sessionId,articleId}  = this.props;
+        this.requestGetCommentList(this.state.Data.slice(),sessionId,articleId,this.state.Data.length,10);
+    };
 
     _renderItem = (item) =>{
         const {navigate}  = this.props;
@@ -131,15 +144,26 @@ class CommentListPanel extends Component {
                                 UserId : '100'
                             })}}
                         >
-                            <Image source={require('./head.jpg')} style={CommentListCss.ItemImage}/>
+                            <Image source={{uri:makeCommonImageUrl(item.item.ImageUrl)}} style={CommentListCss.ItemImage}/>
                         </TouchableOpacity>
                     }
                 />
 
-                <Card.Body>
-                    <Text>{item.item.Content}</Text>
+                <Card.Body style={{paddingLeft:15,minHeight:5}}>
+                    <Text style={{color:'black',fontSize:13}}>{item.item.Content}</Text>
                 </Card.Body>
-                <Card.Footer content = {"上 10000, 下 200"} extra={item.item.PostTime} />
+                <Card.Footer
+                    content = {
+                        <Text style={{fontSize:10,textAlign:'left'}}>
+                            {item.item.UserScore}
+                        </Text>
+                    }
+                    extra={
+                        <Text style={{fontSize:10,textAlign:'right'}}>
+                            {item.item.PostTime}
+                        </Text>
+                    }
+                />
             </Card>
         );
     };
@@ -160,6 +184,23 @@ class CommentListPanel extends Component {
                 initialNumToRender={3}
                 renderItem = {this._renderItem}
                 ItemSeparatorComponent = {this._separator}
+                refreshing={this.state.Refreshing}
+                onRefresh={this._refresh}
+                onEndReached={this._loadMoreData}
+                onEndReachedThreshold={0.1}
+                ListEmptyComponent={
+                    <View style={{
+                        backgroundColor:'#DDDDDD',
+                        width:'100%',
+                        height:100,
+                        flexDirection:'row',
+                        justifyContent:'center',
+                        alignItems:'center'
+                    }}
+                    >
+                        <Text>此文章暂无评论</Text>
+                    </View>
+                }
             />
         );
     }
@@ -167,11 +208,19 @@ class CommentListPanel extends Component {
 }
 
 
+function mapStateToProps(state,ownProps) {
+    return state.MainF;
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+
+    }
+}
 
 class ArticleDetailPanel extends Component{
     static navigationOptions = ({ navigation }) =>({
-        // headerTitle: navigation.state.params.Title,
-        headerTitle: <Text style={{fontSize:15,color:'black'}}>测血糖那天降糖药还用服用吗？</Text>,
+        headerTitle: <Text style={{fontSize:15,color:'black'}}>{navigation.state.params.Title}</Text>,
         headerStyle:{
             height:55,
         }
@@ -180,19 +229,125 @@ class ArticleDetailPanel extends Component{
         super(props);
         this.state = {
             InputFocus :false,
-            CommentListOpen :false
+            CommentListOpen :false,
+            ArticleUrl :'',
+            Collected : false,
+            CommentCount : 0,
+            NewCommentContent :''
         }
+    }
+
+    requestArticleInfo = (seesionId,articleId)=>{
+        httpRequest.post('/userGetArticle', {
+            session_id : seesionId,
+            articleId :articleId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    this.setState({
+                        ArticleUrl: data['contentUrl'],
+                        CommentCount : data['comNumber'],
+                        Collected : data['favorite']===1
+                    })
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    componentDidMount() {
+        const {sessionId}  = this.props;
+        const {params} = this.props.navigation.state;
+        this.requestArticleInfo(sessionId,params.ArticleId);
     }
 
     _openCommentList = ()=>{
         this.setState({CommentListOpen:!this.state.CommentListOpen});
     };
 
+    requestCollectArticle = ()=>{
+        const {sessionId}  = this.props;
+        const {params} = this.props.navigation.state;
+        httpRequest.post('/addFavorite', {
+            session_id:sessionId,
+            articleId:params.ArticleId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    this.setState({Collected:true});
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    requestCancelCollectArticle = ()=>{
+        const {sessionId}  = this.props;
+        const {params} = this.props.navigation.state;
+        httpRequest.post('/removeFavorite', {
+            session_id:sessionId,
+            articleId:params.ArticleId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    this.setState({Collected:false});
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _updateCommentContent = (value) =>{
+        this.setState({NewCommentContent:value});
+    };
+
+    requestAddArticleComment = (sessionId,ArticleId,Content)=>{
+        Toast.loading('正在评论',0);
+        httpRequest.post('/addComment', {
+            session_id:sessionId,
+            articleId:ArticleId,
+            content:Content
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.hide();
+                    Toast.success('评论成功',1);
+                    this.setState({NewCommentContent:''});
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _submitComment = ()=>{
+        const {sessionId}  = this.props;
+        const {params} = this.props.navigation.state;
+        this.requestAddArticleComment(sessionId,params.ArticleId,this.state.NewCommentContent);
+    };
+
     render(){
         const { navigate } = this.props.navigation;
+        const {sessionId}  = this.props;
+        const {params} = this.props.navigation.state;
         return(
             <Drawer
-                sidebar={<CommentListPanel navigate={navigate}/>}
+                sidebar={<CommentListPanel navigate={navigate} sessionId={sessionId} articleId={params.ArticleId}/>}
                 open={this.state.CommentListOpen}
                 position='right'
 
@@ -202,14 +357,13 @@ class ArticleDetailPanel extends Component{
                         style={{
                             height:'100%',
                             width:'100%',
-                            backgroundColor:'red'
                         }}
-                        // source={{uri:'http://www.baidu.com'}}
-                        // onLoad={()=>{}}
+                        source={{uri:makeCommonImageUrl(this.state.ArticleUrl)}}
+                        startInLoadingState={true}
                     />
                     <View
                         style={{
-                            height:45,
+                            height:50,
                             width:'100%',
                             flexDirection:'row',
                             alignItems:'center',
@@ -218,38 +372,42 @@ class ArticleDetailPanel extends Component{
                             borderTopColor:'#DDDDDD',
                             borderTopWidth:1
                         }}>
-                        <View style={{flex:1,height:45,paddingTop:5}}>
+                        <View style={{flex:1,height:50,paddingTop:5}}>
                             <TextareaItem
-                                labelNumber={5}
                                 count={100}
                                 style={{
-                                    height:35,
+                                    height:40,
                                     borderColor:'#DDDDDD',
                                     borderWidth:1,
                                     borderRadius:15,
-                                    paddingBottom: 0,
-                                    paddingTop:5,
                                     paddingRight:9
                                 }}
                                 placeholder="添加评论"
+                                value={this.state.NewCommentContent}
+                                onChange={this._updateCommentContent}
                                 onFocus = {()=>{this.setState({InputFocus:true})}}
                                 onBlur = {()=>{this.setState({InputFocus:false})}}
                             />
                         </View>
                         {
                             this.state.InputFocus?
-                                <View style={{width:40,height:45,paddingTop:11}}>
-                                    <TouchableOpacity onPress={()=>{}} style={{paddingLeft:10}}>
-                                        <Text style={{fontSize:15,color:'black'}} >发送</Text>
+                                <View style={{width:50,height:45,paddingTop:11}}>
+                                    <TouchableOpacity onPress={this._submitComment} style={{paddingLeft:10}}>
+                                        <Text style={{fontSize:16,color:'black'}} >发送</Text>
                                     </TouchableOpacity>
                                 </View> :
-                                <View style={{width:65,height:45,paddingTop:10,flexDirection:'row'}}>
-                                    <TouchableOpacity onPress={()=>{}} style={{paddingLeft:10}}>
-                                        <Text style={{fontSize:15,color:'black'}} ><Icon name="star" size={23} /></Text>
+                                <View style={{width:90,height:45,paddingTop:10,flexDirection:'row'}}>
+                                    <TouchableOpacity
+                                        onPress={this.state.Collected?this.requestCancelCollectArticle:this.requestCollectArticle}
+                                        style={{paddingLeft:10,paddingRight:10}}
+                                    >
+                                        <Icon name="star" color={this.state.Collected?'orange':null} size={25} />
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={this._openCommentList} style={{paddingLeft:10}}>
-                                        <Text style={{fontSize:15,color:'black'}} ><Icon name="message-square" size={23} /></Text>
+                                    <TouchableOpacity onPress={this._openCommentList} >
+                                        <Icon name="comments" size={25} />
                                     </TouchableOpacity>
+                                    <Badge  overflowCount={99} text={999} style={{marginLeft:15}}/>
+
                                 </View>
                         }
                     </View>
@@ -261,4 +419,4 @@ class ArticleDetailPanel extends Component{
 
 }
 
-export default connect()(ArticleDetailPanel);
+export default connect(mapStateToProps,null)(ArticleDetailPanel);

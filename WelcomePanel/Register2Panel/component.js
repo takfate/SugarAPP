@@ -1,12 +1,10 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,TextInput,TouchableOpacity } from 'react-native';
-import {TabBar,Button,InputItem,WhiteSpace } from 'antd-mobile';
-import {
-    StackNavigator,
-    TabNavigator
-} from 'react-navigation';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {TabBar,Button,InputItem,WhiteSpace,Toast } from 'antd-mobile';
+import httpRequest from '../../httpRequest';
+
+import md5 from 'js-md5';
 
 function mapStateToProps(state) {
 }
@@ -21,6 +19,10 @@ class Register2Panel extends Component{
 
     constructor(props){
         super(props);
+        this.state = {
+            NickName : '',
+            Password : ''
+        };
     }
 
     static navigationOptions = ({ navigation }) =>({
@@ -29,6 +31,39 @@ class Register2Panel extends Component{
             height:55,
         }
     });
+
+    _updateNickName = (value)=>{
+        this.setState({NickName:value});
+    };
+
+    _updatePassword = (value)=>{
+        this.setState({Password:value});
+    };
+
+    requestRegister = () => {
+        const { goBack } = this.props.navigation;
+        const {params}  = this.props.navigation.state;
+        let nickname = this.state.NickName;
+        let password = md5(this.state.Password);
+        httpRequest.post('/register', {
+            tel:params.Phone,
+            username: nickname,
+            password:password,
+            verifyCode : params.VerCode
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.success('注册成功',2);
+                    goBack(params._backKey);
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
 
     render(){
         const { navigate } = this.props.navigation;
@@ -40,10 +75,25 @@ class Register2Panel extends Component{
                     </Text>
                 </View>
 
-                <InputItem    placeholder='请输入昵称' maxLength={20} >昵称</InputItem>
-                <InputItem    placeholder='请输入密码' maxLength={6}  type="password">密码</InputItem>
+                <InputItem
+                    placeholder='请输入昵称'
+                    maxLength={20}
+                    value={this.state.NickName}
+                    onChange={this._updateNickName}
+                >
+                    昵称
+                </InputItem>
+                <InputItem
+                    placeholder='请输入密码'
+                    maxLength={15}
+                    type="password"
+                    value={this.state.Password}
+                    onChange={this._updatePassword}
+                >
+                    密码
+                </InputItem>
                 <WhiteSpace size='lg'/>
-                <Button type="primary" >完成注册</Button>
+                <Button type="primary" onClick={this.requestRegister}>完成注册</Button>
 
             </View>
 

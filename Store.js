@@ -5,7 +5,6 @@ import SchoolReducer from './SchoolTabPanel/reducer';
 
 const reducers = combineReducers({
     MainF:MainFReducer,
-    SchoolTabPanel:SchoolReducer
 });
 
 const store = createStore(reducers);

@@ -1,12 +1,9 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,TextInput,TouchableOpacity } from 'react-native';
-import {TabBar,Button,InputItem,WhiteSpace } from 'antd-mobile';
-import {
-    StackNavigator,
-    TabNavigator
-} from 'react-navigation';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {TabBar,Button,InputItem,WhiteSpace,Toast } from 'antd-mobile';
+import httpRequest from "../../httpRequest";
+
 
 function mapStateToProps(state) {
 }
@@ -21,7 +18,79 @@ class Forget1Panel extends Component{
 
     constructor(props){
         super(props);
+        this.state = {
+            Phone : '',
+            VerCode : '',
+            LeftTime : '0',
+            cycling : false
+        }
     }
+
+    _updatePhone = (value)=> {
+        this.setState({Phone:value});
+    };
+
+    _updateVerCode = (value) => {
+        this.setState({VerCode :value});
+    };
+
+    _updateLeftTime = (timer) => {
+        if(this.state.LeftTime===1){
+            clearInterval(timer);
+            this.setState({LeftTime:0,cycling:false});
+            return ;
+        }
+        this.setState({LeftTime:this.state.LeftTime-1});
+    };
+
+    _checkCovered = (Phone,VerCode)=> {
+        let phone = this._phoneWrapper(Phone);
+        return phone.length===11&&VerCode.length===6;
+    };
+
+    _phoneWrapper = (Phone)=>{
+        let phone = '';
+        for (let i =0;i<Phone.length;i++){
+            if(Phone[i]!==' '){
+                phone+=Phone[i];
+            }
+        }
+        return phone;
+    };
+
+    requestGetVerCode = () => {
+        let phone = this._phoneWrapper(this.state.Phone);
+        httpRequest.post('/getCode',{
+            tel:phone
+        })
+            .then((response)=> {
+                let data = response.data;
+                if(data['code']===0){
+                    Toast.success('验证码发送成功',1);
+                    this.setState({LeftTime:60,cycling:true});
+                    let timer = setInterval(()=>{this._updateLeftTime(timer)},1000)
+                }else{
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch( (error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _nextStep = ()=>{
+        const { navigate } = this.props.navigation;
+        if(this._checkCovered(this.state.Phone,this.state.VerCode)){
+            navigate('Forget2',{
+                Phone : this._phoneWrapper(this.state.Phone),
+                VerCode : this.state.VerCode,
+                _backKey : this.props.navigation.state.key
+            });
+
+        }else{
+            Toast.fail('信息填写不完整',1);
+        }
+    };
 
     static navigationOptions = ({ navigation }) =>({
         headerTitle: "找回账号",
@@ -41,10 +110,29 @@ class Forget1Panel extends Component{
                     </Text>
                 </View>
 
-                <InputItem    placeholder='请输入手机号' maxLength={20} />
-                <InputItem    placeholder='请输入验证码' maxLength={6} extra={<Button type="primary">获取验证码</Button>} />
+                <InputItem
+                    placeholder='请输入手机号'
+                    type='phone'
+                    value={this.state.Phone}
+                    onChange={this._updatePhone}
+                />
+                <InputItem
+                    placeholder='请输入验证码'
+                    maxLength={6}
+                    value={this.state.VerCode}
+                    onChange={this._updateVerCode}
+                    extra={
+                        <Button
+                            type="primary"
+                            onClick={this.requestGetVerCode}
+                            disabled={this.state.cycling}
+                        >
+                            {this.state.cycling?this.state.LeftTime+'秒后可重试':'获取验证码'}
+                        </Button>
+                    }
+                />
                 <WhiteSpace size='lg'/>
-                <Button type="primary" onClick={()=>{navigate('Forget2')}}>下一步</Button>
+                <Button type="primary" onClick={this._nextStep}>下一步</Button>
 
             </View>
 

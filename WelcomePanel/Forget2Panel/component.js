@@ -1,12 +1,10 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,TextInput,TouchableOpacity } from 'react-native';
-import {TabBar,Button,InputItem,WhiteSpace } from 'antd-mobile';
-import {
-    StackNavigator,
-    TabNavigator
-} from 'react-navigation';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {TabBar,Button,InputItem,WhiteSpace,Toast } from 'antd-mobile';
+import httpRequest from '../../httpRequest';
+import md5 from 'js-md5';
+
 
 function mapStateToProps(state) {
 }
@@ -21,6 +19,9 @@ class Forget2Panel extends Component{
 
     constructor(props){
         super(props);
+        this.state = {
+            newPassword : ''
+        }
     }
 
     static navigationOptions = ({ navigation }) =>({
@@ -29,6 +30,33 @@ class Forget2Panel extends Component{
             height:55,
         }
     });
+
+    _updateNewPassword = (value) => {
+      this.setState({newPassword:value});
+    };
+
+    requestModifyPassword = () => {
+        const {params} = this.props.navigation.state;
+        const {goBack} = this.props.navigation;
+        let newPassword = md5(this.state.newPassword);
+        httpRequest.post('/alterPassword', {
+            tel:params.Phone,
+            verifyCode:params.VerCode,
+            password : newPassword
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.success('密码修改成功');
+                    goBack(params._backKey);
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
 
     render(){
         const { navigate } = this.props.navigation;
@@ -40,9 +68,17 @@ class Forget2Panel extends Component{
                     </Text>
                 </View>
 
-                <InputItem    placeholder='请输入新密码' maxLength={6}  type="password">新密码</InputItem>
+                <InputItem
+                    placeholder='请输入新密码'
+                    maxLength={15}
+                    type="password"
+                    value={this.state.newPassword}
+                    onChange={this._updateNewPassword}
+                >
+                    新密码
+                </InputItem>
                 <WhiteSpace size='lg'/>
-                <Button type="primary" >完成修改</Button>
+                <Button type="primary" onClick={this.requestModifyPassword}>完成修改</Button>
 
             </View>
 

@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {FlatList, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Button, Card, Drawer, InputItem, List} from 'antd-mobile';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import httpRequest from "../../httpRequest";
 
 
 const Brief = List.Item.Brief;
@@ -216,65 +217,76 @@ class PostDetailPanel extends Component{
         super(props);
         this.state = {
             SubPostListOpen:false,
-            PostData: [
-                {
-                    key: '0',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    PostTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : []
-                },
-                {
-                    key: '1',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    PostTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : [],
-                    Floor : '1'
-                },{
-                    key: '2',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    PostTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : [],
-                    Floor : '2'
-                },{
-                    key: '3',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    PostTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : [],
-                    Floor : '3'
-                },{
-                    key: '4',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    PostTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : [],
-                    Floor : '4'
-                },{
-                    key: '5',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    PostTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : [],
-                    Floor : '5'
-                }
-            ]
+            Data:[],
+
         };
     }
+
+    _dataWrapper = (initData) =>{
+        return {
+            key : initData['floor'].toString(),
+            PostId : initData['replyId'],
+            UserId : initData['userId'],
+            UserNickName : initData['username'],
+            UserImageUrl : initData['iconUrl'],
+            PostTime : initData['replyTime'],
+            Content : initData['content'],
+            Images : [initData['picture1'],initData['picture2'],initData['picture3'],initData['picture4'],initData['picture5']],
+            Score : initData['likes'],
+            CommentCount : initData['comNumber']
+        };
+    };
+
+
+    requestGetTopicDetail = (Data,sessionId,existTopicList,n)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/getLastTopic', {
+            session_id:sessionId,
+            topicIdList:JSON.stringify(existTopicList),
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props;
+        this.requestGetTopicList([],sessionId,[],10);
+    };
+
+    // componentDidMount(){
+    //     const {sessionId}  = this.props;
+    //     this.requestGetTopicList(this.state.Data.slice(),sessionId,this._getExistTopicList(),10);
+    // }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props;
+        this.requestGetTopicList(this.state.Data.slice(),sessionId,this._getExistTopicList(),10);
+    };
 
     _renderItem = (item) =>{
         const { navigate } = this.props.navigation;
         if(item.item.key==='0'){
             return (
-
                 <Card full>
                     <Card.Header
                         title={

@@ -1,1 +1,2 @@
-export const    SELECT_TAB = "SELECT_TAB";
+export const SELECT_TAB = "SELECT_TAB";
+export const CHANGE_TO_LOGIN_STATE = "CHANGE_TO_LOGIN_STATE";

@@ -4,13 +4,7 @@ import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity  } from 'react-native';
 import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace,Badge} from 'antd-mobile';
-import {UserImage} from '../CommonComponent';
-import {
-    MyCollectedArticleListPanel,
-    MyCollectedTopicListPanel,
-    MyCommentListPanel,
-    MyPublishedTopicListPanel, MyResponseListPanel
-} from "./NormalListPanel";
+import {makeCommonImageUrl} from '../CommonComponent';
 
 const Brief = List.Item.Brief;
 
@@ -47,14 +41,39 @@ const MeCss = StyleSheet.create({
     }
 });
 
+
+function mapStateToProps(state) {
+    return state.MainF;
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+
+    }
+}
+
+
 class MeTabPanel extends Component{
 
     constructor(props){
         super(props);
     }
 
+    _safePhone = (phone) =>{
+        let temp = '';
+        for(let i=0;i<phone.length;i++){
+            if(i>=3&&i<=6){
+                temp+='*'
+            }else{
+                temp+=phone[i];
+            }
+        }
+        return temp;
+    };
+
     render(){
         const { navigate } = this.props.navigation;
+        const {sessionId,userId,loginUserInfo} = this.props;
         return(
 
             <View style={{width:'100%',height:'100%'}}>
@@ -76,13 +95,13 @@ class MeTabPanel extends Component{
                             style={MeCss.HeaderItem}
                             thumb={
                                 <Badge style={{marginRight:15}} text="Lv4">
-                                    <Image source={require('./head.jpg')} style={MeCss.HeaderImage}/>
+                                    <Image source={{uri:makeCommonImageUrl(loginUserInfo.HeadImageUrl)}} style={MeCss.HeaderImage}/>
                                 </Badge>
                             }
                         >
                             <Brief> </Brief>
-                            <Text style={MeCss.HeaderItemText}>震天八荒</Text>
-                            <Brief style={MeCss.HeaderItemBrief}>910904072@qq.com</Brief>
+                            <Text style={MeCss.HeaderItemText}>{loginUserInfo.NickName}</Text>
+                            <Brief style={MeCss.HeaderItemBrief}>{this._safePhone(loginUserInfo.Phone)}</Brief>
                             <Brief> </Brief>
                         </List.Item>
                         <List.Item arrow='horizontal' onClick={()=>{navigate('MyWatchList')}} >
@@ -125,4 +144,4 @@ class MeTabPanel extends Component{
 
 }
 
-export default connect()(MeTabPanel);
+export default connect(mapStateToProps,null)(MeTabPanel);

@@ -3,10 +3,11 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity,FlatList,TouchableHighlight  } from 'react-native';
-import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge} from 'antd-mobile';
+import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Toast} from 'antd-mobile';
 import {UserImage} from '../CommonComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BbsSearchPanel from "./BbsSearchPanel/component";
+import httpRequest from "../httpRequest";
 
 const Brief = List.Item.Brief;
 
@@ -32,51 +33,94 @@ const BbsCss = StyleSheet.create({
 
 });
 
+
+function mapStateToProps(state,ownProps) {
+    return state.MainF;
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+
+    }
+}
+
 class BbsTabPanel extends Component{
 
     constructor(props){
         super(props);
         this.state = {
-            PostData: [
-                {
-                    key: '1',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    RecentTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : []
-                },{
-                    key: '2',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    RecentTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : []
-                },{
-                    key: '3',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    RecentTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : []
-                },{
-                    key: '4',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    RecentTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : []
-                },{
-                    key: '5',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    RecentTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : []
-                }
-            ]
+            Data: [],
+            Refreshing : false
         };
     }
+
+
+    _dataWrapper = (initData) =>{
+        return {
+            key : initData['topicId'].toString(),
+            UserId : initData['userId'],
+            UserNickName : initData['username'],
+            UserImageUrl : initData['iconUrl'],
+            LastPostTime : initData['lastTime'],
+            Content : initData['content'],
+            Images : [initData['picture1'],initData['picture2'],initData['picture3']],
+            CommentCount : initData['replyNum']+initData['comNum']
+        };
+    };
+
+    _getExistTopicList = () => {
+        let list = this.state.Data;
+        let nowList = [];
+        for(let i=0;i<list.length;i++){
+            nowList.push(list[i].key);
+        }
+        return nowList;
+    };
+
+    requestGetTopicList = (Data,sessionId,existTopicList,n)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/getLastTopic', {
+            session_id:sessionId,
+            topicIdList:JSON.stringify(existTopicList),
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props;
+        this.requestGetTopicList([],sessionId,[],10);
+    };
+
+    componentDidMount(){
+        const {sessionId}  = this.props;
+        this.requestGetTopicList(this.state.Data.slice(),sessionId,this._getExistTopicList(),10);
+    }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props;
+        this.requestGetTopicList(this.state.Data.slice(),sessionId,this._getExistTopicList(),10);
+    };
 
     _renderItem = (item) =>{
         const { navigate } = this.props.navigation;
@@ -94,12 +138,11 @@ class BbsTabPanel extends Component{
                                 >
                                     <Text style={{color:'black'}}>{item.item.UserNickName}</Text>
                                 </TouchableOpacity>
-                                <Text style={{fontSize:10}}>5分钟前</Text>
+                                <Text style={{fontSize:10}}>{item.item.LastPostTime}</Text>
                             </View>
                             <View style={{width:100,paddingLeft:15,flexDirection:'row',justifyContent:'flex-end'}}>
                                 <Icon name="comment" size={15}/>
-                                <Text style={{fontSize:12,marginLeft:3}}>12343</Text>
-
+                                <Text style={{fontSize:12,marginLeft:3}}>{item.item.CommentCount}</Text>
                             </View>
                         </View>}
                         thumb={
@@ -116,7 +159,7 @@ class BbsTabPanel extends Component{
 
                     <Card.Body >
                         <Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:15}}>
-                            {item.item.PostTitle}
+                            {item.item.Content}
                         </Text>
                     </Card.Body>
 
@@ -151,10 +194,14 @@ class BbsTabPanel extends Component{
                 </View>
                 <FlatList
                     style={BbsCss.MainView}
-                    data={this.state.PostData}
+                    data={this.state.Data}
                     initialNumToRender={3}
                     renderItem = {this._renderItem}
                     ItemSeparatorComponent = {this._separator}
+                    refreshing={this.state.Refreshing}
+                    onRefresh={this._refresh}
+                    onEndReached={this._loadMoreData}
+                    onEndReachedThreshold={0.1}
                 />
             </View>
         );
@@ -162,4 +209,4 @@ class BbsTabPanel extends Component{
 
 }
 
-export default connect()(BbsTabPanel);
+export default connect(mapStateToProps,null)(BbsTabPanel);

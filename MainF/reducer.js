@@ -2,12 +2,16 @@ import * as ActionTypes from './actionTypes';
 
 const MainFState = {
     selectedTab : "Home",
-    sessionId : null,
-    userId : null,
+    sessionId : 'a13b6160-bd23-3710-a150-41d800dd30b4',
+    userId : 34,
+    // sessionId : null,
+    // userId : null,
     loginUserInfo : {
-        HeadImageUrl : "",
-        NickName : '',
-        Phone : '',
+        HeadImageUrl : '/static/userImg/usertile27.jpg',
+        NickName : 'tankwoks',
+        // HeadImageUrl : '',
+        // NickName : '',
+        Phone : '18061532353',
         Gender  : '',
         Age : '',
         Job : '',
@@ -23,6 +27,11 @@ const reducer = function(state = MainFState,action){
     switch (action.type){
         case ActionTypes.SELECT_TAB:
             return {...state,selectedTab:action.new_tab};
+        case ActionTypes.CHANGE_TO_LOGIN_STATE:
+            return {...state,sessionId:action.sessionId,userId:action.userId,loginUserInfo:{
+                    ...state.loginUserInfo,HeadImageUrl:action.iconUrl,NickName:action.nickName,Phone:action.Phone
+                }
+            };
         default:
             return state;
     }
