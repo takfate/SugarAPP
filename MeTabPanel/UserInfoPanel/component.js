@@ -3,13 +3,13 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet} from 'react-native';
-import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace,Progress} from 'antd-mobile';
-import {
-    StackNavigator,
-    TabNavigator
-} from 'react-navigation';
+import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace,Progress,Toast} from 'antd-mobile';
+import httpRequest from '../../httpRequest';
+import {makeCommonImageUrl} from "../../CommonComponent";
 
 const Brief = List.Item.Brief;
+
+
 
 
 const UserInfoCss = StyleSheet.create({
@@ -44,6 +44,16 @@ const UserInfoCss = StyleSheet.create({
     }
 });
 
+function mapStateToProps(state) {
+    return state.MainF;
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+
+    }
+}
+
 class UserInfoPanel extends Component{
     static navigationOptions = ({ navigation }) =>({
         headerTitle: navigation.state.params.IsLoginUser?"我的信息":"糖友信息",
@@ -54,7 +64,53 @@ class UserInfoPanel extends Component{
 
     constructor(props){
         super(props);
+        this.state = {
+            HeadImageUrl : '',
+            NickName : '',
+            Gender  : '',
+            Age : '',
+            Job : '',
+            Location : '',
+            Height: '',
+            Weight : '',
+            Score : ''
+        };
     }
+
+    requestGetMyInfo = (sessionId)=>{
+        httpRequest.post('/getUserInfoBySessionId', {
+            session_id:sessionId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    this.setState({
+                        HeadImageUrl : data['iconUrl'],
+                        NickName : data['username'],
+                        Gender  : data['gender'],
+                        Age : data['age'],
+                        Job : data['job'],
+                        Location : data['area'],
+                        Height: data['height'],
+                        Weight : data['weight'],
+                        Score : data['integral']
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+
+
+    componentDidMount(){
+        const {sessionId} = this.props;
+        this.requestGetMyInfo(sessionId);
+    }
+
 
     render(){
         const { navigate } = this.props.navigation;
@@ -64,22 +120,22 @@ class UserInfoPanel extends Component{
                 <List >
 
                     <List.Item
-                        thumb={ <Image source={require('./head.jpg')} style={UserInfoCss.HeaderImage}/>}
+                        thumb={ <Image source={{uri:makeCommonImageUrl(this.state.HeadImageUrl)}} style={UserInfoCss.HeaderImage}/>}
                         extra={
                             <Progress percent={30}  />
                         }
                         multipleLine
                     >
                         <Brief> </Brief>
-                        震天八荒
+                        {this.state.NickName}
                         <Brief> </Brief>
                     </List.Item>
-                    <List.Item extra="男">性别</List.Item>
-                    <List.Item extra="18">年龄</List.Item>
-                    <List.Item extra="学生">职业</List.Item>
-                    <List.Item extra="湖南省 衡阳市">所在地</List.Item>
-                    <List.Item extra="180cm">身高</List.Item>
-                    <List.Item extra="80kg">体重</List.Item>
+                    <List.Item extra={this.state.Gender}>性别</List.Item>
+                    <List.Item extra={this.state.Age}>年龄</List.Item>
+                    <List.Item extra={this.state.Job}>职业</List.Item>
+                    <List.Item extra={this.state.Location}>所在地</List.Item>
+                    <List.Item extra={this.state.Height}>身高</List.Item>
+                    <List.Item extra={this.state.Weight}>体重</List.Item>
                     <List.Item >
                         {params.IsLoginUser? <Button type="primary" onClick={()=>{navigate('UserInfoEdit')}}>编辑个人信息</Button>:null }
                         {!params.IsLoginUser? <Button type="ghost">关注</Button>:null }
@@ -93,4 +149,4 @@ class UserInfoPanel extends Component{
 
 }
 
-export default connect()(UserInfoPanel);
+export default connect(mapStateToProps,null)(UserInfoPanel);

@@ -15,10 +15,12 @@ export class NickNameEditPanel extends  Component{
     };
     constructor(props){
         super(props);
-        this.state = {
-            NickName: "震天八荒"
-        }
+
     }
+
+    _updateNickName = (value)=>{
+        this.props.navigation.state.params.onUpdate('NickName',value);
+    };
 
     render(){
         return (
@@ -26,8 +28,8 @@ export class NickNameEditPanel extends  Component{
                 <InputItem
                     clear
                     maxLength={8}
-                    value={this.state.NickName}
-
+                    defaultValue={this.props.navigation.state.params.data}
+                    onChange={this._updateNickName}
                 >
                     昵称
                 </InputItem>
@@ -189,7 +191,7 @@ export class HeightEditPanel extends  Component{
                 <Picker
                     data={ItemData.Heights}
                     cols={1}
-                    title="选择身高"
+                    title="选择身高(cm)"
                     extra={this.state.Height}
                 >
                     <List.Item arrow="horizontal">身高</List.Item>
@@ -221,7 +223,8 @@ export class WeightEditPanel extends  Component{
                 <Picker
                     data={ItemData.Weights}
                     cols={1}
-                    title="选择体重"
+                    title="选择体重(kg)"
+                    cascade={false}
                     extra={this.state.Weight}
                 >
                     <List.Item arrow="horizontal">体重</List.Item>

@@ -12,12 +12,6 @@ const MainFState = {
         // HeadImageUrl : '',
         // NickName : '',
         Phone : '18061532353',
-        Gender  : '',
-        Age : '',
-        Job : '',
-        Location : '',
-        Height: '',
-        Weight : '',
         Score : ''
     },
 

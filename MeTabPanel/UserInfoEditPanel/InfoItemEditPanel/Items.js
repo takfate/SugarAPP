@@ -1591,7 +1591,7 @@ export const Heights = function () {
     for(let i=50;i<=250;i++){
         li.push({
             value:i.toString(),
-            label:i.toString()+"cm"
+            label:i.toString()
         });
     }
     return li;
@@ -1599,20 +1599,25 @@ export const Heights = function () {
 
 
 export const Weights = function () {
-    let li =  [];
-    for(let i=20;i<=99;i++){
-        li.push({
-            value:i.toString()+'.0',
-            label:i.toString()+'.0 kg'
-        });
-        li.push({
-            value:i.toString()+'.5',
-            label:i.toString()+'.5 kg'
+    let res = [];
+    let intPart = [];
+    let realPart = [];
+    for(let i=20;i<=150;i++){
+        intPart.push({
+            value:i.toString(),
+            label:i.toString()
         });
     }
-    li.push({
-        value:'100.0',
-        label:'100.0 kg'
-    });
-    return li;
+    for(let i=0;i<=9;i++){
+        realPart.push({
+            value:'.'+i.toString(),
+            label:'.'+i.toString()
+        });
+    }
+
+    res.push(intPart);
+    res.push(realPart);
+    return res;
 }();
+
+
