@@ -48,6 +48,8 @@ import KinLinkPanel from './HomeTabPanel/KinLinkPanel';
 import SugarRecordPanel from './HomeTabPanel/SugarRecordPanel';
 import HealthRecordPanel from './HomeTabPanel/HealthRecordPanel';
 
+import SugarGuideNavigation from './HomeTabPanel/SugarGuidePanel';
+
 
 const StackNav = StackNavigator(
     {
@@ -165,7 +167,8 @@ const StackNav = StackNavigator(
         },
         HealthRecord : {
             screen : HealthRecordPanel
-        }
+        },
+        ...SugarGuideNavigation
     },
     {
         headerMode: 'screen',

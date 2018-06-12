@@ -4,7 +4,7 @@ import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity,FlatList,TouchableHighlight  } from 'react-native';
 import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Toast} from 'antd-mobile';
-import {UserImage} from '../CommonComponent';
+import {makeCommonImageUrl, UserImage} from '../CommonComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BbsSearchPanel from "./BbsSearchPanel/component";
 import httpRequest from "../httpRequest";
@@ -125,7 +125,7 @@ class BbsTabPanel extends Component{
     _renderItem = (item) =>{
         const { navigate } = this.props.navigation;
         return (
-            <TouchableHighlight onPress={()=>{navigate('PostDetail')}}>
+            <TouchableHighlight onPress={()=>{navigate('PostDetail',{topicId:item.item.key})}}>
                 <Card full>
                     <Card.Header
                         title={<View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
@@ -152,7 +152,7 @@ class BbsTabPanel extends Component{
                                     UserId : '100'
                                 })}}
                             >
-                                <Image source={require('./head.jpg')} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
+                                <Image source={{uri:makeCommonImageUrl(item.item.UserImageUrl)}} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
                             </TouchableOpacity>
                         }
                     />

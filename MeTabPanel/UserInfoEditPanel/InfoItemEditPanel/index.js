@@ -50,10 +50,15 @@ export class GenderEditPanel extends  Component{
     constructor(props){
         super(props);
         this.state = {
-            Gender: "男"
+            Gender: [props.navigation.state.params.data]
         };
 
     }
+
+    _updateGender = (value) => {
+        this.setState({Gender:value});
+        this.props.navigation.state.params.onUpdate('Gender',value[0]);
+    };
 
     render(){
         return (
@@ -62,7 +67,9 @@ export class GenderEditPanel extends  Component{
                     data={ItemData.genders}
                     cols={1}
                     title="选择性别"
-                    extra={this.state.Gender }
+                    extra={this.state.Gender}
+                    value={this.state.Gender}
+                    onChange={this._updateGender}
                 >
                     <List.Item arrow="horizontal">性别</List.Item>
                 </Picker>
@@ -84,9 +91,14 @@ export class AgeEditPanel extends  Component{
     constructor(props){
         super(props);
         this.state = {
-            Age: "18"
+            Age: [props.navigation.state.params.data]
         };
     }
+
+    _updateAge = (value)=>{
+        this.setState({Age:value});
+        this.props.navigation.state.params.onUpdate('Age',value[0]);
+    };
 
     render(){
         return (
@@ -96,6 +108,8 @@ export class AgeEditPanel extends  Component{
                     cols={1}
                     title="选择年龄"
                     extra={this.state.Age}
+                    value={this.state.Age}
+                    onChange={this._updateAge}
                 >
                     <List.Item arrow="horizontal">年龄</List.Item>
                 </Picker>
@@ -113,18 +127,20 @@ export class JobEditPanel extends  Component{
     };
     constructor(props){
         super(props);
-        this.state = {
-            Job: "学生"
-        };
     }
+
+    _updateJob = (value)=>{
+        this.props.navigation.state.params.onUpdate('Job',value);
+    };
 
     render(){
         return (
             <List style={{marginTop:15}}>
                 <InputItem
                     clear
-                    maxLength={8}
-                    value={this.state.Job }
+                    maxLength={10}
+                    defaultValue={this.props.navigation.state.params.data}
+                    onChange={this._updateJob}
                 >
                     职业
                 </InputItem>
@@ -146,9 +162,14 @@ export class LocationEditPanel extends  Component{
     constructor(props){
         super(props);
         this.state = {
-            Location: "湖南省 衡阳市"
+            Location: props.navigation.state.params.data.split(',')
         };
     }
+
+    _updateLocation = (value)=>{
+        this.setState({Location:value});
+        this.props.navigation.state.params.onUpdate('Location',value[0]+','+value[1]);
+    };
 
     render(){
         return (
@@ -158,6 +179,8 @@ export class LocationEditPanel extends  Component{
                     cols={2}
                     title="选择所在地"
                     extra={this.state.Location}
+                    value={this.state.Location}
+                    onChange={this._updateLocation}
                     itemStyle={{
                         fontSize:15
                     }}
@@ -178,12 +201,19 @@ export class HeightEditPanel extends  Component{
             height:55,
         },
     };
+
     constructor(props){
         super(props);
         this.state = {
-            Height: "180cm"
+            Height: [props.navigation.state.params.data]
         };
     }
+
+    _updateHeight = (value)=>{
+        this.setState({Height:value});
+        this.props.navigation.state.params.onUpdate('Height',value[0]);
+    };
+
 
     render(){
         return (
@@ -193,6 +223,8 @@ export class HeightEditPanel extends  Component{
                     cols={1}
                     title="选择身高(cm)"
                     extra={this.state.Height}
+                    value={this.state.Height}
+                    onChange={this._updateHeight}
                 >
                     <List.Item arrow="horizontal">身高</List.Item>
                 </Picker>
@@ -212,23 +244,12 @@ export class WeightEditPanel extends  Component{
     };
     constructor(props){
         super(props);
-        this.state = {
-            Weight: "76.6kg"
-        };
     }
 
     render(){
         return (
             <List style={{marginTop:15}}>
-                <Picker
-                    data={ItemData.Weights}
-                    cols={1}
-                    title="选择体重(kg)"
-                    cascade={false}
-                    extra={this.state.Weight}
-                >
-                    <List.Item arrow="horizontal">体重</List.Item>
-                </Picker>
+                <List.Item  extra={this.props.navigation.state.params.data}>体重</List.Item>
             </List>
         );
     }

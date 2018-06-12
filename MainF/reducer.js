@@ -2,18 +2,34 @@ import * as ActionTypes from './actionTypes';
 
 const MainFState = {
     selectedTab : "Home",
-    sessionId : 'a13b6160-bd23-3710-a150-41d800dd30b4',
-    userId : 34,
-    // sessionId : null,
-    // userId : null,
+    sessionId : null,
+    userId : null,
     loginUserInfo : {
-        HeadImageUrl : '/static/userImg/usertile27.jpg',
-        NickName : 'tankwoks',
-        // HeadImageUrl : '',
-        // NickName : '',
-        Phone : '18061532353',
+        HeadImageUrl : '',
+        NickName : '',
+        Phone : '',
         Score : ''
     },
+    sugarGuide : {
+        gender : '男',
+        age : '30',
+        height : '160',
+        weight : '70.5',
+        sugarType : '1型糖尿病',
+        diseaseAge : '30',
+        akin : '有',
+        fm : '几乎没有',
+        manyDrinkWC : '是',
+        poison :'是',
+        thirsty:'是',
+        visionDown : '是',
+        diseaseSpeed : '迅速',
+        verifyYear : '2018',
+        cureWay : '',
+        dsPlan : '基础一针',
+        complication :'',
+        navigationKey : ''
+    }
 
 };
 
@@ -24,6 +40,36 @@ const reducer = function(state = MainFState,action){
         case ActionTypes.CHANGE_TO_LOGIN_STATE:
             return {...state,sessionId:action.sessionId,userId:action.userId,loginUserInfo:{
                     ...state.loginUserInfo,HeadImageUrl:action.iconUrl,NickName:action.nickName,Phone:action.Phone
+                }
+            };
+        case ActionTypes.GUIDE_CLEAR:
+            return {
+                ...state,sugarGuide:{
+                    gender : '男',
+                    age : '30',
+                    height : '160',
+                    weight : '70.5',
+                    sugarType : '1型糖尿病',
+                    diseaseAge : '30',
+                    akin : '有',
+                    fm : '几乎没有',
+                    manyDrinkWC : '是',
+                    poison :'是',
+                    thirsty:'是',
+                    visionDown : '是',
+                    diseaseSpeed : '迅速',
+                    verifyYear : '2018',
+                    cureWay : '',
+                    dsPlan : '基础一针',
+                    complication :'',
+                    navigationKey : action.NavKey
+                }
+            };
+        case ActionTypes.GUIDE_UPDATE:
+            return {
+                ...state,sugarGuide:{
+                    ...state.sugarGuide,
+                    ...action.updateItem
                 }
             };
         default:

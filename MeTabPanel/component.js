@@ -88,10 +88,7 @@ class MeTabPanel extends Component{
                     <List >
                         <List.Item
                             arrow='horizontal'
-                            onClick={()=>{navigate('UserInfo',{
-                                IsLoginUser :true,
-                                UserId : '100'
-                            })}}
+                            onClick={()=>{navigate('UserInfo',{isLoginUser:true,UserId:userId})}}
                             style={MeCss.HeaderItem}
                             thumb={
                                 <Badge style={{marginRight:15}} text="Lv4">

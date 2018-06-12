@@ -82,11 +82,11 @@ class UserInfoEditPanel extends Component{
                         HeadImageUrl : data['iconUrl'],
                         NickName : data['username'],
                         Gender  : data['gender'],
-                        Age : data['age'],
+                        Age : data['age'].toString(),
                         Job : data['job'],
                         Location : data['area'],
-                        Height: data['height'],
-                        Weight : data['weight'],
+                        Height: data['height'].toString(),
+                        Weight : data['weight'].toString(),
                         Score : data['integral']
                     });
                 } else {
@@ -107,6 +107,36 @@ class UserInfoEditPanel extends Component{
         this.setState({
             [key]:value
         })
+    };
+
+    requestSaveInfo = (sessionId,NickName,Gender,Height,Weight,Location,Job,Age) => {
+        httpRequest.post('/alterUserInfo', {
+            session_id:sessionId,
+            username:NickName,
+            gender:Gender,
+            height:Height,
+            weight:Weight,
+            area:Location,
+            job:Job,
+            age:Age
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.success('保存成功');
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _submitSave = ()=>{
+        const {sessionId} = this.props;
+        this.requestSaveInfo(sessionId,this.state.NickName,this.state.Gender,this.state.Height,this.state.Weight,
+            this.state.Location,this.state.Job,this.state.Age);
     };
 
     render(){
@@ -146,9 +176,11 @@ class UserInfoEditPanel extends Component{
                         onClick={()=>{navigate('HeightEdit',{onUpdate:this._updateInfo,data:this.state.Height})}}
                         arrow="horizontal">身高</List.Item>
                     <List.Item
-                        extra={this.state.Weight}>体重</List.Item>
+                        extra={this.state.Weight}
+                        onClick={()=>{navigate('WeightEdit',{onUpdate:this._updateInfo,data:this.state.Weight})}}
+                        arrow="horizontal">体重</List.Item>
                     <List.Item >
-                        <Button type="primary" onClick={()=>{}}>保存</Button>
+                        <Button type="primary" onClick={this._submitSave}>保存</Button>
                     </List.Item>
                 </List>
 

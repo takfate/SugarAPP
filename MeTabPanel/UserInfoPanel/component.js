@@ -56,7 +56,7 @@ function mapDispatchToProps(dispatch) {
 
 class UserInfoPanel extends Component{
     static navigationOptions = ({ navigation }) =>({
-        headerTitle: navigation.state.params.IsLoginUser?"我的信息":"糖友信息",
+        headerTitle: navigation.state.params.isLoginUser?"我的信息":"糖友信息",
         headerStyle:{
             height:55,
         }
@@ -73,9 +73,11 @@ class UserInfoPanel extends Component{
             Location : '',
             Height: '',
             Weight : '',
-            Score : ''
+            Score : '',
+            Focus : false
         };
     }
+
 
     requestGetMyInfo = (sessionId)=>{
         httpRequest.post('/getUserInfoBySessionId', {
@@ -104,10 +106,39 @@ class UserInfoPanel extends Component{
             });
     };
 
+    requestGetUserInfo = (sessionId,UserId)=>{
+        httpRequest.post('/getOtherUserInfo', {
+            session_id:sessionId,
+            otherUserId:UserId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    this.setState({
+                        HeadImageUrl : data['iconUrl'],
+                        NickName : data['username'],
+                        Gender  : data['gender'],
+                        Age : data['age'],
+                        Job : data['job'],
+                        Location : data['area'],
+                        Height: data['height'],
+                        Weight : data['weight'],
+                        Score : data['integral'],
+                        Focus : data['isFollow']===1
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
 
 
     componentDidMount(){
-        const {sessionId} = this.props;
+        const {sessionId,userId} = this.props;
+        this.props.navigation.setParams({LocalUserId : userId});
         this.requestGetMyInfo(sessionId);
     }
 
@@ -115,6 +146,7 @@ class UserInfoPanel extends Component{
     render(){
         const { navigate } = this.props.navigation;
         const { params } = this.props.navigation.state;
+        console.log(1230);
         return(
             <ScrollView style={UserInfoCss.MainView}>
                 <List >
@@ -137,9 +169,9 @@ class UserInfoPanel extends Component{
                     <List.Item extra={this.state.Height}>身高</List.Item>
                     <List.Item extra={this.state.Weight}>体重</List.Item>
                     <List.Item >
-                        {params.IsLoginUser? <Button type="primary" onClick={()=>{navigate('UserInfoEdit')}}>编辑个人信息</Button>:null }
-                        {!params.IsLoginUser? <Button type="ghost">关注</Button>:null }
-                        {!params.IsLoginUser? <Button onClick={()=>{navigate('Chat')}}>私信</Button>:null }
+                        {params.isLoginUser? <Button type="primary" onClick={()=>{navigate('UserInfoEdit')}}>编辑个人信息</Button>:null }
+                        {!params.isLoginUser? <Button type="ghost">关注</Button>:null }
+                        {!params.isLoginUser? <Button onClick={()=>{navigate('Chat')}}>私信</Button>:null }
                     </List.Item>
                 </List>
 

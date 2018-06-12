@@ -1,17 +1,17 @@
 export const genders = [
     {
-        value:'male',
+        value:'男',
         label:'男'
     },
     {
-        value:'female',
+        value:'女',
         label:'女'
     }
 ];
 
 export const ages = function () {
     let li =  [];
-    for(let i=10;i<=150;i++){
+    for(let i=5;i<=150;i++){
         li.push({
             value:i.toString(),
             label:i.toString()

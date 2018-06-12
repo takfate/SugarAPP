@@ -7,6 +7,7 @@ import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Carousel,Grid} from '
 import {UserImage} from '../CommonComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {GridImageURL} from "../CommonComponent";
+import {makeCommonImageUrl} from "../CommonComponent";
 
 const Brief = List.Item.Brief;
 
@@ -63,6 +64,9 @@ class HomeTabPanel extends Component{
             case '每日健康记录':
                 navigate('HealthRecord');
                 break;
+            case '糖导':
+                navigate('GuideHome');
+                break;
             default :
                 return ;
         }
@@ -77,25 +81,22 @@ class HomeTabPanel extends Component{
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
                     <Text style={{fontSize:18,color:'white'}}><Icon name="home" size={25}/>  糖家</Text>
                 </View>
-                <Card full>
-                    <Card.Body>
-                        <Carousel
-                            autoplay={false}
-                            infinite
-                            style={{height:200}}
-                        >
-                            <View style={{width:'100%',height:'100%',flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                                <Text style={{fontSize:30,color:'black'}}>健康周报</Text>
-                            </View>
-                            <View>
-                                <Text>血糖变化</Text>
-                            </View>
-                            <View>
-                                <Text>记录</Text>
-                            </View>
-                        </Carousel>
-                    </Card.Body>
-                </Card>
+
+                <Carousel
+                    autoplay={true}
+                    infinite
+                    style={{height:200}}
+                >
+                    <View style={{width:'100%',height:200,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                        <Image source={{uri:makeCommonImageUrl('/static/appImg/weeks.jpg')}} style={{width:'100%',height:200}}/>
+                    </View>
+                    <View>
+                        <Text>血糖变化</Text>
+                    </View>
+                    <View>
+                        <Text>记录</Text>
+                    </View>
+                </Carousel>
                 <WhiteSpace size="lg"/>
                 <Grid data={GridData}  onClick={this._gridOnClick} />
                 <WhiteSpace size="lg"/>

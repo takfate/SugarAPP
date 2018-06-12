@@ -1,2 +1,6 @@
 export const SELECT_TAB = "SELECT_TAB";
 export const CHANGE_TO_LOGIN_STATE = "CHANGE_TO_LOGIN_STATE";
+export const GUIDE_CLEAR = "GUIDE/CLEAR";
+export const GUIDE_UPDATE = "GUIDE/UPDATE";
+
+
