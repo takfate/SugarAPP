@@ -24,6 +24,7 @@ class CommonListPanel extends Component{
     render(){
         const {RealData,InitNum} = this.props;
         const {RenderItem,Separator} = this.props;
+        const {refreshing ,onRefresh,onEndReached,onEndReachedThreshold} = this.props;
         return(
             <FlatList
                 style={CommonListCss.MainView}
@@ -31,6 +32,10 @@ class CommonListPanel extends Component{
                 initialNumToRender={InitNum}
                 renderItem = {RenderItem}
                 ItemSeparatorComponent = {Separator}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={onEndReachedThreshold}
             >
             </FlatList>
         );

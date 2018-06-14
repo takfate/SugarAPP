@@ -74,7 +74,6 @@ class GuideStep1Panel extends Component{
         this.state = {
             value:'男'
         };
-
     }
 
 
@@ -123,6 +122,8 @@ class GuideStep2Panel extends Component{
             value:['30']
         };
     }
+
+
 
     _updateSelection = (obj) => {
         this.setState({value:obj});
@@ -263,10 +264,21 @@ class GuideStep5Panel extends Component {
         };
     }
 
+
     _updateSelection = (value) => {
         this.setState({value:value});
         const {guideUpdate} = this.props;
         guideUpdate({sugarType:value});
+    };
+
+    _switch = ()=> {
+        const {sugarType} =  this.props.sugarGuide;
+        const {navigate} = this.props.navigation;
+        if(sugarType==='不清楚'){
+            navigate('GuideStep6');
+        }else{
+            navigate('GuideStep14');
+        }
     };
 
     render() {
@@ -288,9 +300,7 @@ class GuideStep5Panel extends Component {
                             ))}
                         </List>
                     </Card.Body>
-                    <Card.Footer content={<Button type='primary' onClick={() => {
-                        navigate('GuideStep6')
-                    }}>下一步</Button>}/>
+                    <Card.Footer content={<Button type='primary' onClick={this._switch}>下一步</Button>}/>
                 </Card>
             </View>
         );
@@ -312,6 +322,7 @@ class GuideStep6Panel extends Component{
             value:['30']
         };
     }
+
 
     _updateSelection = (obj) => {
         this.setState({value:obj});
@@ -676,11 +687,54 @@ class GuideStep14Panel extends Component{
 
     constructor(props){
         super(props);
-        alert(JSON.stringify(this.props));
+
+    }
+
+
+
+    componentDidMount(){
+        const {sugarType,diseaseAge,akin,fm,manyDrinkWC,poison,thirsty,visionDown,diseaseSpeed,height,weight} = this.props.sugarGuide;
+        const {guideUpdate} = this.props;
+        if(sugarType==='不清楚'){
+            let one = 0;
+            let two = 0;
+            if(parseInt(diseaseAge)<20)one++;
+            else two++;
+            if(akin==='是')one++;
+            else two++;
+            if(fm==='几乎没有')one++;
+            else if(fm==='正常或稍高')two++;
+            if(manyDrinkWC==='是')one++;
+            else two++;
+            if(poison==='是')one++;
+            else if(poison==='不是')two++;
+            if(thirsty==='是')two++;
+            else one++;
+            if(visionDown==='是')one++;
+            else two++;
+            if(diseaseSpeed==='迅速')one++;
+            else two++;
+            let he = parseFloat(height);
+            let we = parseFloat(weight);
+            let bmi = we/(he*he/10000);
+            if(bmi<18.4){
+                one++;
+            }else if(bmi>28){
+                two++;
+            }
+            if(one>=two){
+                guideUpdate({sugarType:'1型糖尿病'});
+            }else{
+                guideUpdate({sugarType:'2型糖尿病'})
+            }
+
+        }
     }
 
     render(){
         const {navigate} = this.props.navigation;
+
+        const {sugarType} = this.props.sugarGuide;
         return(
             <View style={{  height: '100%', width: '100%'}}>
                 <Card style={{width:'100%',marginTop:75}}>
@@ -689,7 +743,7 @@ class GuideStep14Panel extends Component{
                         style={{flexDirection:'row',justifyContent:'center',alignItems:'center',}}
                     />
                     <Card.Body>
-                        <Text style={{textAlign:'center',fontSize:30,color:'black'}}>1型糖尿病</Text>
+                        <Text style={{textAlign:'center',fontSize:30,color:'black'}}>{sugarType}</Text>
                     </Card.Body>
                     <Card.Footer content={<Button type='primary' onClick={()=>{navigate('GuideStep15')}}>下一步</Button>}/>
                 </Card>
@@ -759,6 +813,7 @@ class GuideStep16Panel extends Component{
         };
     }
 
+
     _updateSelection = (ev,value) => {
         const {guideUpdate} = this.props;
         if(!ev.target.checked){
@@ -817,6 +872,7 @@ class GuideStep17Panel extends Component{
         };
     }
 
+
     _updateSelection = (value) => {
         this.setState({value:value});
         const {guideUpdate} = this.props;
@@ -864,6 +920,7 @@ class GuideStep18Panel extends Component{
             value:[]
         };
     }
+
 
     _updateSelection = (ev,value) => {
         const {guideUpdate} = this.props;
@@ -913,24 +970,23 @@ class GuideStep19Panel extends Component{
         headerTitle: "糖导(19/19)",
         headerStyle:{
             height:55,
-        }
+        },
+        headerLeft:null
     };
 
     constructor(props){
         super(props);
-        alert(JSON.stringify(this.props));
         this.state = {
             value:[]
         };
     }
 
-    _updateSelection = (obj) => {
-        alert(obj);
-    };
+
 
 
     render(){
         const {goBack} = this.props.navigation;
+        const {navigationKey} = this.props.sugarGuide;
         return(
             <View style={{  height: '100%', width: '100%'}}>
                 <Card style={{width:'100%',marginTop:75}}>
@@ -943,7 +999,7 @@ class GuideStep19Panel extends Component{
                             生成的健康周报在糖家的状态滚动栏中可以查看哦~
                         </Text>
                     </Card.Body>
-                    <Card.Footer content={<Button type='primary' onClick={()=>{}}>完成</Button>}/>
+                    <Card.Footer content={<Button type='primary' onClick={()=>{goBack(navigationKey)}}>完成</Button>}/>
                 </Card>
             </View>
         );

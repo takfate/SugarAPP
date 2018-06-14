@@ -11,12 +11,11 @@ import {
     TouchableNativeFeedback,
     TouchableHighlight
 } from 'react-native';
-import {Button, NavBar,Card,List,ListView,WhiteSpace,InputItem} from 'antd-mobile';
+import {Button, NavBar,Card,List,ListView,WhiteSpace,InputItem,Toast} from 'antd-mobile';
 import CommonListPanel from '../CommonListPanel';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import httpRequest from "../../httpRequest";
 const Brief = List.Item.Brief;
-
-
 
 
 export class MyWatchListPanel extends Component{
@@ -254,8 +253,6 @@ export class WatchMeListPanel extends Component{
     }
 }
 
-
-
 export class MyCollectedArticleListPanel extends Component{
 
     static navigationOptions = {
@@ -267,58 +264,8 @@ export class MyCollectedArticleListPanel extends Component{
     constructor(props){
         super(props);
         this.state =  {
-            Data : [
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "1"
-                },
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "2"
-                },
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "3"
-                },
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "4"
-                },
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "5"
-                },
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "6"
-                },
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "7"
-                },
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "8"
-                },
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "9"
-                },
-                {
-                    Title:"糖友，生活规律，别睡懒觉",
-                    Content:"随着糖尿病教育的开展，对糖尿病的正确认识可减轻糖尿病患者的心理压力。我们要时不时的对糖友们进行心理分析。",
-                    key : "10"
-                }
-            ]
+            Data : [],
+            Refreshing :false
         };
     }
     _renderItem = (item)=>{
@@ -326,9 +273,9 @@ export class MyCollectedArticleListPanel extends Component{
         return (
 
             <TouchableHighlight
-                onPress={()=>{navigate("UserInfo",{
-                    IsLoginUser :false,
-                    UserId : '100'
+                onPress={()=>{navigate('ArticleDetail',{
+                    ArticleId: item.item.key,
+                    Title :item.item.Title
                 })}}
             >
                 <Card full>
@@ -344,6 +291,60 @@ export class MyCollectedArticleListPanel extends Component{
         ) ;
     };
 
+    _dataWrapper = (initData) =>{
+        return {
+            key : initData['articleId'].toString(),
+            Title :initData['title'],
+            Content : initData['content']
+        };
+    };
+
+    requestGetMyCollectedArticleList = (Data,sessionId,x,n)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/getFavoriteArticle', {
+            session_id:sessionId,
+            x:x,
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    console.log(Data);
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyCollectedArticleList([],sessionId,0,10);
+    };
+
+    componentDidMount(){
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyCollectedArticleList(this.state.Data.slice(),sessionId,0,10);
+    }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyCollectedArticleList(this.state.Data.slice(),sessionId,this.state.Data.length,10);
+    };
+
     render(){
         return (
             <View style={{height:'100%',width:'100%'}}>
@@ -356,6 +357,10 @@ export class MyCollectedArticleListPanel extends Component{
                     InitNum = {10}
                     RenderItem = {this._renderItem}
                     style={{height:'100%'}}
+                    refreshing={this.state.Refreshing}
+                    onRefresh={this._refresh}
+                    onEndReached={this._loadMoreData}
+                    onEndReachedThreshold={0.1}
                 />
             </View>
         );
@@ -373,91 +378,8 @@ export class MyCommentListPanel extends Component{
     constructor(props){
         super(props);
         this.state =  {
-            Data : [
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "12",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "1"
-                },
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "12",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "2"
-                },
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "12",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "3"
-                },
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "12",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "4"
-                },
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "12",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "5"
-                },
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "12",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "6"
-                }
-                ,
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "-5",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "7"
-                }
-                ,
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "0",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "8"
-                }
-                ,
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "12",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "9"
-                },
-                {
-                    CommentContent:"你是真的强你是真的强你是真的强",
-                    ArticleTitle : "糖尿病",
-                    Score : "12",
-                    ArticleId:'123',
-                    PostTime:'1',
-                    key : "10"
-                }
-            ]
+            Data : [],
+            Refreshing: false
         };
     }
     _renderItem = (item)=>{
@@ -469,7 +391,7 @@ export class MyCommentListPanel extends Component{
                 <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                     <View>
                         <Text>
-                            2018-05-05 23:00
+                            {item.item.PostTime}
                         </Text>
                     </View>
                     <View style={{flexDirection:'row'}}>
@@ -483,7 +405,7 @@ export class MyCommentListPanel extends Component{
                 <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                     <View>
                         <Text>
-                            2018-05-05 23:00
+                            {item.item.PostTime}
                         </Text>
                     </View>
                     <View style={{flexDirection:'row'}}>
@@ -491,19 +413,31 @@ export class MyCommentListPanel extends Component{
                         <Text>{item.item.Score}</Text>
                     </View>
                 </View>
+        }else{
+            FooterContent =
+                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                    <View>
+                        <Text>
+                            {item.item.PostTime}
+                        </Text>
+                    </View>
+                </View>
         }
         return (
             <TouchableHighlight
-                onPress={()=>{}}
+                onPress={()=>{navigate('ArticleDetail',{
+                    ArticleId: item.item.ArticleId,
+                    Title :item.item.Title
+                })}}
             >
                 <Card full>
                     <Card.Header
-                        title={item.item.ArticleTitle}
+                        title={item.item.Title}
 
                     />
                     <Card.Body>
                         <Text style={{color:'black',paddingLeft:15}}>
-                            评论：{item.item.CommentContent}
+                            评论：{item.item.Content}
                         </Text>
                     </Card.Body>
                     <Card.Footer content={FooterContent} />
@@ -511,6 +445,62 @@ export class MyCommentListPanel extends Component{
             </TouchableHighlight>
 
         ) ;
+    };
+
+    _dataWrapper = (initData) =>{
+        return {
+            key : initData['commentId'].toString(),
+            Title :initData['title'],
+            Content : initData['content'],
+            ArticleId : initData['articleId'],
+            Score : initData['likes'],
+            PostTime : initData['commentTime']
+        };
+    };
+
+    requestGetMyArticleCommentList = (Data,sessionId,x,n)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/getCommentByUserId', {
+            session_id:sessionId,
+            x:x,
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    console.log(Data);
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyArticleCommentList([],sessionId,0,10);
+    };
+
+    componentDidMount(){
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyArticleCommentList(this.state.Data.slice(),sessionId,0,10);
+    }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyArticleCommentList(this.state.Data.slice(),sessionId,this.state.Data.length,10);
     };
 
     render(){
@@ -525,6 +515,10 @@ export class MyCommentListPanel extends Component{
                     InitNum = {10}
                     RenderItem = {this._renderItem}
                     style={{height:'100%'}}
+                    refreshing={this.state.Refreshing}
+                    onRefresh={this._refresh}
+                    onEndReached={this._loadMoreData}
+                    onEndReachedThreshold={0.1}
                 />
             </View>
         );
@@ -542,108 +536,8 @@ export class MyPublishedTopicListPanel extends Component{
     constructor(props){
         super(props);
         this.state =  {
-            Data : [
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "1"
-                },
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "2"
-                },
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "3"
-                },
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "4"
-                },
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "5"
-                },
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "6"
-                },
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "7"
-                },
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "8"
-                },
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "9"
-                },
-                {
-                    TopicContent:"你这也太强了吧哈哈哈哈哈哈哈哈哈你这也太强了吧哈哈哈哈哈哈哈哈哈",
-                    PublishTime : "2018-08-07 23:00",
-                    PostCount : '23',
-                    CollectCount : '12',
-                    Score : '23',
-                    TopicId: '12',
-                    Images : [],
-                    key : "10"
-                }
-            ]
+            Data : [],
+            Refreshing:false
         };
     }
     _renderItem = (item)=>{
@@ -655,11 +549,11 @@ export class MyPublishedTopicListPanel extends Component{
                 <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                     <View style={{flexDirection:'row'}}>
                         <Icon name='comment'  style={{marginRight:5,marginTop:4}}/>
-                        <Text>{item.item.PostCount}</Text>
+                        <Text>{item.item.CommentCount}</Text>
                     </View>
                     <View style={{flexDirection:'row'}}>
                         <Icon name='star' color='yellow' style={{marginRight:5,marginTop:4}}/>
-                        <Text>{item.item.CollectCount}</Text>
+                        <Text>{item.item.CollectedCount}</Text>
                     </View>
                     <View style={{flexDirection:'row'}}>
                         <Icon name='thumbs-up' color='red' style={{marginRight:5,marginTop:4}}/>
@@ -672,30 +566,45 @@ export class MyPublishedTopicListPanel extends Component{
                 <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                     <View style={{flexDirection:'row'}}>
                         <Icon name='comment' style={{marginRight:5,marginTop:4}}/>
-                        <Text>{item.item.PostCount}</Text>
+                        <Text>{item.item.CommentCount}</Text>
                     </View>
                     <View style={{flexDirection:'row'}}>
-                        <Icon name='star' color='yellow' style={{marginRight:5,marginTop:4}}/>
-                        <Text>{item.item.CollectCount}</Text>
+                        <Icon name='star' color='orange' style={{marginRight:5,marginTop:4}}/>
+                        <Text>{item.item.CollectedCount}</Text>
                     </View>
                     <View style={{flexDirection:'row'}}>
                         <Icon name='thumbs-down' color='blue' style={{marginRight:5,marginTop:4}}/>
                         <Text>{item.item.Score}</Text>
                     </View>
                 </View>
+        }else{
+            FooterContent =
+                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                    <View style={{flexDirection:'row'}}>
+                        <Icon name='comment' style={{marginRight:5,marginTop:4}}/>
+                        <Text>{item.item.CommentCount}</Text>
+                    </View>
+                    <View style={{flexDirection:'row'}}>
+                        <Icon name='star' color='orange' style={{marginRight:5,marginTop:4}}/>
+                        <Text>{item.item.CollectedCount}</Text>
+                    </View>
+                    <View style={{flexDirection:'row'}}>
+                        <Icon name='thumbs-up'  style={{marginRight:5,marginTop:4}}/>
+                        <Text>{item.item.Score}</Text>
+                    </View>
+                </View>
         }
         return (
-
             <TouchableHighlight
-                onPress={()=>{}}
+                onPress={()=>{navigate('PostDetail',{topicId:item.item.key})}}
             >
                 <Card full>
                     <Card.Header
-                        title={item.item.PublishTime}
+                        title={item.item.PostTime}
                     />
                     <Card.Body>
                         <Text style={{color:'black',paddingLeft:15}}>
-                            {item.item.TopicContent}
+                            {item.item.Content}
                         </Text>
                     </Card.Body>
                     <Card.Footer content={FooterContent} />
@@ -703,6 +612,63 @@ export class MyPublishedTopicListPanel extends Component{
             </TouchableHighlight>
 
         ) ;
+    };
+
+    _dataWrapper = (initData) =>{
+        return {
+            key : initData['topicId'].toString(),
+            Content : initData['content'],
+            CommentCount : initData['replyNum'] + initData['comNum'],
+            Score : initData['likes'],
+            PostTime : initData['topicTime'],
+            ImageList : [initData['picture1'],initData['picture2'],initData['picture3']],
+            CollectedCount : initData['favoriteNum']
+        };
+    };
+
+    requestGetMyPublishedTopicList = (Data,sessionId,x,n)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/getTopicByUserId', {
+            session_id:sessionId,
+            x:x,
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    console.log(Data);
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyPublishedTopicList([],sessionId,0,10);
+    };
+
+    componentDidMount(){
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyPublishedTopicList(this.state.Data.slice(),sessionId,0,10);
+    }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyPublishedTopicList(this.state.Data.slice(),sessionId,this.state.Data.length,10);
     };
 
     render(){
@@ -717,12 +683,15 @@ export class MyPublishedTopicListPanel extends Component{
                     InitNum = {10}
                     RenderItem = {this._renderItem}
                     style={{height:'100%'}}
+                    refreshing={this.state.Refreshing}
+                    onRefresh={this._refresh}
+                    onEndReached={this._loadMoreData}
+                    onEndReachedThreshold={0.1}
                 />
             </View>
         );
     }
 }
-
 
 export class MyCollectedTopicListPanel extends Component{
 
@@ -735,101 +704,8 @@ export class MyCollectedTopicListPanel extends Component{
     constructor(props){
         super(props);
         this.state =  {
-            Data : [
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "1"
-                },
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "2"
-                },
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "3"
-                },
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "4"
-                },
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "5"
-                },
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "6"
-                }
-                ,
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "7"
-                }
-                ,
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "8"
-                }
-                ,
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "9"
-                },
-                {
-                    UserImage:"",
-                    NickName : "竹曦雨露1",
-                    UserId:'23',
-                    Image :'',
-                    TopicContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    Floor: '12',
-                    key : "10"
-                }
-            ]
+            Data : [],
+            Refreshing:false
         };
     }
     _renderItem = (item)=>{
@@ -841,7 +717,7 @@ export class MyCollectedTopicListPanel extends Component{
             >
                 <Card full>
                     <Card.Header
-                        title={item.item.NickName}
+                        title={item.item.UserNickName}
                         thumb = {
                             <Image
                                 source={require('./head.jpg')}
@@ -856,14 +732,70 @@ export class MyCollectedTopicListPanel extends Component{
                     />
                     <Card.Body>
                         <Text style={{color:'black',paddingLeft:15}}>
-                            {item.item.TopicContent}
+                            {item.item.Content}
                         </Text>
                     </Card.Body>
-                    <Card.Footer content={<Text>楼主更新到了{item.item.Floor}楼</Text>} />
+                    <Card.Footer content={<Text>楼主更新到了{10}楼</Text>} />
                 </Card>
             </TouchableHighlight>
 
         ) ;
+    };
+
+    _dataWrapper = (initData) =>{
+        return {
+            key : initData['topicId'].toString(),
+            Content : initData['content'],
+            ImageList : [initData['picture1'],initData['picture2'],initData['picture3']],
+            UserId  : initData['userId'],
+            UserImageUrl : initData['iconUrl'],
+            UserNickName : initData['username']
+        };
+    };
+
+    requestGetMyCollectedTopicList = (Data,sessionId,x,n)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/getFavoriteTopic', {
+            session_id:sessionId,
+            x:x,
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    console.log(Data);
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyCollectedTopicList([],sessionId,0,10);
+    };
+
+    componentDidMount(){
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyCollectedTopicList(this.state.Data.slice(),sessionId,0,10);
+    }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyCollectedTopicList(this.state.Data.slice(),sessionId,this.state.Data.length,10);
     };
 
     render(){
@@ -871,19 +803,22 @@ export class MyCollectedTopicListPanel extends Component{
             <View style={{height:'100%',width:'100%'}}>
                 <View style={{height:30,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12}}>
-                    <Text >共收藏了55个话题</Text>
+                    <Text >共收藏了10个话题</Text>
                 </View>
                 <CommonListPanel
                     RealData = {this.state.Data}
                     InitNum = {10}
                     RenderItem = {this._renderItem}
                     style={{height:'100%'}}
+                    refreshing={this.state.Refreshing}
+                    onRefresh={this._refresh}
+                    onEndReached={this._loadMoreData}
+                    onEndReachedThreshold={0.1}
                 />
             </View>
         );
     }
 }
-
 
 export class MyResponseListPanel extends Component{
 
@@ -896,99 +831,13 @@ export class MyResponseListPanel extends Component{
     constructor(props){
         super(props);
         this.state =  {
-            Data : [
-                {
-                    type:'comment',
-                    CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    SubPostId : '12',
-                    Score: '15',
-                    Floor : '12',
-                    key : "1"
-                },
-                {
-                    type:'comment',
-                    CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    SubPostId : '12',
-                    Score: '15',
-                    Floor : '12',
-                    key : "2"
-                },
-                {
-                    type:'comment',
-                    CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    SubPostId : '12',
-                    Score: '15',
-                    Floor : '12',
-                    key : "3"
-                },
-                {
-                    type:'comment',
-                    CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    SubPostId : '12',
-                    Score: '15',
-                    Floor : '12',
-                    key : "4"
-                },
-                {
-                    type:'comment',
-                    CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    SubPostId : '12',
-                    Score: '15',
-                    Floor : '12',
-                    key : "5"
-                },
-                {
-                    type:'comment',
-                    CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    SubPostId : '12',
-                    Score: '15',
-                    Floor : '12',
-                    key : "6"
-                },
-                {
-                    type:'comment',
-                    CommentContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    SubPostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    SubPostId : '12',
-                    Score: '15',
-                    Floor : '12',
-                    key : "7"
-                },
-                {
-                    type:'subPost',
-                    SubPostContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
-                    Score: '15',
-                    key : "8"
-                },
-                {
-                    type:'subPost',
-                    SubPostContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
-                    Score: '15',
-                    key : "9"
-                },
-                {
-                    type:'subPost',
-                    SubPostContent : "我的好菜啊，我好菜啊，我好菜啊",
-                    PostContent : '你好强啊啊啊啊啊啊啊啊啊',
-                    PostId : '12',
-                    Score: '-15',
-                    key : "10"
-                }
-            ]
+            Data : [],
+            Refreshing : false
         };
     }
     _renderItem = (item)=>{
         const { navigate } = this.props.navigation;
+        const {sessionId}  = this.props.navigation.state.params;
         let FooterContent = null;
         let score = parseInt(item.item.Score);
         if(score>0){
@@ -996,7 +845,7 @@ export class MyResponseListPanel extends Component{
                 <View style={{flexDirection:'row',justifyContent:'space-between',paddingLeft:15,paddingRight:15,marginTop:5}}>
                     <View>
                         <Text >
-                            2018-05-05 23:00
+                            {item.item.PostTime}
                         </Text>
                     </View>
 
@@ -1011,7 +860,7 @@ export class MyResponseListPanel extends Component{
                 <View style={{flexDirection:'row',justifyContent:'space-between',paddingLeft:15,paddingRight:15,marginTop:5}}>
                     <View>
                         <Text >
-                            2018-05-05 23:00
+                            {item.item.PostTime}
                         </Text>
                     </View>
                     <View style={{flexDirection:'row'}}>
@@ -1019,40 +868,36 @@ export class MyResponseListPanel extends Component{
                         <Text>{item.item.Score}</Text>
                     </View>
                 </View>
+        }else{
+            FooterContent =
+                <View style={{flexDirection:'row',justifyContent:'space-between',paddingLeft:15,paddingRight:15,marginTop:5}}>
+                    <View>
+                        <Text >
+                            {item.item.PostTime}
+                        </Text>
+                    </View>
+                    <View style={{flexDirection:'row'}}>
+                        <Icon name='thumbs-up' style={{marginRight:5,marginTop:4}}/>
+                        <Text>{item.item.Score}</Text>
+                    </View>
+                </View>
         }
 
-        if(item.item.type==='comment'){
+        if(item.item.type==='subreply'){
             return (
-
                 <TouchableHighlight
-                    onPress={()=>{navigate('SubPostDetail',{Floor:'23'})}}
+                    onPress={()=>{
+                        navigate('SubPostDetail',{
+                            Floor:item.item.Floor,
+                            TopicId:item.item.TopicId,
+                            sessionId:sessionId,
+                            PostId :item.item.PostId
+                        })
+                    }}
                 >
                     <Card full>
                         <Card.Body>
                             <Text style={{color:'black',paddingLeft:15}}>回复：{item.item.CommentContent}</Text>
-                            {FooterContent}
-                        </Card.Body>
-                        <Card.Footer
-                            content={
-                                <Text >
-                                    原贴：{item.item.SubPostContent}
-                                </Text>
-                            }
-                            style={{borderTopWidth:1,borderTopColor:'#DDDDDD'}}
-                        />
-                    </Card>
-                </TouchableHighlight>
-
-            ) ;
-        }else{
-            return (
-
-                <TouchableHighlight
-                    onPress={()=>{navigate('PostDetail')}}
-                >
-                    <Card full>
-                        <Card.Body>
-                            <Text style={{color:'black',paddingLeft:15}}>回复：{item.item.SubPostContent}</Text>
                             {FooterContent}
                         </Card.Body>
                         <Card.Footer
@@ -1067,8 +912,102 @@ export class MyResponseListPanel extends Component{
                 </TouchableHighlight>
 
             ) ;
+        }else{
+            return (
+
+                <TouchableHighlight
+                    onPress={()=>{navigate('PostDetail',{topicId:item.item.TopicId})}}
+                >
+                    <Card full>
+                        <Card.Body>
+                            <Text style={{color:'black',paddingLeft:15}}>回复：{item.item.PostContent}</Text>
+                            {FooterContent}
+                        </Card.Body>
+                        <Card.Footer
+                            content={
+                                <Text >
+                                    原贴：{item.item.TopicContent}
+                                </Text>
+                            }
+                            style={{borderTopWidth:1,borderTopColor:'#DDDDDD'}}
+                        />
+                    </Card>
+                </TouchableHighlight>
+
+            ) ;
         }
 
+    };
+
+    _dataWrapper = (initData) =>{
+        if(initData['type']==='reply'){
+            return {
+                type: initData['type']  ,
+                key : 'reply'+initData['replyId'].toString(),
+                TopicId : initData['topicId'],
+                PostTime : initData['time'],
+                Score : initData['likes'],
+                TopicContent : initData['topicContent'],
+                PostContent : initData['replyContent']
+            };
+        }else{
+            return {
+                type : initData['type'],
+                key : 'subreply'+initData['subreplyId'].toString(),
+                TopicId :initData['topicId'].toString(),
+                PostId : initData['replyId'],
+                PostTime: initData['time'],
+                CommentContent : initData['subreplyContent'],
+                PostContent : initData['replyContent'],
+                Score : initData['likes'],
+                Floor : initData['floor'].toString()
+            }
+        }
+    };
+
+    requestGetMyResponseList = (Data,sessionId,x,n)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/getUserReplyAndSubReply', {
+            session_id:sessionId,
+            x:x,
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    console.log(Data);
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyResponseList([],sessionId,0,10);
+    };
+
+    componentDidMount(){
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyResponseList(this.state.Data.slice(),sessionId,0,10);
+    }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyResponseList(this.state.Data.slice(),sessionId,this.state.Data.length,10);
     };
 
     render(){
@@ -1076,26 +1015,29 @@ export class MyResponseListPanel extends Component{
             <View style={{height:'100%',width:'100%'}}>
                 <View style={{height:30,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12}}>
-                    <Text >共有105条回复</Text>
+                    <Text >共有20条回复</Text>
                 </View>
                 <CommonListPanel
                     RealData = {this.state.Data}
                     InitNum = {10}
                     RenderItem = {this._renderItem}
                     style={{height:'100%'}}
+                    refreshing={this.state.Refreshing}
+                    onRefresh={this._refresh}
+                    onEndReached={this._loadMoreData}
+                    onEndReachedThreshold={0.1}
                 />
             </View>
         );
     }
 }
 
-
 export class SubPostDetailPanel extends Component{
 
     static navigationOptions = ({ navigation }) =>({
         headerTitle: navigation.state.params.Floor+"楼回复",
         headerRight:
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>{navigation.navigate('PostDetail',{topicId:navigation.state.params.TopicId})}}>
                 <Text style={{fontSize:18,color:'black',marginRight:10}}>查看话题</Text>
             </TouchableOpacity>,
         headerStyle:{
@@ -1105,69 +1047,135 @@ export class SubPostDetailPanel extends Component{
     constructor(props){
         super(props);
         this.state =  {
-            Data : [
-                {
-                    key: '0',
-                    UserId:'1',
-                    UserNickName:'震天八荒',
-                    UserImageUrl :'',
-                    PostTime : '5',
-                    PostTitle: '大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊大佬们好强啊',
-                    Images : []
-                },
-                {
-                    key:'1',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                },
-                {
-                    key:'2',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                }
-                ,
-                {
-                    key:'3',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                }
-                ,
-                {
-                    key:'4',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                },
-                {
-                    key:'5',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                },
-                {
-                    key:'5',
-                    UserId:'1',
-                    UserImageUrl :'',
-                    UserNickName : '震天八荒',
-                    Content : '你是真的牛批',
-                    PostTime : '2018-03-02 18:78'
-                }
-            ]
+            Data : [],
+            Refreshing:false,
+            newComment : ''
         };
     }
+
+    _dataWrapper = (initData) =>{
+        return {
+            key : initData['subreplyId'].toString(),
+            UserId : initData['userId'],
+            UserNickName : initData['username'],
+            UserImageUrl : initData['iconUrl'],
+            PostTime : initData['subreplyTime'],
+            Content : initData['content'],
+            Score : initData['likes'],
+        };
+    };
+
+
+    requestGetPostDetail = (Data,sessionId,topicId,x,n,postId)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/getReplyFromXGetN', {
+            session_id:sessionId,
+            topicId:topicId,
+            x:x,
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    let resData=data.data[0];
+                    Data.push({
+                        key:'0',
+                        PostId : resData['replyId'],
+                        UserId : resData['userId'],
+                        UserNickName : resData['username'],
+                        UserImageUrl : resData['iconUrl'],
+                        PostTime : resData['replyTime'],
+                        Content : resData['content'],
+                        Images : [resData['picture1'],resData['picture2'],resData['picture3'],resData['picture4'],resData['picture5']],
+                        Score : resData['likes']
+                    });
+                    this.requestGetPostCommentList(Data,sessionId,postId,0,10);
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    requestGetPostCommentList = (Data,sessionId,postId,x,n) =>{
+        httpRequest.post('/getSubReplyFromXGetN', {
+            session_id:sessionId,
+            replyId:postId,
+            x:x,
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    requestNewPostCommment = (sessionId,replyId,Content) =>{
+        Toast.loading('正在发表');
+        httpRequest.post('/addSubReply', {
+            session_id : sessionId,
+            replyId : replyId,
+            content :Content
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.success('发表成功',1);
+                    this.setState({newComment:''});
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {params} = this.props.navigation.state;
+        let floor = parseInt(params.Floor);
+        this.requestGetPostDetail([],params.sessionId,params.TopicId,floor-1,1,params.PostId);
+    };
+
+    componentDidMount(){
+        const {params} = this.props.navigation.state;
+        let floor = parseInt(params.Floor);
+        this.requestGetPostDetail([],params.sessionId,params.TopicId,floor-1,1,params.PostId);
+    }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {params} = this.props.navigation.state;
+        this.requestGetPostCommentList(this.state.Data.slice(),params.sessionId,params.PostId,this.state.Data.length-1,10);
+    };
+
+    _updateNewComment =  (value)=>{
+      this.setState({newComment :value}) ;
+    };
+
+    _submitNewComment = ()=>{
+        const {sessionId,PostId} = this.props.navigation.state.params;
+        this.requestNewPostCommment(sessionId,PostId,this.state.newComment);
+        this.setState({newComment:''});
+    };
+
     _renderItem = (item)=>{
         const { navigate } = this.props.navigation;
         if(item.item.key==='0'){
@@ -1186,7 +1194,7 @@ export class SubPostDetailPanel extends Component{
                                         >
                                             <Text style={{color:'black'}}>{item.item.UserNickName}</Text>
                                         </TouchableOpacity>
-                                        <Text style={{fontSize:10}}>楼主 {item.item.PostTime}</Text>
+                                        <Text style={{fontSize:10}}>{item.item.PostTime}</Text>
                                     </View>
                                     <View style={{width:100,paddingLeft:85}}>
                                         <TouchableOpacity onPress={()=>{}} >
@@ -1209,7 +1217,7 @@ export class SubPostDetailPanel extends Component{
                         />
                         <Card.Body>
                             <Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:13}}>
-                                {item.item.PostTitle}
+                                {item.item.Content}
                             </Text>
                         </Card.Body>
                         <Card.Footer
@@ -1272,7 +1280,7 @@ export class SubPostDetailPanel extends Component{
                         }
                     />
 
-                    <Card.Body>
+                    <Card.Body style={{paddingLeft:15}}>
                         <Text>{item.item.Content}</Text>
                     </Card.Body>
                     <Card.Footer content = {"上 10000, 下 200"} extra={item.item.PostTime} />
@@ -1292,6 +1300,10 @@ export class SubPostDetailPanel extends Component{
                     initialNumToRender={3}
                     renderItem = {this._renderItem}
                     ItemSeparatorComponent = {this._separator}
+                    refreshing={this.state.Refreshing}
+                    onRefresh={this._refresh}
+                    onEndReached={this._loadMoreData}
+                    onEndReachedThreshold={0.1}
                 />
                 <View
                     style={{
@@ -1308,10 +1320,12 @@ export class SubPostDetailPanel extends Component{
                         <InputItem
                             placeholder="写下你的看法...."
                             maxLength={50}
+                            onChange={this._updateNewComment}
+                            value={this.state.newComment}
                         />
                     </View>
                     <View style={{width:50,height:45,paddingTop:11}}>
-                        <TouchableOpacity onPress={()=>{}} style={{paddingLeft:10}}>
+                        <TouchableOpacity onPress={this._submitNewComment} style={{paddingLeft:10}}>
                             <Text style={{fontSize:15,color:'black'}} >发送</Text>
                         </TouchableOpacity>
                     </View>

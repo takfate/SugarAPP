@@ -121,28 +121,29 @@ class CommentListPanel extends Component {
         this.requestGetCommentList(this.state.Data.slice(),sessionId,articleId,this.state.Data.length,10);
     };
 
+    _navigateToUser =(ToUserId) =>{
+        const {userId,navigate} = this.props;
+        navigate("UserInfo",{
+            isLoginUser :userId===ToUserId,
+            UserId : ToUserId
+        });
+    };
+
     _renderItem = (item) =>{
-        const {navigate}  = this.props;
         return (
 
             <Card full>
                 <Card.Header
                     title={
                         <TouchableOpacity
-                            onPress={()=>{navigate("UserInfo",{
-                                IsLoginUser :false,
-                                UserId : '100'
-                            })}}
+                            onPress={()=>{this._navigateToUser(item.item.UserId)}}
                         >
                             <Text>{item.item.UserNickName}</Text>
                         </TouchableOpacity>
                     }
                     thumb={
                         <TouchableOpacity
-                            onPress={()=>{navigate("UserInfo",{
-                                IsLoginUser :false,
-                                UserId : '100'
-                            })}}
+                            onPress={()=>{this._navigateToUser(item.item.UserId)}}
                         >
                             <Image source={{uri:makeCommonImageUrl(item.item.ImageUrl)}} style={CommentListCss.ItemImage}/>
                         </TouchableOpacity>
@@ -269,6 +270,10 @@ class ArticleDetailPanel extends Component{
         this.setState({CommentListOpen:!this.state.CommentListOpen});
     };
 
+    _updateOpenState = (value) => {
+        if(!value)this.setState({CommentListOpen:false});
+    };
+
     requestCollectArticle = ()=>{
         const {sessionId}  = this.props;
         const {params} = this.props.navigation.state;
@@ -343,13 +348,14 @@ class ArticleDetailPanel extends Component{
 
     render(){
         const { navigate } = this.props.navigation;
-        const {sessionId}  = this.props;
+        const {sessionId,userId}  = this.props;
         const {params} = this.props.navigation.state;
         return(
             <Drawer
-                sidebar={<CommentListPanel navigate={navigate} sessionId={sessionId} articleId={params.ArticleId}/>}
+                sidebar={<CommentListPanel navigate={navigate} sessionId={sessionId} articleId={params.ArticleId} userId={userId}/>}
                 open={this.state.CommentListOpen}
                 position='right'
+                onOpenChange={this._updateOpenState}
 
             >
                 <View style={{width:"100%",height:"100%",flexDirection:'column',justifyContent:'flex-end'}}>
@@ -403,10 +409,14 @@ class ArticleDetailPanel extends Component{
                                     >
                                         <Icon name="star" color={this.state.Collected?'orange':null} size={25} />
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={this._openCommentList} >
-                                        <Icon name="comments" size={25} />
+                                    <TouchableOpacity
+                                        onPress={this._openCommentList}
+                                    >
+                                        <Text style={{fontSize:18}}>
+                                            <Icon name="comments" size={25} />
+                                            {this.state.CommentCount>99?'99+':this.state.CommentCount}
+                                        </Text>
                                     </TouchableOpacity>
-                                    <Badge  overflowCount={99} text={999} style={{marginLeft:15}}/>
 
                                 </View>
                         }

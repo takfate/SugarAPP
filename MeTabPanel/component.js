@@ -101,10 +101,10 @@ class MeTabPanel extends Component{
                             <Brief style={MeCss.HeaderItemBrief}>{this._safePhone(loginUserInfo.Phone)}</Brief>
                             <Brief> </Brief>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyWatchList')}} >
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyWatchList',{sessionId:sessionId})}} >
                             <Text style={MeCss.CommonItemText}>我关注的人</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('WatchMeList')}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('WatchMeList',{sessionId:sessionId})}}>
                             <Text style={MeCss.CommonItemText}>关注我的人</Text>
                         </List.Item>
 
@@ -114,22 +114,22 @@ class MeTabPanel extends Component{
                     </List>
                     <WhiteSpace size="xl"/>
                     <List >
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyCollectedArticleList')}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyCollectedArticleList',{sessionId:sessionId})}}>
                             <Text style={MeCss.CommonItemText}>我收藏的文章</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyCommentList')}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyCommentList',{sessionId:sessionId})}}>
                             <Text style={MeCss.CommonItemText}>我的评论</Text>
                         </List.Item>
                     </List>
                     <WhiteSpace size="xl"/>
                     <List >
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyPublishedTopicList')}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyPublishedTopicList',{sessionId:sessionId})}}>
                             <Text style={MeCss.CommonItemText}>我发布的话题</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyCollectedTopicList')}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyCollectedTopicList',{sessionId:sessionId})}}>
                             <Text style={MeCss.CommonItemText}>我收藏的话题</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyResponseList')}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyResponseList',{sessionId:sessionId})}}>
                             <Text style={MeCss.CommonItemText}>我的回复</Text>
                         </List.Item>
                     </List>

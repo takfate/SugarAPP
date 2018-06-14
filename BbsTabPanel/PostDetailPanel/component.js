@@ -5,6 +5,7 @@ import {Button, Card, Drawer, InputItem, List, Toast} from 'antd-mobile';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import httpRequest from "../../httpRequest";
 import {makeCommonImageUrl} from "../../CommonComponent";
+import {TopicItem,PostItem} from './items';
 
 
 const Brief = List.Item.Brief;
@@ -113,6 +114,7 @@ class SubPostListPanel extends Component {
                 let data = response.data;
                 if (data['code'] === 0) {
                     Toast.success('发表成功',1);
+                    this.setState({newComment:''});
                 } else {
                     Toast.fail(data['msg']);
                 }
@@ -140,6 +142,14 @@ class SubPostListPanel extends Component {
         this.requestGetPostCommentList(this.state.Data.slice(),sessionId,this.state.selectedPostId,this.state.Data.length,6);
     };
 
+    _navigateToUser =(ToUserId) =>{
+        const {userId,navigate} = this.props;
+        navigate("UserInfo",{
+            isLoginUser :userId===ToUserId,
+            UserId : ToUserId
+        });
+    };
+
     _renderItem = (item) =>{
         const {navigate}  = this.props;
         return (
@@ -147,20 +157,14 @@ class SubPostListPanel extends Component {
                 <Card.Header
                     title={
                         <TouchableOpacity
-                            onPress={()=>{navigate("UserInfo",{
-                                IsLoginUser :false,
-                                UserId : '100'
-                            })}}
+                            onPress={()=>this._navigateToUser(item.item.UserId)}
                         >
                             <Text>{item.item.UserNickName}</Text>
                         </TouchableOpacity>
                     }
                     thumb={
                         <TouchableOpacity
-                            onPress={()=>{navigate("UserInfo",{
-                                IsLoginUser :false,
-                                UserId : '100'
-                            })}}
+                            onPress={()=>this._navigateToUser(item.item.UserId)}
                         >
                             <Image source={{uri:makeCommonImageUrl(item.item.UserImageUrl)}} style={CommentListCss.ItemImage}/>
                         </TouchableOpacity>
@@ -282,7 +286,8 @@ class PostDetailPanel extends Component{
         this.state = {
             SubPostListOpen:false,
             Data:[],
-            Refreshing:false
+            Refreshing:false,
+            Value : {}
         };
     }
 
@@ -313,7 +318,6 @@ class PostDetailPanel extends Component{
 
                 if (data['code'] === 0) {
                     let resData=data.data;
-
                     Data.push({
                         key:'0',
                         UserId : resData['userId'],
@@ -324,6 +328,12 @@ class PostDetailPanel extends Component{
                         Collected : resData['favorite'],
                         Images : [resData['picture1'],resData['picture2'],resData['picture3'],resData['picture4'],resData['picture5']],
                         Score : resData['likes']
+                    });
+                    this.setState({
+                        Value : {
+                            ...this.state.Value,
+                            '0': 0
+                        }
                     });
                     this.requestGetTopicPostList(Data,sessionId,topicId,0,10);
                 } else {
@@ -345,12 +355,19 @@ class PostDetailPanel extends Component{
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    let values = {};
                     for(let i=0;i<data.data.length;i++){
-                        Data.push(this._dataWrapper(data.data[i]));
+                        let da = this._dataWrapper(data.data[i]);
+                        Data.push(da);
+                        values[da.key] = 0;
                     }
                     this.setState({
                         Refreshing:false,
-                        Data:Data
+                        Data:Data,
+                        Value: {
+                            ...this.state.Value,
+                            ...values
+                        }
                     });
                 } else {
                     Toast.fail(data['msg']);
@@ -383,170 +400,28 @@ class PostDetailPanel extends Component{
         this.requestGetTopicPostList(this.state.Data.slice(),sessionId,params.topicId,this.state.Data.length-1,10);
     };
 
-    _renderItem = (item) =>{
-        const { navigate } = this.props.navigation;
-        if(item.item.key==='0'){
-            return (
-                <Card full>
-                    <Card.Header
-                        title={
-                            <View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
-                                <View style={{flex:1}}>
-                                    <TouchableOpacity
-                                        onPress={()=>{navigate("UserInfo",{
-                                            IsLoginUser :false,
-                                            UserId : '100'
-                                        })}}
-                                    >
-                                        <Text style={{color:'black'}}>{item.item.UserNickName}</Text>
-                                    </TouchableOpacity>
-                                    <Text style={{fontSize:10}}>楼主 {item.item.PostTime}</Text>
-                                </View>
-                                <View style={{width:100,paddingLeft:85}}>
-                                    <TouchableOpacity onPress={()=>{}} >
-                                        <Icon name="trash" size={14} />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+    _navigateToUser =(ToUserId) =>{
+        const {userId} = this.props;
+        const {navigate} = this.props.navigation;
+        navigate("UserInfo",{
+            isLoginUser :userId===ToUserId,
+            UserId : ToUserId
+        });
+    };
 
-                        }
-                        thumb={
-                            <TouchableOpacity
-                                onPress={()=>{navigate("UserInfo",{
-                                    IsLoginUser :false,
-                                    UserId : '100'
-                                })}}
-                            >
-                                <Image source={{uri:makeCommonImageUrl(item.item.UserImageUrl)}} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
-                            </TouchableOpacity>
-                        }
-                    />
-                    <Card.Body>
-                        <Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:13}}>
-                            {item.item.Content}
-                        </Text>
-                    </Card.Body>
-                    <Card.Footer
-                        content={
-                            <View
-                                style={{
-                                    width:120,
-                                    height:45,
-                                    flexDirection:'row',
-                                    alignItems:'center'
-                                }}
-                            >
-                                <Button size="small" >
-                                    <Icon name="caret-up" size={15}/>
-                                    <Text>{item.item.Score}</Text>
-                                </Button>
-                                <Button size="small" style={{marginLeft:5}}>
-                                    <Icon name="caret-down" size={15}/>
-                                </Button>
-                            </View>
-                        }
-                        style={{
-                            height:30,
-                            width:'100%',
-                            flexDirection:'row',
-                            alignItems:'center',
-                            borderTopWidth:1,
-                            borderTopColor:'#DDDDDD',
-                            paddingTop:5
-                        }}
-                    />
-                </Card>
-            );
+    _renderItem = (item) =>{
+        if(item.item.key==='0'){
+            return <TopicItem key={item.item.key} item={item.item} navigation={this.props.navigation} />;
         }else{
             return (
-                <Card style={{marginLeft:10,marginRight:5}}>
-                    <Card.Header
-                        title={
-                            <View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
-                                <View style={{flex:1}}>
-                                    <TouchableOpacity
-                                        onPress={()=>{navigate("UserInfo",{
-                                            IsLoginUser :false,
-                                            UserId : '100'
-                                        })}}
-                                    >
-                                        <Text style={{color:'black'}}>{item.item.UserNickName}</Text>
-                                    </TouchableOpacity>
-                                    <Text style={{fontSize:10}}>{item.item.key}楼 {item.item.PostTime}</Text>
-                                </View>
-                                <View style={{width:100,paddingLeft:85}}>
-                                    <TouchableOpacity onPress={()=>{}} >
-                                        <Icon name="trash" size={14} />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-
-                        }
-                        thumb={
-                            <TouchableOpacity
-                                onPress={()=>{navigate("UserInfo",{
-                                    IsLoginUser :false,
-                                    UserId : '100'
-                                })}}
-                            >
-                                <Image source={{uri:makeCommonImageUrl(item.item.UserImageUrl)}} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
-                            </TouchableOpacity>
-                        }
-                    />
-                    <Card.Body>
-                        <Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:13}}>
-                            {item.item.Content}
-                        </Text>
-                    </Card.Body>
-                    <Card.Footer
-                        content={
-                            <View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
-                                <View style={{flex:1,flexDirection:'row'}}>
-                                    <Button size="small" >
-                                        <Icon name="caret-up" size={15}/>
-                                        <Text>{item.item.Score}</Text>
-                                    </Button>
-                                    <Button size="small" style={{marginLeft:5}}>
-                                        <Icon name="caret-down" size={15}/>
-                                    </Button>
-                                </View>
-                                <TouchableOpacity
-                                    onPress={()=>{
-                                        this.setState({SubPostListOpen:true});
-                                        this.refs.getCommentList._updateNewCommentList(item.item.PostId,item.item.key);
-                                    }}
-                                >
-                                    <View
-                                        style={{
-                                            width:75,
-                                            height:45,
-                                            flexDirection:'row',
-                                            justifyContent:'flex-end',
-                                            alignItems:'center'
-                                        }}
-                                    >
-                                        <Icon name="comment" size={15}/>
-                                        <Text style={{fontSize:12,marginLeft:3}}>{item.item.CommentCount}条评论</Text>
-                                    </View>
-
-                                </TouchableOpacity>
-                            </View>
-                        }
-
-                        style={{
-                            height:30,
-                            width:'100%',
-                            flexDirection:'row',
-                            alignItems:'center',
-                            borderTopWidth:1,
-                            borderTopColor:'#DDDDDD',
-                            paddingTop:5
-                        }}
-                    />
-
-                </Card>
-
+                <PostItem
+                    key={item.item.key}
+                    item={item.item}
+                    transGetCommentList={this.transGetCommentList}
+                    navigation={this.props.navigation}
+                />
             );
+
         }
 
     };
@@ -562,9 +437,14 @@ class PostDetailPanel extends Component{
         if(!value)this.setState({SubPostListOpen:false});
     };
 
+    transGetCommentList = (PostId,key)=>{
+        this.setState({SubPostListOpen:true});
+        this.refs.getCommentList._updateNewCommentList(PostId,key);
+    };
+
     render(){
         const { navigate } = this.props.navigation;
-        const {sessionId} = this.props;
+        const {sessionId,userId} = this.props;
         return(
             <View style={{width:'100%',height:'100%'}}>
                 <Drawer
@@ -573,6 +453,7 @@ class PostDetailPanel extends Component{
                             navigate={navigate}
                             sessionId={sessionId}
                             ref='getCommentList'
+                            userId={userId}
                         />
                     }
                     open={this.state.SubPostListOpen}

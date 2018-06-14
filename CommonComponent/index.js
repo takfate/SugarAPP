@@ -39,5 +39,3 @@ export const makeCommonImageUrl = (suffix) => {
 export const GridImageURL  = (name)=>{
     return BaseUrl+'/static/appImg/'+name+'.png';
 };
-
-

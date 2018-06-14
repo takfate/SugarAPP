@@ -122,6 +122,15 @@ class BbsTabPanel extends Component{
         this.requestGetTopicList(this.state.Data.slice(),sessionId,this._getExistTopicList(),10);
     };
 
+    _navigateToUser =(ToUserId) =>{
+        const {userId} = this.props;
+        const { navigate } = this.props.navigation;
+        navigate("UserInfo",{
+            isLoginUser :userId===ToUserId,
+            UserId : ToUserId
+        });
+    };
+
     _renderItem = (item) =>{
         const { navigate } = this.props.navigation;
         return (
@@ -131,10 +140,7 @@ class BbsTabPanel extends Component{
                         title={<View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
                             <View style={{flex:1}}>
                                 <TouchableOpacity
-                                    onPress={()=>{navigate("UserInfo",{
-                                        IsLoginUser :false,
-                                        UserId : '100'
-                                    })}}
+                                    onPress={()=>this._navigateToUser(item.item.UserId)}
                                 >
                                     <Text style={{color:'black'}}>{item.item.UserNickName}</Text>
                                 </TouchableOpacity>
@@ -147,10 +153,7 @@ class BbsTabPanel extends Component{
                         </View>}
                         thumb={
                             <TouchableOpacity
-                                onPress={()=>{navigate("UserInfo",{
-                                    IsLoginUser :false,
-                                    UserId : '100'
-                                })}}
+                                onPress={()=>this._navigateToUser(item.item.UserId)}
                             >
                                 <Image source={{uri:makeCommonImageUrl(item.item.UserImageUrl)}} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
                             </TouchableOpacity>
