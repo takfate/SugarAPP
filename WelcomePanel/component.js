@@ -71,7 +71,7 @@ class WelcomePanel extends Component{
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
-                    console.log(data['session_id'],data.userId,data.username,data.iconUrl,phone);
+                    console.log(data['session_id']);
                     changeToLoginState(data['session_id'],data.userId,data.username,data.iconUrl,phone);
                     storage.save({
                         key:'loginUser',
@@ -111,6 +111,7 @@ class WelcomePanel extends Component{
 
     render(){
         const { navigate } = this.props.navigation;
+
         return (
             <View style={{height:'100%',width:'100%',backgroundColor:'white',paddingLeft:15,paddingRight:15}}>
                 <View style={{width:'100%',height:200,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>

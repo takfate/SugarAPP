@@ -287,7 +287,6 @@ class PostDetailPanel extends Component{
             SubPostListOpen:false,
             Data:[],
             Refreshing:false,
-            Value : {}
         };
     }
 
@@ -325,16 +324,11 @@ class PostDetailPanel extends Component{
                         UserImageUrl : resData['iconUrl'],
                         PostTime : resData['topicTime'],
                         Content : resData['content'],
-                        Collected : resData['favorite'],
+                        Collected : resData['favorite']===1,
                         Images : [resData['picture1'],resData['picture2'],resData['picture3'],resData['picture4'],resData['picture5']],
                         Score : resData['likes']
                     });
-                    this.setState({
-                        Value : {
-                            ...this.state.Value,
-                            '0': 0
-                        }
-                    });
+                    // alert(JSON.stringify(Data));
                     this.requestGetTopicPostList(Data,sessionId,topicId,0,10);
                 } else {
                     Toast.fail(data['msg']);
@@ -355,19 +349,13 @@ class PostDetailPanel extends Component{
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
-                    let values = {};
                     for(let i=0;i<data.data.length;i++){
                         let da = this._dataWrapper(data.data[i]);
                         Data.push(da);
-                        values[da.key] = 0;
                     }
                     this.setState({
                         Refreshing:false,
                         Data:Data,
-                        Value: {
-                            ...this.state.Value,
-                            ...values
-                        }
                     });
                 } else {
                     Toast.fail(data['msg']);
@@ -411,7 +399,15 @@ class PostDetailPanel extends Component{
 
     _renderItem = (item) =>{
         if(item.item.key==='0'){
-            return <TopicItem key={item.item.key} item={item.item} navigation={this.props.navigation} />;
+            const {params} = this.props.navigation.state;
+            return (
+                <TopicItem
+                    key={item.item.key}
+                    item={item.item}
+                    navigation={this.props.navigation}
+                    topicId={params.topicId}
+                />
+            );
         }else{
             return (
                 <PostItem

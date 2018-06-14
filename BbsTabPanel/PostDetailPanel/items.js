@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {FlatList, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {Button, Card, Drawer, InputItem, List, Toast} from 'antd-mobile';
+import {Button, Card, Drawer, InputItem, List, Toast,Modal} from 'antd-mobile';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import httpRequest from "../../httpRequest";
 import {makeCommonImageUrl} from "../../CommonComponent";
@@ -15,6 +15,8 @@ function mapDispatchToProps(dispatch) {
 
     }
 }
+
+
 
 
 class PostMainItemPanel extends Component {
@@ -61,8 +63,93 @@ class PostMainItemPanel extends Component {
             });
     };
 
+    requestDeleteTopic = (sessionId,TopicId)=>{
+        httpRequest.post('/removeTopic', {
+            session_id:sessionId,
+            topicId :TopicId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.success('删除成功',1);
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    requestCollectTopic = (sessionId,TopicId)=>{
+        httpRequest.post('/addFavoriteTopic', {
+            session_id:sessionId,
+            topicId:TopicId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    this.setState({Collected:true});
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    requestUncollectTopic = (sessionId,TopicId)=>{
+        httpRequest.post('/removeFavoriteTopic', {
+            session_id:sessionId,
+            topicId:TopicId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    this.setState({Collected:false});
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _submitCollectTopic = ()=>{
+        const {sessionId,topicId} = this.props;
+        this.requestCollectTopic(sessionId,topicId);
+    };
+
+    _submitUncollectTopic = ()=>{
+        const {sessionId,topicId} = this.props;
+        this.requestUncollectTopic(sessionId,topicId);
+    };
+
+    _submitDeleteTopic = ()=>{
+        Modal.alert('删除话题','确定要删除该话题吗?', [
+            {
+                text:'取消',
+                onPress:()=>{}
+            },
+            {
+                text:'确定',
+                onPress:()=>{
+                    const {sessionId,topicId} = this.props;
+                    this.requestDeleteTopic(sessionId,topicId);
+                }
+            },
+        ]);
+
+    };
+
     render(){
         const {navigate} = this.props.navigation;
+        const {userId} = this.props;
+        const isMine = (userId === this.state.UserId);
+        const isCollected = this.state.Collected;
+
         return (
             <Card full>
                 <Card.Header
@@ -77,8 +164,10 @@ class PostMainItemPanel extends Component {
                                 <Text style={{fontSize:10}}>楼主 {this.state.PostTime}</Text>
                             </View>
                             <View style={{width:100,paddingLeft:85}}>
-                                <TouchableOpacity onPress={()=>{}} >
-                                    <Icon name="trash" size={14} />
+                                <TouchableOpacity
+                                    onPress={isMine?this._submitDeleteTopic:isCollected?this._submitUncollectTopic:this._submitCollectTopic}
+                                >
+                                    <Icon name={isMine?'trash':'star'} color={isMine?null:isCollected?'orange':null} size={14} />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -192,6 +281,40 @@ class PostCommonItemPanel extends Component {
             });
     };
 
+    requestDeletePost = (sessionId,PostId)=>{
+        httpRequest.post('/removeReply', {
+            session_id:sessionId,
+            replyId:PostId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.success('删除成功');
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _submitDeletePost = ()=>{
+        Modal.alert('删除跟帖','确定要删除该跟帖吗?', [
+            {
+                text:'取消',
+                onPress:()=>{}
+            },
+            {
+                text:'确定',
+                onPress:()=>{
+                    const {sessionId} = this.props;
+                    this.requestDeletePost(sessionId,this.state.PostId);
+                }
+            },
+        ]);
+    };
+
     render(){
         const {navigation} = this.props;
         return (
@@ -208,7 +331,7 @@ class PostCommonItemPanel extends Component {
                                 <Text style={{fontSize:10}}>{this.state.key}楼 {this.state.PostTime}</Text>
                             </View>
                             <View style={{width:100,paddingLeft:85}}>
-                                <TouchableOpacity onPress={()=>{}} >
+                                <TouchableOpacity onPress={this._submitDeletePost} >
                                     <Icon name="trash" size={14} />
                                 </TouchableOpacity>
                             </View>
