@@ -5,7 +5,7 @@ import {Button, Card, Drawer, InputItem, List, Toast} from 'antd-mobile';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import httpRequest from "../../httpRequest";
 import {makeCommonImageUrl} from "../../CommonComponent";
-import {TopicItem,PostItem} from './items';
+import {TopicItem,PostItem,CommentItem} from './items';
 
 
 const Brief = List.Item.Brief;
@@ -71,7 +71,7 @@ class SubPostListPanel extends Component {
             UserImageUrl : initData['iconUrl'],
             PostTime : initData['subreplyTime'],
             Content : initData['content'],
-            Score : initData['likes'],
+            UserScore : initData['likes']
         };
     };
 
@@ -153,40 +153,7 @@ class SubPostListPanel extends Component {
     _renderItem = (item) =>{
         const {navigate}  = this.props;
         return (
-            <Card full>
-                <Card.Header
-                    title={
-                        <TouchableOpacity
-                            onPress={()=>this._navigateToUser(item.item.UserId)}
-                        >
-                            <Text>{item.item.UserNickName}</Text>
-                        </TouchableOpacity>
-                    }
-                    thumb={
-                        <TouchableOpacity
-                            onPress={()=>this._navigateToUser(item.item.UserId)}
-                        >
-                            <Image source={{uri:makeCommonImageUrl(item.item.UserImageUrl)}} style={CommentListCss.ItemImage}/>
-                        </TouchableOpacity>
-                    }
-                />
-
-                <Card.Body style={{paddingLeft:15,minHeight:5}}>
-                    <Text style={{color:'black',fontSize:13}}>{item.item.Content}</Text>
-                </Card.Body>
-                <Card.Footer
-                    content = {
-                        <Text style={{fontSize:10,textAlign:'left'}}>
-                            {item.item.Score}
-                        </Text>
-                    }
-                    extra={
-                        <Text style={{fontSize:10,textAlign:'right'}}>
-                            {item.item.PostTime}
-                        </Text>
-                    }
-                />
-            </Card>
+            <CommentItem item={item.item} navigate={navigate}/>
         );
     };
 

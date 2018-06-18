@@ -36,7 +36,7 @@ const CommentListCss = StyleSheet.create({
     }
 });
 
-class ArticleCommonItemPanel extends Component {
+class ArticleCommentItemPanel extends Component {
     constructor(props){
         super(props);
         this.state = {
@@ -133,4 +133,4 @@ class ArticleCommonItemPanel extends Component {
 }
 
 
-export const CommentItem = connect(mapStateToProps,null)(ArticleCommonItemPanel);
+export const CommentItem = connect(mapStateToProps,null)(ArticleCommentItemPanel);
