@@ -1,8 +1,9 @@
 import axios from 'axios';
 import Qs from "qs";
+import {BaseUrl} from './config';
 
 const httpRequest = axios.create({
-    baseURL:'http://120.27.48.66',
+    baseURL:BaseUrl,
     transformRequest: [function (data) {
         data = Qs.stringify(data);
         return data;

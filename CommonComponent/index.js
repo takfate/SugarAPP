@@ -1,15 +1,7 @@
-
-
 import React,{PropTypes,Component} from 'react';
-import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet} from 'react-native';
-import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace} from 'antd-mobile';
-import {
-    StackNavigator,
-    TabNavigator
-} from 'react-navigation';
+import {BaseUrl} from '../config';
 
-const Brief = List.Item.Brief;
 
 
 export class UserImage extends Component{
@@ -30,7 +22,6 @@ export class UserImage extends Component{
     }
 }
 
-export const BaseUrl = 'http://120.27.48.66';
 
 export const makeCommonImageUrl = (suffix) => {
     return BaseUrl + suffix;
