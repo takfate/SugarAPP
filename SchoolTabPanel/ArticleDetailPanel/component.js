@@ -6,6 +6,7 @@ import {View,Text,ScrollView,Image,StyleSheet,FlatList,TouchableOpacity,WebView}
 import {Button, NavBar,Card,List,ListView,WhiteSpace,TextareaItem,Drawer ,Toast,Badge } from 'antd-mobile';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import httpRequest from '../../httpRequest';
+import {CommentItem} from './items';
 import {makeCommonImageUrl} from '../../CommonComponent';
 
 const Brief = List.Item.Brief;
@@ -68,7 +69,7 @@ class CommentListPanel extends Component {
             key : initData['commentId'].toString(),
             Content : initData['content'],
             PostTime : initData['commentTime'],
-            ImageUrl : initData['iconUrl'],
+            UserImageUrl : initData['iconUrl'],
             UserId : initData['userId'],
             UserScore : initData['likes'],
             UserNickName :initData['username']
@@ -124,48 +125,15 @@ class CommentListPanel extends Component {
     _navigateToUser =(ToUserId) =>{
         const {userId,navigate} = this.props;
         navigate("UserInfo",{
-            isLoginUser :userId===ToUserId,
+            isLoginUser :userId === ToUserId,
             UserId : ToUserId
         });
     };
 
     _renderItem = (item) =>{
+        const {navigate} = this.props;
         return (
-
-            <Card full>
-                <Card.Header
-                    title={
-                        <TouchableOpacity
-                            onPress={()=>{this._navigateToUser(item.item.UserId)}}
-                        >
-                            <Text>{item.item.UserNickName}</Text>
-                        </TouchableOpacity>
-                    }
-                    thumb={
-                        <TouchableOpacity
-                            onPress={()=>{this._navigateToUser(item.item.UserId)}}
-                        >
-                            <Image source={{uri:makeCommonImageUrl(item.item.ImageUrl)}} style={CommentListCss.ItemImage}/>
-                        </TouchableOpacity>
-                    }
-                />
-
-                <Card.Body style={{paddingLeft:15,minHeight:5}}>
-                    <Text style={{color:'black',fontSize:13}}>{item.item.Content}</Text>
-                </Card.Body>
-                <Card.Footer
-                    content = {
-                        <Text style={{fontSize:10,textAlign:'left'}}>
-                            {item.item.UserScore}
-                        </Text>
-                    }
-                    extra={
-                        <Text style={{fontSize:10,textAlign:'right'}}>
-                            {item.item.PostTime}
-                        </Text>
-                    }
-                />
-            </Card>
+            <CommentItem item={item.item} navigate={navigate} />
         );
     };
 
