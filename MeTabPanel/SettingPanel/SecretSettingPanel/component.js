@@ -3,11 +3,8 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,StyleSheet} from 'react-native';
-import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace,Switch } from 'antd-mobile';
-import {
-    StackNavigator,
-    TabNavigator
-} from 'react-navigation';
+import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace,Switch,Toast } from 'antd-mobile';
+import httpRequest from "../../../httpRequest";
 
 
 const SecretSettingCss = StyleSheet.create({
@@ -20,6 +17,13 @@ const SecretSettingCss = StyleSheet.create({
     }
 });
 
+function mapStateToProps(state) {
+    return state.MainF;
+}
+
+function mapDispatchToProps(dispatch) {
+}
+
 class SecretSettingPanel extends Component{
     static navigationOptions = {
         headerTitle:"隐私设置",
@@ -30,7 +34,120 @@ class SecretSettingPanel extends Component{
     };
     constructor(props){
         super(props);
+        this.state = {
+            showLevel:true,
+            showPhone:true,
+            showGender:true,
+            showAge : true,
+            showJob : true,
+            showLocation : true,
+            showHeight : true,
+            showWeight : true
+        };
     }
+
+    requestGetSecretSetting = (sessionId)=>{
+        Toast.loading('正在获取');
+        httpRequest.post('/getUserPrivacy', {
+            session_id : sessionId
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.hide();
+                    this.setState({
+                        showLevel : data['isIntegral']===1,
+                        showPhone:data['isTel']===1,
+                        showGender:data['isGender']===1,
+                        showAge : data['isAge']===1,
+                        showJob : data['isJob']===1,
+                        showLocation : data['isArea']===1,
+                        showHeight : data['isHeight']===1,
+                        showWeight : data['isWeight']===1
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+
+    componentDidMount(){
+        const {sessionId} = this.props;
+        this.requestGetSecretSetting(sessionId);
+    }
+
+    requestSaveSecretSetting = (sessionId,key,value)=>{
+        let Data = {
+            isTel: this.state.showPhone?1:0,
+            isGender : this.state.showGender?1:0,
+            isAge : this.state.showAge?1:0,
+            isHeight : this.state.showHeight?1:0,
+            isWeight : this.state.showWeight?1:0,
+            isArea : this.state.showLocation?1:0,
+            isJob : this.state.showJob?1:0,
+            isIntegral : this.state.showLevel?1:0,
+        };
+        Data[key]=value?1:0;
+        Data.session_id=sessionId;
+        httpRequest.post('/alterUserPrivacy', Data)
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    this.setState({[key]:value});
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+
+    _updateLevel = (value)=>{
+        const {sessionId} = this.props;
+        this.requestSaveSecretSetting(sessionId,'showLevel',value);
+    };
+
+    _updatePhone = (value)=>{
+        const {sessionId} = this.props;
+        this.requestSaveSecretSetting(sessionId,'showPhone',value);
+    };
+
+    _updateGender = (value)=>{
+        const {sessionId} = this.props;
+        this.requestSaveSecretSetting(sessionId,'showGender',value);
+    };
+
+    _updateAge = (value)=>{
+        const {sessionId} = this.props;
+        this.requestSaveSecretSetting(sessionId,'showAge',value);
+    };
+
+    _updateJob = (value)=>{
+        const {sessionId} = this.props;
+        this.requestSaveSecretSetting(sessionId,'showJob',value);
+    };
+
+    _updateLocation = (value)=>{
+        const {sessionId} = this.props;
+        this.requestSaveSecretSetting(sessionId,'showLocation',value);
+    };
+
+    _updateHeight = (value)=>{
+        const {sessionId} = this.props;
+        this.requestSaveSecretSetting(sessionId,'showHeight',value);
+    };
+
+    _updateWeight = (value)=>{
+        const {sessionId} = this.props;
+        this.requestSaveSecretSetting(sessionId,'showWeight',value);
+    };
+
 
     render(){
 
@@ -38,32 +155,32 @@ class SecretSettingPanel extends Component{
             <ScrollView style={SecretSettingCss.MainView}>
                 <List >
 
-                    <List.Item   extra={<Switch />}>
-                        <Text style={SecretSettingCss.ItemText}>隐藏等级</Text>
+                    <List.Item extra={<Switch checked={this.state.showLevel} onChange={this._updateLevel}/>}>
+                        <Text style={SecretSettingCss.ItemText}>显示等级</Text>
                     </List.Item>
-                    <List.Item extra={<Switch />}>
-                        <Text style={SecretSettingCss.ItemText}>隐藏手机号码</Text>
-                    </List.Item>
-
-                    <List.Item extra={<Switch />}>
-                        <Text style={SecretSettingCss.ItemText}>隐藏性别</Text>
+                    <List.Item extra={<Switch checked={this.state.showPhone} onChange={this._updatePhone}/>}>
+                        <Text style={SecretSettingCss.ItemText}>显示手机号码</Text>
                     </List.Item>
 
-                    <List.Item extra={<Switch />}>
-                        <Text style={SecretSettingCss.ItemText}>隐藏年龄</Text>
-                    </List.Item>
-                    <List.Item extra={<Switch />}>
-                        <Text style={SecretSettingCss.ItemText}>隐藏职业</Text>
-                    </List.Item>
-                    <List.Item  extra={<Switch />}>
-                        <Text style={SecretSettingCss.ItemText}>隐藏所在地</Text>
+                    <List.Item extra={<Switch checked={this.state.showGender} onChange={this._updateGender}/>}>
+                        <Text style={SecretSettingCss.ItemText}>显示性别</Text>
                     </List.Item>
 
-                    <List.Item extra={<Switch />}>
-                        <Text style={SecretSettingCss.ItemText}>隐藏身高</Text>
+                    <List.Item extra={<Switch checked={this.state.showAge} onChange={this._updateAge}/>}>
+                        <Text style={SecretSettingCss.ItemText}>显示年龄</Text>
                     </List.Item>
-                    <List.Item extra={<Switch />}>
-                        <Text style={SecretSettingCss.ItemText}>隐藏体重</Text>
+                    <List.Item extra={<Switch checked={this.state.showJob} onChange={this._updateJob}/>}>
+                        <Text style={SecretSettingCss.ItemText}>显示职业</Text>
+                    </List.Item>
+                    <List.Item  extra={<Switch checked={this.state.showLocation} onChange={this._updateLocation}/>}>
+                        <Text style={SecretSettingCss.ItemText}>显示所在地</Text>
+                    </List.Item>
+
+                    <List.Item extra={<Switch checked={this.state.showHeight} onChange={this._updateHeight}/>}>
+                        <Text style={SecretSettingCss.ItemText}>显示身高</Text>
+                    </List.Item>
+                    <List.Item extra={<Switch checked={this.state.showWeight} onChange={this._updateWeight}/>}>
+                        <Text style={SecretSettingCss.ItemText}>显示体重</Text>
                     </List.Item>
                 </List>
             </ScrollView>
@@ -72,4 +189,4 @@ class SecretSettingPanel extends Component{
 
 }
 
-export default connect()(SecretSettingPanel);
+export default connect(mapStateToProps,null)(SecretSettingPanel);
