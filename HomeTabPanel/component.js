@@ -3,11 +3,13 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity,FlatList,TouchableHighlight  } from 'react-native';
-import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Carousel,Grid} from 'antd-mobile';
+import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Carousel,Grid,Toast} from 'antd-mobile';
 import {UserImage} from '../CommonComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {GridImageURL} from "../CommonComponent";
-import {makeCommonImageUrl} from "../CommonComponent";
+import {GridImageURL,makeCommonImageUrl} from "../CommonComponent";
+import httpRequest from '../httpRequest';
+import {SugarChart} from './items';
+
 
 const Brief = List.Item.Brief;
 
@@ -32,6 +34,16 @@ const HomeCss = StyleSheet.create({
     }
 
 });
+
+function mapStateToProps(state,ownProps) {
+    return state.MainF;
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+
+    }
+}
 
 
 const GridData = [
@@ -67,11 +79,36 @@ class HomeTabPanel extends Component{
             case '糖导':
                 navigate('GuideHome');
                 break;
+            case '签到':
+                this._submitAttend();
+                break;
             default :
                 return ;
         }
     };
 
+    requestAttend = (sessionId)=>{
+        Toast.loading('正在签到');
+        httpRequest.post('/alterUserCheckTime', {
+            session_id:sessionId,
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.success('签到成功');
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _submitAttend = ()=>{
+        const {sessionId} = this.props;
+        this.requestAttend(sessionId);
+    };
 
     render(){
         const { navigate } = this.props.navigation;
@@ -83,7 +120,7 @@ class HomeTabPanel extends Component{
                 </View>
 
                 <Carousel
-                    autoplay={true}
+
                     infinite
                     style={{height:200}}
                 >
@@ -91,7 +128,7 @@ class HomeTabPanel extends Component{
                         <Image source={{uri:makeCommonImageUrl('/static/appImg/weeks.jpg')}} style={{width:'100%',height:200}}/>
                     </View>
                     <View>
-                        <Text>血糖变化</Text>
+                        <SugarChart />
                     </View>
                     <View>
                         <Text>记录</Text>
@@ -118,4 +155,4 @@ class HomeTabPanel extends Component{
 
 }
 
-export default connect()(HomeTabPanel);
+export default connect(mapStateToProps,null)(HomeTabPanel);
