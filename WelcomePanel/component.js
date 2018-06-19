@@ -12,8 +12,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        changeToLoginState: (sessionId,userId,nickName,iconUrl,Phone)=>{
-            dispatch(change_to_login_state(sessionId,userId,nickName,iconUrl,Phone));
+        changeToLoginState: (sessionId,userId,nickName,iconUrl,Phone,isAttend)=>{
+            dispatch(change_to_login_state(sessionId,userId,nickName,iconUrl,Phone,isAttend));
         }
     }
 }
@@ -72,7 +72,7 @@ class WelcomePanel extends Component{
                 let data = response.data;
                 if (data['code'] === 0) {
                     console.log(data['session_id']);
-                    changeToLoginState(data['session_id'],data.userId,data.username,data.iconUrl,phone);
+                    changeToLoginState(data['session_id'],data.userId,data.username,data.iconUrl,phone,data.isCheck===1);
                     storage.save({
                         key:'loginUser',
                         data:{

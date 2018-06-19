@@ -15,6 +15,7 @@ import {Button, NavBar,Card,List,ListView,WhiteSpace,InputItem,Toast} from 'antd
 import CommonListPanel from '../CommonListPanel';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import httpRequest from "../../httpRequest";
+import {makeCommonImageUrl} from "../../CommonComponent";
 const Brief = List.Item.Brief;
 
 
@@ -29,78 +30,88 @@ export class MyWatchListPanel extends Component{
     constructor(props){
         super(props);
         this.state =  {
-            Data : [
-                {
-                    Image:"",
-                    NickName : "竹曦雨露1",
-                    key : "1"
-                },
-                {
-                    Image:"",
-                    NickName : "竹曦雨露2",
-                    key : "2"
-                },
-                {
-                    Image:"",
-                    NickName : "竹曦雨露3",
-                    key : "3"
-                },
-                {
-                    Image:"",
-                    NickName : "竹曦雨露4",
-                    key : "4"
-                },
-                {
-                    Image:"",
-                    NickName : "竹曦雨露5",
-                    key : "5"
-                },
-                {
-                    Image:"",
-                    NickName : "竹曦雨露6",
-                    key : "6"
-                }
-                ,
-                {
-                    Image:"",
-                    NickName : "竹曦雨露7",
-                    key : "7"
-                }
-                ,
-                {
-                    Image:"",
-                    NickName : "竹曦雨露8",
-                    key : "8"
-                }
-                ,
-                {
-                    Image:"",
-                    NickName : "竹曦雨露9",
-                    key : "9"
-                },
-                {
-                    Image:"",
-                    NickName : "竹曦雨露10",
-                    key : "10"
-                }
-            ]
+            Data : [],
+            Refreshing:false,
+            Total : 0
         };
     }
+
+    _dataWrapper = (initData) =>{
+        return {
+            key : initData['followId'].toString(),
+            UserNickName :initData['username'],
+            UserImageUrl : initData['iconUrl']
+        };
+    };
+
+    requestGetMyWatchList = (Data,sessionId,x,n)=>{
+        this.setState({Refreshing:true});
+        httpRequest.post('/getFollowList', {
+            session_id:sessionId,
+            x:x,
+            n:n
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataWrapper(data.data[i]));
+                    }
+                    this.setState({
+                        Refreshing:false,
+                        Data:Data,
+                        Total:data.total
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                // alert(error);
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _refresh = ()=>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyWatchList([],sessionId,0,10);
+    };
+
+    componentDidMount(){
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyWatchList(this.state.Data.slice(),sessionId,0,10);
+    }
+
+
+    _loadMoreData = () =>{
+        if(this.state.Refreshing)return ;
+        const {sessionId}  = this.props.navigation.state.params;
+        this.requestGetMyWatchList(this.state.Data.slice(),sessionId,this.state.Data.length,10);
+    };
+
+    _navigateToUser =(ToUserId) =>{
+        const {userId} = this.props.navigation.state.params;
+        const {navigate} = this.props.navigation;
+        alert( userId+'\n'+ ToUserId);
+        navigate("UserInfo",{
+            isLoginUser :userId===ToUserId,
+            UserId : ToUserId
+        });
+    };
+
     _renderItem = (item)=>{
         const { navigate } = this.props.navigation;
         return (
             <TouchableHighlight
-                onPress={()=>{navigate("UserInfo",{
-                    IsLoginUser :false,
-                    UserId : '100'
-                })}}
+                onPress={()=>{this._navigateToUser(item.item.key)}}
             >
                 <Card full>
                     <Card.Header
-                        title={item.item.NickName}
+                        title={item.item.UserNickName}
                         thumb = {
                             <Image
-                                source={require('./head.jpg')}
+                                source={{uri:makeCommonImageUrl(item.item.UserImageUrl)}}
                                 style={{
                                     height:40,
                                     width:40,
@@ -122,13 +133,17 @@ export class MyWatchListPanel extends Component{
             <View style={{height:'100%',width:'100%'}}>
                 <View style={{height:30,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12}}>
-                    <Text >共关注了15个糖友</Text>
+                    <Text >共关注了{this.state.Total}个糖友</Text>
                 </View>
                 <CommonListPanel
                     RealData = {this.state.Data}
                     InitNum = {10}
                     RenderItem = {this._renderItem}
                     style={{height:'100%'}}
+                    refreshing={this.state.Refreshing}
+                    onRefresh={this._refresh}
+                    onEndReached={this._loadMoreData}
+                    onEndReachedThreshold={0.1}
                 />
             </View>
         );
@@ -268,6 +283,7 @@ export class MyCollectedArticleListPanel extends Component{
             Refreshing :false
         };
     }
+
     _renderItem = (item)=>{
         const { navigate } = this.props.navigation;
         return (

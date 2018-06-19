@@ -46,14 +46,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-const GridData = [
-    {text:'签到',icon:GridImageURL('attend')},
-    {text:'糖导',icon:GridImageURL('guide')},
-    {text:'血糖记录',icon:GridImageURL('sugar')},
-    {text:'每日健康记录',icon:GridImageURL('health')},
-    {text:'家属关联',icon:GridImageURL('link')},
-    {text:'智能提醒',icon:GridImageURL('message')}
-];
 
 class HomeTabPanel extends Component{
 
@@ -66,6 +58,7 @@ class HomeTabPanel extends Component{
 
     _gridOnClick = (item) =>{
         const { navigate } = this.props.navigation;
+        const { isAttend } = this.props;
         switch(item.text){
             case '家属关联':
                 navigate('KinLinkList');
@@ -80,7 +73,9 @@ class HomeTabPanel extends Component{
                 navigate('GuideHome');
                 break;
             case '签到':
-                this._submitAttend();
+                if(!isAttend){
+                    this._submitAttend();
+                }
                 break;
             default :
                 return ;
@@ -112,6 +107,15 @@ class HomeTabPanel extends Component{
 
     render(){
         const { navigate } = this.props.navigation;
+        const { isAttend } = this.props.loginUserInfo;
+        const GridData = [
+            {text:isAttend?"已签到":"签到",icon:GridImageURL('attend')},
+            {text:'糖导',icon:GridImageURL('guide')},
+            {text:'血糖记录',icon:GridImageURL('sugar')},
+            {text:'每日健康记录',icon:GridImageURL('health')},
+            {text:'家属关联',icon:GridImageURL('link')},
+            {text:'智能提醒',icon:GridImageURL('message')}
+        ];
         return(
             <ScrollView style={{width:'100%',height:'100%'}}>
                 <View style={{height:55,flexDirection:'row',justifyContent:'space-between',
@@ -120,21 +124,34 @@ class HomeTabPanel extends Component{
                 </View>
 
                 <Carousel
-
                     infinite
-                    style={{height:200}}
+                    style={{height:220}}
+                    autoplay
+                    autoplayInterval={5000}
+                    selectedIndex={1}
+                    swipeSpeed={6}
                 >
-                    <View style={{width:'100%',height:200,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                        <Image source={{uri:makeCommonImageUrl('/static/appImg/weeks.jpg')}} style={{width:'100%',height:200}}/>
+                    <View style={{width:'100%',height:220,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                        <Image source={{uri:makeCommonImageUrl('/static/appImg/weeks.jpg')}} style={{width:'100%',height:250}}/>
                     </View>
                     <View>
+                        <View style={{
+                            height:35,
+                            flexDirection:'row',
+                            justifyContent:'space-between',
+                            alignItems:'center',
+                            paddingLeft:20,
+                            paddingRight:40}}
+                        >
+                            <Text style={{fontSize:17,color:'black',textAlign:'center'}}>今日血糖变化</Text>
+                            <Button type='ghost' size='small'>查看更多</Button>
+                        </View>
                         <SugarChart />
                     </View>
                     <View>
                         <Text>记录</Text>
                     </View>
                 </Carousel>
-                <WhiteSpace size="lg"/>
                 <Grid data={GridData}  onClick={this._gridOnClick} />
                 <WhiteSpace size="lg"/>
                 <Card full>

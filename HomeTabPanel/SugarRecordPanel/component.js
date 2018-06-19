@@ -73,7 +73,7 @@ class SugarRecordPanel extends Component{
     constructor(props){
         super(props);
         this.state = {
-            sugarValue : 23,
+            sugarValue : 100,
             sugarPeriod : [checkOutTime()]
         }
     }
@@ -133,6 +133,7 @@ class SugarRecordPanel extends Component{
                             max={333}
                             step={1}
                             dots
+                            value={this.state.sugarValue}
                             onChange={(value)=>{this.setState({sugarValue:value})}}
                         />
                         <View style={{width:'100%',height:100,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>

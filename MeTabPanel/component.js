@@ -101,10 +101,10 @@ class MeTabPanel extends Component{
                             <Brief style={MeCss.HeaderItemBrief}>{this._safePhone(loginUserInfo.Phone)}</Brief>
                             <Brief> </Brief>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyWatchList',{sessionId:sessionId})}} >
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyWatchList',{sessionId:sessionId,userId:userId.toString()})}} >
                             <Text style={MeCss.CommonItemText}>我关注的人</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('WatchMeList',{sessionId:sessionId})}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('WatchMeList',{sessionId:sessionId,userId:userId.toString()})}}>
                             <Text style={MeCss.CommonItemText}>关注我的人</Text>
                         </List.Item>
 

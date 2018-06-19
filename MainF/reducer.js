@@ -8,7 +8,8 @@ const MainFState = {
         HeadImageUrl : '',
         NickName : '',
         Phone : '',
-        Score : ''
+        Score : '',
+        isAttend : false
     },
     sugarGuide : {
         gender : '男',
@@ -39,7 +40,8 @@ const reducer = function(state = MainFState,action){
             return {...state,selectedTab:action.new_tab};
         case ActionTypes.CHANGE_TO_LOGIN_STATE:
             return {...state,sessionId:action.sessionId,userId:action.userId,loginUserInfo:{
-                    ...state.loginUserInfo,HeadImageUrl:action.iconUrl,NickName:action.nickName,Phone:action.Phone
+                    ...state.loginUserInfo,HeadImageUrl:action.iconUrl,NickName:action.nickName,Phone:action.Phone,
+                    isAttend:action.isAttend
                 }
             };
         case ActionTypes.GUIDE_CLEAR:

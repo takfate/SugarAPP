@@ -7,14 +7,15 @@ export const select_tab = (newTab) =>{
     }
 };
 
-export const change_to_login_state = (sessionId,userId,nickName,iconUrl,Phone)=>{
+export const change_to_login_state = (sessionId,userId,nickName,iconUrl,Phone,isAttend)=>{
     return {
         type:ActionTypes.CHANGE_TO_LOGIN_STATE,
         sessionId:sessionId,
         userId:userId,
         nickName:nickName,
         iconUrl:iconUrl,
-        Phone:Phone
+        Phone:Phone,
+        isAttend : isAttend
     }
 };
 
