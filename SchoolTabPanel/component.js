@@ -108,7 +108,6 @@ class SchoolTabPanel extends Component{
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
-                    console.log(Data);
                     this.setState({
                         Refreshing:false,
                         Data:Data
