@@ -1,7 +1,7 @@
-import React,{PropTypes,Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {View,Text,TextInput,TouchableOpacity,Image } from 'react-native';
-import {TabBar,Button,InputItem,WhiteSpace,Toast } from 'antd-mobile';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Button, InputItem, Toast, WhiteSpace} from 'antd-mobile';
 import httpRequest from '../httpRequest';
 import md5 from 'js-md5';
 import {change_to_login_state} from '../MainF/actions';
@@ -29,7 +29,8 @@ class WelcomePanel extends Component{
         super(props);
         this.state = {
             Phone:'',
-            Password : ''
+            Password : '',
+            isCover : true
         }
     }
 
@@ -80,11 +81,14 @@ class WelcomePanel extends Component{
                             Password : password
                         }
                     });
+                    this.setState({isCover:false});
                 } else {
+                    this.setState({isCover:false});
                     Toast.fail(data['msg']);
                 }
             })
             .catch((error) => {
+                this.setState({isCover:false});
                 Toast.fail('网络好像有问题~');
             });
     };
@@ -101,8 +105,10 @@ class WelcomePanel extends Component{
         }).catch(err=>{
             switch (err.name) {
                 case 'NotFoundError':
+                    this.setState({isCover:false});
                     break;
                 case 'ExpiredError':
+                    this.setState({isCover:false});
                     Toast.info('账号信息已过期，请重新登录',1);
                     break;
             }
@@ -111,46 +117,53 @@ class WelcomePanel extends Component{
 
     render(){
         const { navigate } = this.props.navigation;
-
-        return (
-            <View style={{height:'100%',width:'100%',backgroundColor:'white',paddingLeft:15,paddingRight:15}}>
-                <View style={{width:'100%',height:200,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                    <Image source={require('./logo.png')} style={{height:64,width:64}}/>
-
+        if(this.state.isCover){
+            return (
+                <View style={{height:'100%',width:'100%'}}>
+                    <Image source={require('./cover.png')} style={{width:'100%',height:'100%'}}/>
                 </View>
-                <InputItem
-                    placeholder='请输入手机号'
-                    type="phone"
-                    value={this.state.Phone}
-                    onChange={this._updatePhone}
-                >
-                    手机号
-                </InputItem>
-                <InputItem
-                    placeholder='请输入密码'
-                    type='password'
-                    maxLength={15}
-                    value={this.state.Password}
-                    onChange={this._updatePassword}
-                >
-                    密码
-                </InputItem>
-                <WhiteSpace size='lg'/>
-                <Button type="primary" onClick={this._submitLogin}>登  录</Button>
-                <View style={{width:'100%',height:50,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                    <TouchableOpacity onPress={()=>{navigate('Forget1')}}>
-                        <Text style={{fontSize:15}}>
-                            忘记密码？
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>{navigate('Register1')}}>
-                        <Text style={{fontSize:15}}>
-                            新用户注册
-                        </Text>
-                    </TouchableOpacity>
+            );
+        }else{
+            return (
+                <View style={{height:'100%',width:'100%',backgroundColor:'white',paddingLeft:15,paddingRight:15}}>
+                    <View style={{width:'100%',height:200,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                        <Image source={require('./logo.png')} style={{height:64,width:64}}/>
+
+                    </View>
+                    <InputItem
+                        placeholder='请输入手机号'
+                        type="phone"
+                        value={this.state.Phone}
+                        onChange={this._updatePhone}
+                    >
+                        手机号
+                    </InputItem>
+                    <InputItem
+                        placeholder='请输入密码'
+                        type='password'
+                        maxLength={15}
+                        value={this.state.Password}
+                        onChange={this._updatePassword}
+                    >
+                        密码
+                    </InputItem>
+                    <WhiteSpace size='lg'/>
+                    <Button type="primary" onClick={this._submitLogin}>登  录</Button>
+                    <View style={{width:'100%',height:50,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                        <TouchableOpacity onPress={()=>{navigate('Forget1')}}>
+                            <Text style={{fontSize:15}}>
+                                忘记密码？
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>{navigate('Register1')}}>
+                            <Text style={{fontSize:15}}>
+                                新用户注册
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
-        );
+            );
+        }
 
     }
 

@@ -45,7 +45,6 @@ class MainF extends Component{
             );
         }else {
             return(
-
                 <View style={{  height: '100%', width: '100%', top: 0}}>
                     <TabBar
                         unselectedTintColor="#949494"
