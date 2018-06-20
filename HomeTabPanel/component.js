@@ -29,8 +29,8 @@ const HomeCss = StyleSheet.create({
     },
     ItemImage:{
         marginRight:15,
-        width:80,
-        height:80
+        width:48,
+        height:48
     }
 
 });
@@ -51,9 +51,10 @@ class HomeTabPanel extends Component{
 
     constructor(props){
         super(props);
-        // this.state = {
-        //
-        // };
+        this.state = {
+            ArticleData : [],
+            TopicData : [],
+        };
     }
 
     _gridOnClick = (item) =>{
@@ -100,9 +101,95 @@ class HomeTabPanel extends Component{
             });
     };
 
+    _articleDataWrapper = (initData)=>{
+        return {
+            key : initData['articleId'].toString(),
+            Title :initData['title'],
+            Content : initData['content'],
+            PostTime : initData['articleTime'],
+            ImageUrl : initData['imgUrl'],
+            ViewCount : initData['views']
+        };
+    };
+
+    _topicDataWrapper = (initData)=>{
+        return {
+            key : initData['topicId'].toString(),
+            UserId : initData['userId'],
+            UserNickName : initData['username'],
+            UserImageUrl : initData['iconUrl'],
+            LastPostTime : initData['lastTime'],
+            Content : initData['content'],
+            Images : [initData['picture1'],initData['picture2'],initData['picture3']],
+            CommentCount : initData['replyNum']+initData['comNum']
+        };
+    };
+
+    requestGetRecommendArticle = (sessionId)=>{
+        let Data = [];
+        httpRequest.post('/getRecommendArticle', {
+            session_id:sessionId,
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._articleDataWrapper(data.data[i]));
+                    }
+                    this.setState({
+                        ArticleData:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    requestGetRecommendTopic = (sessionId)=>{
+        let Data = [];
+        httpRequest.post('/getRecommendTopic', {
+            session_id:sessionId,
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._topicDataWrapper(data.data[i]));
+                    }
+                    this.setState({
+                        TopicData:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
     _submitAttend = ()=>{
         const {sessionId} = this.props;
         this.requestAttend(sessionId);
+    };
+
+
+    componentDidMount(){
+        const {sessionId} = this.props;
+        this.requestGetRecommendArticle(sessionId);
+        this.requestGetRecommendTopic(sessionId);
+    }
+
+    _navigateToUser = (ToUserId) =>{
+        const {userId} = this.props;
+        const { navigate } = this.props.navigation;
+        navigate("UserInfo",{
+            isLoginUser :userId===ToUserId,
+            UserId : ToUserId
+        });
     };
 
     render(){
@@ -157,13 +244,64 @@ class HomeTabPanel extends Component{
                 <Card full>
                     <Card.Header title="推荐文章" />
                     <Card.Body>
-
+                        {this.state.ArticleData.map(item=>(
+                            <TouchableHighlight
+                                onPress={()=>{navigate('ArticleDetail',{
+                                    ArticleId: item.key,
+                                    Title :item.Title
+                                })}}
+                                key={item.key}
+                            >
+                                <Card full>
+                                    <Card.Header
+                                        title={item.Title}
+                                        thumb={<Image source={{uri:makeCommonImageUrl(item.ImageUrl)}} style={HomeCss.ItemImage}/>}
+                                    />
+                                    <Card.Footer content = {item.PostTime} extra={item.ViewCount}/>
+                                </Card>
+                            </TouchableHighlight>
+                        ))}
                     </Card.Body>
                 </Card>
                 <Card full>
                     <Card.Header title="推荐话题" />
                     <Card.Body>
+                        {this.state.TopicData.map(item=>(
+                            <TouchableHighlight onPress={()=>{navigate('PostDetail',{topicId:item.key})}} key={item.key}>
+                                <Card full>
+                                    <Card.Header
+                                        title={<View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
+                                            <View style={{flex:1}}>
+                                                <TouchableOpacity
+                                                    onPress={()=>this._navigateToUser(item.UserId)}
+                                                >
+                                                    <Text style={{color:'black'}}>{item.UserNickName}</Text>
+                                                </TouchableOpacity>
+                                                <Text style={{fontSize:10}}>{item.LastPostTime}</Text>
+                                            </View>
+                                            <View style={{width:100,paddingLeft:15,flexDirection:'row',justifyContent:'flex-end'}}>
+                                                <Icon name="comment" size={15}/>
+                                                <Text style={{fontSize:12,marginLeft:3}}>{item.CommentCount}</Text>
+                                            </View>
+                                        </View>}
+                                        thumb={
+                                            <TouchableOpacity
+                                                onPress={()=>this._navigateToUser(item.UserId)}
+                                            >
+                                                <Image source={{uri:makeCommonImageUrl(item.UserImageUrl)}} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
+                                            </TouchableOpacity>
+                                        }
+                                    />
 
+                                    <Card.Body >
+                                        <Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:15}}>
+                                            {item.Content}
+                                        </Text>
+                                    </Card.Body>
+
+                                </Card>
+                            </TouchableHighlight>
+                        ))}
                     </Card.Body>
                 </Card>
             </ScrollView>

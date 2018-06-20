@@ -108,9 +108,9 @@ class MeTabPanel extends Component{
                             <Text style={MeCss.CommonItemText}>关注我的人</Text>
                         </List.Item>
 
-                        <List.Item arrow='horizontal' onClick={()=>{}}>
-                            <Text style={MeCss.CommonItemText}>我的消息</Text>
-                        </List.Item>
+                        {/*<List.Item arrow='horizontal' onClick={()=>{}}>*/}
+                            {/*<Text style={MeCss.CommonItemText}>我的消息</Text>*/}
+                        {/*</List.Item>*/}
                     </List>
                     <WhiteSpace size="xl"/>
                     <List >

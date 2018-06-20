@@ -256,12 +256,12 @@ class OtherUserInfoPanel extends  Component{
                         {this.state.NickName}
                         <Brief> </Brief>
                     </List.Item>
-                    <List.Item extra={this.state.Gender}>性别</List.Item>
-                    <List.Item extra={this.state.Age}>年龄</List.Item>
-                    <List.Item extra={this.state.Job}>职业</List.Item>
-                    <List.Item extra={this.state.Location}>所在地</List.Item>
-                    <List.Item extra={this.state.Height}>身高</List.Item>
-                    <List.Item extra={this.state.Weight}>体重</List.Item>
+                    <List.Item extra={this.state.Gender===""?'保密':this.state.Gender}>性别</List.Item>
+                    <List.Item extra={this.state.Age===""?'保密':this.state.Age}>年龄</List.Item>
+                    <List.Item extra={this.state.Job===""?'保密':this.state.Job}>职业</List.Item>
+                    <List.Item extra={this.state.Location===""?'保密':this.state.Location}>所在地</List.Item>
+                    <List.Item extra={this.state.Height===""?'保密':this.state.Height}>身高</List.Item>
+                    <List.Item extra={this.state.Weight===""?'保密':this.state.Weight}>体重</List.Item>
                     <List.Item >
                         <Button
                             type={this.state.Focus?'primary':'ghost'}
@@ -269,7 +269,7 @@ class OtherUserInfoPanel extends  Component{
                         >
                             {this.state.Focus?'已关注':'关注'}
                         </Button>
-                        <Button onClick={()=>{navigate('Chat')}}>私信</Button>
+                        {/*<Button onClick={()=>{navigate('Chat')}}>私信</Button>*/}
                     </List.Item>
                 </List>
 
