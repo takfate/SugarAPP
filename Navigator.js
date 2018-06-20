@@ -50,7 +50,8 @@ import HealthRecordPanel from './HomeTabPanel/HealthRecordPanel';
 import MoreSugarRecordPanel from './HomeTabPanel/MoreSugarRecordPanel';
 import MoreHealthRecordPanel from './HomeTabPanel/MoreHealthRecordPanel';
 
-import SugarGuideNavigation from './HomeTabPanel/SugarGuidePanel';
+import SugarGuidePanel from './HomeTabPanel/SugarGuidePanel';
+import SugarDoctorPanel from './HomeTabPanel/SugarDoctorPanel';
 
 
 const StackNav = StackNavigator(
@@ -176,7 +177,12 @@ const StackNav = StackNavigator(
         MoreHealthRecord : {
             screen : MoreHealthRecordPanel
         },
-        ...SugarGuideNavigation
+        SugarGuide : {
+            screen : SugarGuidePanel
+        },
+        SugarDoctor : {
+            screen : SugarDoctorPanel
+        }
     },
     {
         headerMode: 'screen',

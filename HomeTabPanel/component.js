@@ -3,16 +3,17 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity,FlatList,TouchableHighlight,RefreshControl  } from 'react-native';
-import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Carousel,Grid,Toast} from 'antd-mobile';
+import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Grid,Toast,WingBlank} from 'antd-mobile';
+import Carousel from 'react-native-snap-carousel';
 import {UserImage} from '../CommonComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {GridImageURL,makeCommonImageUrl} from "../CommonComponent";
 import httpRequest from '../httpRequest';
 import {TodaySugarChart} from './items';
-
+import Dimensions from 'Dimensions';
+const {width} = Dimensions.get('window');
 
 const Brief = List.Item.Brief;
-
 
 
 const HomeCss = StyleSheet.create({
@@ -45,7 +46,11 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-
+const CarouselData = [
+    {key:'1'},
+    {key:'2'},
+    {key:'3'}
+];
 
 class HomeTabPanel extends Component{
 
@@ -73,12 +78,15 @@ class HomeTabPanel extends Component{
                 navigate('HealthRecord');
                 break;
             case '糖导':
-                navigate('GuideHome');
+                navigate('SugarGuide');
                 break;
             case '签到':
                 if(!isAttend){
                     this._submitAttend();
                 }
+                break;
+            case '智能医生':
+                navigate('SugarDoctor');
                 break;
             default :
                 return ;
@@ -252,18 +260,73 @@ class HomeTabPanel extends Component{
         )
     };
 
+
+    _renderCarouselItem = ({item, index}) =>{
+        const { navigate } = this.props.navigation;
+        if(item.key==='1'){
+            return (
+                <View style={{width:'100%',height:220,flexDirection:'row',justifyContent:'center',alignItems:'center'}} key='1'>
+                    <Image source={{uri:makeCommonImageUrl('/static/appImg/weeks.jpg')}} style={{width:'100%',height:220}}/>
+                </View>
+            );
+        }else if(item.key==='2'){
+
+            return (
+                <View  key='2' style={{height:220,width:'100%'}}>
+                    <View style={{
+                        height:35,
+                        flexDirection:'row',
+                        justifyContent:'space-between',
+                        alignItems:'center',
+                        paddingLeft:20,
+                        paddingRight:40}}
+                    >
+                        <Text style={{fontSize:17,color:'black',textAlign:'center'}}>今日血糖变化</Text>
+                        <Button type='ghost' size='small' onClick={()=>{navigate('MoreSugarRecord')}}>查看更多</Button>
+                    </View>
+                    <TodaySugarChart ref={this.refTodaySugarRecord}/>
+                </View>
+            );
+        }else{
+            const HealthGridData = this._healthGridDataWrapper(this.state.HealthData);
+            return (
+                <View  key='3' style={{height:220,width:'100%'}}>
+                    <View style={{
+                        height:35,
+                        flexDirection:'row',
+                        justifyContent:'space-between',
+                        alignItems:'center',
+                        paddingLeft:20,
+                        paddingRight:40}}
+                    >
+                        <Text style={{fontSize:17,color:'black',textAlign:'center'}}>五天内健康记录</Text>
+                        <Button type='ghost' size='small' onClick={()=>{navigate('MoreHealthRecord')}}>查看更多</Button>
+                    </View>
+                    <View style={{paddingLeft:10,paddingRight:10}}>
+                        <Grid
+                            data={HealthGridData}
+                            columnNum={5}
+                            itemStyle={{ height: 25 }}
+                            renderItem={this._renderGridItem}
+                        />
+                    </View>
+                </View>
+            );
+        }
+    };
+
     render(){
         const { navigate } = this.props.navigation;
         const { isAttend } = this.props.loginUserInfo;
         const GridData = [
             {text:isAttend?"已签到" : "签到",icon:GridImageURL('attend')},
             {text:'糖导',icon:GridImageURL('guide')},
+            {text:'智能医生',icon:GridImageURL('message')},
             {text:'血糖记录',icon:GridImageURL('sugar')},
             {text:'每日健康记录',icon:GridImageURL('health')},
             {text:'家属关联',icon:GridImageURL('link')},
-            {text:'智能提醒',icon:GridImageURL('message')}
         ];
-        const HealthGridData = this._healthGridDataWrapper(this.state.HealthData);
+
         return(
             <View style={{width:'100%',height:'100%'}}>
                 <View style={{height:55,flexDirection:'row',justifyContent:'space-between',
@@ -280,52 +343,15 @@ class HomeTabPanel extends Component{
                     }
                 >
                     <Carousel
-                        infinite
-                        style={{height:220}}
+                        ref={(c) => { this._carousel = c; }}
+                        data={CarouselData}
+                        renderItem={this._renderCarouselItem}
+                        sliderWidth={width}
+                        itemWidth={width}
+                        loop
                         autoplay
-                        autoplayInterval={10000}
-                        selectedIndex={1}
-                        swipeSpeed={6}
-                    >
-                        <View style={{width:'100%',height:220,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                            <Image source={{uri:makeCommonImageUrl('/static/appImg/weeks.jpg')}} style={{width:'100%',height:250}}/>
-                        </View>
-                        <View>
-                            <View style={{
-                                height:35,
-                                flexDirection:'row',
-                                justifyContent:'space-between',
-                                alignItems:'center',
-                                paddingLeft:20,
-                                paddingRight:40}}
-                            >
-                                <Text style={{fontSize:17,color:'black',textAlign:'center'}}>今日血糖变化</Text>
-                                <Button type='ghost' size='small' onClick={()=>{navigate('MoreSugarRecord')}}>查看更多</Button>
-                            </View>
-                            <TodaySugarChart ref={this.refTodaySugarRecord}/>
-                        </View>
-                        <View>
-                            <View style={{
-                                height:35,
-                                flexDirection:'row',
-                                justifyContent:'space-between',
-                                alignItems:'center',
-                                paddingLeft:20,
-                                paddingRight:40}}
-                            >
-                                <Text style={{fontSize:17,color:'black',textAlign:'center'}}>五天内健康记录</Text>
-                                <Button type='ghost' size='small' onClick={()=>{navigate('MoreHealthRecord')}}>查看更多</Button>
-                            </View>
-                            <View style={{paddingLeft:10,paddingRight:10}}>
-                                <Grid
-                                    data={HealthGridData}
-                                    columnNum={5}
-                                    itemStyle={{ height: 25 }}
-                                    renderItem={this._renderGridItem}
-                                />
-                            </View>
-                        </View>
-                    </Carousel>
+                        autoplayInterval={5000}
+                    />
                     <Grid data={GridData}  onClick={this._gridOnClick} />
                     <WhiteSpace size="lg"/>
                     <Card full>
