@@ -1363,10 +1363,3 @@ export class SubPostDetailPanel extends Component{
         );
     }
 }
-
-
-
-
-
-
-

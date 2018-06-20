@@ -204,7 +204,6 @@ class ArticleSearchPanel extends Component{
     };
 
     render(){
-        const { navigate } = this.props;
         let HistoryPanel = null;
         if(this.state.SearchHistory.length>0){
             HistoryPanel = (
