@@ -270,7 +270,6 @@ class HomeTabPanel extends Component{
                 </View>
             );
         }else if(item.key==='2'){
-
             return (
                 <View  key='2' style={{height:220,width:'100%'}}>
                     <View style={{
@@ -321,10 +320,10 @@ class HomeTabPanel extends Component{
         const GridData = [
             {text:isAttend?"已签到" : "签到",icon:GridImageURL('attend')},
             {text:'糖导',icon:GridImageURL('guide')},
-            {text:'智能医生',icon:GridImageURL('message')},
+            {text:'智能医生',icon:GridImageURL('doctor')},
+            {text:'家属关联',icon:GridImageURL('link')},
             {text:'血糖记录',icon:GridImageURL('sugar')},
             {text:'每日健康记录',icon:GridImageURL('health')},
-            {text:'家属关联',icon:GridImageURL('link')},
         ];
 
         return(

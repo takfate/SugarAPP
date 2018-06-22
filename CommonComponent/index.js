@@ -1,6 +1,6 @@
 import React,{PropTypes,Component} from 'react';
 import {View,Text,ScrollView,Image,StyleSheet} from 'react-native';
-import {BaseUrl} from '../config';
+import {BaseUrl,wsUrl} from '../config';
 
 
 
@@ -29,4 +29,8 @@ export const makeCommonImageUrl = (suffix) => {
 
 export const GridImageURL  = (name)=>{
     return BaseUrl+'/static/appImg/'+name+'.png';
+};
+
+export const makeWebSocketUrl = (sessionId)=>{
+  return `${wsUrl}/webSocket?session_id=${sessionId}`
 };
