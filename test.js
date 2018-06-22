@@ -1,0 +1,1 @@
+//source={__DEV__||(Platform.OS === 'ios')?require('./tpl.html'):{'uri':'file:///android_asset/tpl.html'}}

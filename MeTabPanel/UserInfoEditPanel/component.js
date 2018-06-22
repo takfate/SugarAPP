@@ -77,16 +77,17 @@ class UserInfoEditPanel extends Component{
         })
             .then((response) => {
                 let data = response.data;
+                // alert(JSON.stringify(data));
                 if (data['code'] === 0) {
                     this.setState({
                         HeadImageUrl : data['iconUrl'],
                         NickName : data['username'],
                         Gender  : data['gender'],
-                        Age : data['age'].toString(),
+                        Age : data['age']===null?'':data['age'].toString(),
                         Job : data['job'],
                         Location : data['area'],
-                        Height: data['height'].toString(),
-                        Weight : data['weight'].toString(),
+                        Height: data['height']===null?'':data['height'].toString(),
+                        Weight : data['weight']===null?'':data['weight'].toString(),
                         Score : data['integral']
                     });
                 } else {
@@ -94,6 +95,7 @@ class UserInfoEditPanel extends Component{
                 }
             })
             .catch((error) => {
+                alert(error);
                 Toast.fail('网络好像有问题~');
             });
     };

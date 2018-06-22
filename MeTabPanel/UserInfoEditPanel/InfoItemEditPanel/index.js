@@ -162,7 +162,8 @@ export class LocationEditPanel extends  Component{
     constructor(props){
         super(props);
         this.state = {
-            Location: props.navigation.state.params.data.split(',')
+            Location: props.navigation.state.params.data===null?[,]:
+                props.navigation.state.params.data.split(',')
         };
     }
 

@@ -91,7 +91,7 @@ class MeTabPanel extends Component{
                             onClick={()=>{navigate('UserInfo',{isLoginUser:true,UserId:userId})}}
                             style={MeCss.HeaderItem}
                             thumb={
-                                <Badge style={{marginRight:15}} text="Lv4">
+                                <Badge style={{marginRight:15}} text="Lv1">
                                     <Image source={{uri:makeCommonImageUrl(loginUserInfo.HeadImageUrl)}} style={MeCss.HeaderImage}/>
                                 </Badge>
                             }

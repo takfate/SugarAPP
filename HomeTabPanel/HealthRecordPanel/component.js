@@ -225,15 +225,20 @@ class HealthRecordPanel extends Component{
     };
 
     _submitSaveHealthRecord = ()=>{
-        const {sessionId} = this.props;
-        let nowDate = new Date();
-        let datetime = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
-        let time = nowDate.getHours()+':'+nowDate.getMinutes();
-        let YDS = this.state.YDSValue[0]+this.state.YDSValue[1];
-        let PE = this.state.PEValue[0]+','+this.state.PEValue[1];
-        let Weight = this.state.WeightValue[0]+this.state.WeightValue[1];
-        let BS = this.state.BS1Value[0]+','+this.state.BS2Value[0];
-        this.requestSaveHealthRecord(sessionId,YDS,PE,Weight,BS,time,datetime);
+        if(this.state.YDSValueChange&&this.state.PEValueChange&&this.state.WeightValueChange&&this.state.BSValueChange){
+            const {sessionId} = this.props;
+            let nowDate = new Date();
+            let datetime = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
+            let time = nowDate.getHours()+':'+nowDate.getMinutes();
+            let YDS = this.state.YDSValue[0]+this.state.YDSValue[1];
+            let PE = this.state.PEValue[0]+','+this.state.PEValue[1];
+            let Weight = this.state.WeightValue[0]+this.state.WeightValue[1];
+            let BS = this.state.BS1Value[0]+','+this.state.BS2Value[0];
+            this.requestSaveHealthRecord(sessionId,YDS,PE,Weight,BS,time,datetime);
+        }else{
+            Toast.fail('请填写完整的健康记录');
+        }
+
     };
 
 

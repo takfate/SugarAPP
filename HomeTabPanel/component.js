@@ -46,11 +46,15 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-const CarouselData = [
-    {key:'1'},
-    {key:'2'},
-    {key:'3'}
-];
+const period = {
+    '0':'早餐前',
+    '1':'早餐后',
+    '2':'午餐前',
+    '3':'午餐后',
+    '4':'晚餐前',
+    '5':'晚餐后',
+    '6':'睡前',
+};
 
 class HomeTabPanel extends Component{
 
@@ -60,7 +64,12 @@ class HomeTabPanel extends Component{
             ArticleData : [],
             TopicData : [],
             HealthData : [],
-            Refreshing :false
+            Refreshing :false,
+            CarouselData : [
+                {key:'1'},
+                {key:'2',ddx:[],ddd:[]},
+                {key:'3'}
+            ]
         };
     }
 
@@ -201,6 +210,40 @@ class HomeTabPanel extends Component{
             });
     };
 
+    requestGetSugarRecord = (sessionId)=>{
+        let nowDate = new Date();
+        let bloodDate = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
+        httpRequest.post('/getUserOneDayBlood', {
+            session_id : sessionId,
+            bloodDate : bloodDate
+        })
+            .then((response) => {
+                let data = response.data;
+                let newDdx = [];
+                let newDdd = [];
+                if (data['code'] === 0) {
+                    for (let key in data.level){
+                        if(data.level[key]!=='0'){
+                            newDdx.push(period[key]);
+                            newDdd.push(parseFloat(data.level[key]));
+                        }
+                    }
+                    let newData = this.state.CarouselData.slice();
+                    newData[1] = {
+                        key:'2',
+                        ddx:newDdx,
+                        ddd:newDdd
+                    };
+                    this.setState({CarouselData: newData});
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
     _submitAttend = ()=>{
         const {sessionId} = this.props;
         this.requestAttend(sessionId);
@@ -212,6 +255,7 @@ class HomeTabPanel extends Component{
         this.requestGetRecommendArticle(sessionId);
         this.requestGetRecommendTopic(sessionId);
         this.requestHealthRecord(sessionId,0,5);
+        this.requestGetSugarRecord(sessionId);
     }
 
     _navigateToUser = (ToUserId) =>{
@@ -227,11 +271,15 @@ class HomeTabPanel extends Component{
         const {sessionId} = this.props;
         this.requestGetRecommendArticle(sessionId);
         this.requestGetRecommendTopic(sessionId);
-        this.todaySugarRecord.requestGetSugarRecord(sessionId);
+        this.requestGetSugarRecord(sessionId);
+        this.requestHealthRecord(sessionId,0,5);
     };
 
     refTodaySugarRecord = (instance)=>{
-        this.todaySugarRecord = instance.getWrappedInstance();
+        if(instance){
+            this.todaySugarRecord = instance.getWrappedInstance();
+        }
+
     };
 
     _healthGridDataWrapper = (initData)=>{
@@ -283,7 +331,7 @@ class HomeTabPanel extends Component{
                         <Text style={{fontSize:17,color:'black',textAlign:'center'}}>今日血糖变化</Text>
                         <Button type='ghost' size='small' onClick={()=>{navigate('MoreSugarRecord')}}>查看更多</Button>
                     </View>
-                    <TodaySugarChart ref={this.refTodaySugarRecord}/>
+                    <TodaySugarChart ddx={item.ddx} ddd={item.ddd}/>
                 </View>
             );
         }else{
@@ -342,8 +390,7 @@ class HomeTabPanel extends Component{
                     }
                 >
                     <Carousel
-                        ref={(c) => { this._carousel = c; }}
-                        data={CarouselData}
+                        data={this.state.CarouselData}
                         renderItem={this._renderCarouselItem}
                         sliderWidth={width}
                         itemWidth={width}

@@ -42,46 +42,7 @@ const period = {
 class TodaySugarChartPanel extends Component {
     constructor(props){
         super(props);
-        this.state = {
-            ddx : [],
-            ddd : []
-        }
     }
-
-    requestGetSugarRecord = (sessionId)=>{
-        let nowDate = new Date();
-        let bloodDate = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
-        httpRequest.post('/getUserOneDayBlood', {
-            session_id : sessionId,
-            bloodDate : bloodDate
-        })
-            .then((response) => {
-                let data = response.data;
-                let newDdx = [];
-                let newDdd = [];
-                if (data['code'] === 0) {
-                    for (let key in data.level){
-                        if(data.level[key]!=='0'){
-                            newDdx.push(period[key]);
-                            newDdd.push(parseFloat(data.level[key]));
-                        }
-                    }
-                    this.setState({ddx:newDdx,ddd:newDdd});
-                } else {
-                    Toast.fail(data['msg']);
-                }
-            })
-            .catch((error) => {
-                Toast.fail('网络好像有问题~');
-            });
-    };
-
-    componentDidMount(){
-        const {sessionId} = this.props;
-        this.requestGetSugarRecord(sessionId);
-    }
-
-
 
     render(){
         const option = {
@@ -93,7 +54,7 @@ class TodaySugarChartPanel extends Component {
                 {
                     type: 'category',
                     boundaryGap: false,
-                    data: this.state.ddx
+                    data: this.props.ddx
                 }
             ],
             yAxis: [
@@ -105,7 +66,7 @@ class TodaySugarChartPanel extends Component {
                 {
                     name: '血糖值',
                     type: 'line',
-                    data: this.state.ddd,
+                    data: this.props.ddd,
                     roam: false
                 },
             ],
@@ -113,8 +74,6 @@ class TodaySugarChartPanel extends Component {
                 top:10,
             }
         };
-
-
         return (
             <Echarts option={option} height={210} width={width}/>
         );
@@ -168,6 +127,7 @@ class LongSugarChartPanel extends Component {
 
     componentDidMount(){
         const {sessionId} = this.props;
+
         this.requestGetSugarRecord(sessionId,0,this.props.DayLength);
     }
 
