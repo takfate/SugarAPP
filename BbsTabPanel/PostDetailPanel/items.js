@@ -330,11 +330,17 @@ class PostCommonItemPanel extends Component {
                                 </TouchableOpacity>
                                 <Text style={{fontSize:10}}>{this.state.key}楼 {this.state.PostTime}</Text>
                             </View>
-                            <View style={{width:100,paddingLeft:85}}>
-                                <TouchableOpacity onPress={this._submitDeletePost} >
-                                    <Icon name="trash" size={14} />
-                                </TouchableOpacity>
-                            </View>
+                            {
+                                this.state.UserId===this.props.userId?
+                                    <View style={{width:100,paddingLeft:85}}>
+                                        <TouchableOpacity onPress={this._submitDeletePost} >
+                                            <Icon name="trash" size={14} />
+                                        </TouchableOpacity>
+                                    </View>
+                                    :
+                                    null
+                            }
+
                         </View>
 
                     }
@@ -360,7 +366,7 @@ class PostCommonItemPanel extends Component {
                                     onClick={()=>{
                                         const {sessionId} = this.props;
                                         const {params} = this.props.navigation.state;
-                                        this.requestValuePost(sessionId,params.topicId,1);
+                                        this.requestValuePost(sessionId,this.state.PostId,1);
                                     }}
                                 >
                                     <Icon name="caret-up" size={15}/>
@@ -372,7 +378,7 @@ class PostCommonItemPanel extends Component {
                                     onClick={()=>{
                                         const {sessionId} = this.props;
                                         const {params} = this.props.navigation.state;
-                                        this.requestValuePost(sessionId,params.topicId,-1);
+                                        this.requestValuePost(sessionId,this.state.PostId,-1);
                                     }}
                                 >
                                     <Icon name="caret-down" size={15}/>

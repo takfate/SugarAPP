@@ -747,14 +747,14 @@ export class MyCollectedTopicListPanel extends Component{
         return (
 
             <TouchableHighlight
-                onPress={()=>{}}
+                onPress={()=>{navigate('PostDetail',{topicId:item.item.key})}}
             >
                 <Card full>
                     <Card.Header
                         title={item.item.UserNickName}
                         thumb = {
                             <Image
-                                source={require('./head.jpg')}
+                                source={{uri:makeCommonImageUrl(item.item.UserImageUrl)}}
                                 style={{
                                     height:30,
                                     width:30,
@@ -769,7 +769,10 @@ export class MyCollectedTopicListPanel extends Component{
                             {item.item.Content}
                         </Text>
                     </Card.Body>
-                    <Card.Footer content={<Text>楼主更新到了{10}楼</Text>} />
+                    <Card.Footer
+                        content={
+                        item.item.LastFloor===0?<Text>楼主还未更新</Text>:<Text>楼主更新到了{item.item.LastFloor}楼</Text>}
+                    />
                 </Card>
             </TouchableHighlight>
 
@@ -783,7 +786,8 @@ export class MyCollectedTopicListPanel extends Component{
             ImageList : [initData['picture1'],initData['picture2'],initData['picture3']],
             UserId  : initData['userId'],
             UserImageUrl : initData['iconUrl'],
-            UserNickName : initData['username']
+            UserNickName : initData['username'],
+            LastFloor : initData['lastFloor']
         };
     };
 
@@ -800,7 +804,6 @@ export class MyCollectedTopicListPanel extends Component{
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
-                    console.log(Data);
                     this.setState({
                         Refreshing:false,
                         Data:Data,
