@@ -292,7 +292,8 @@ export class MyCollectedArticleListPanel extends Component{
         super(props);
         this.state =  {
             Data : [],
-            Refreshing :false
+            Refreshing :false,
+            Total : 0
         };
     }
 
@@ -344,7 +345,8 @@ export class MyCollectedArticleListPanel extends Component{
                     console.log(Data);
                     this.setState({
                         Refreshing:false,
-                        Data:Data
+                        Data:Data,
+                        Total:data.total
                     });
                 } else {
                     Toast.fail(data['msg']);
@@ -378,7 +380,7 @@ export class MyCollectedArticleListPanel extends Component{
             <View style={{height:'100%',width:'100%'}}>
                 <View style={{height:30,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12}}>
-                    <Text >共收藏了10篇文章</Text>
+                    <Text >共收藏了{this.state.Total}篇文章</Text>
                 </View>
                 <CommonListPanel
                     RealData = {this.state.Data}
@@ -407,7 +409,8 @@ export class MyCommentListPanel extends Component{
         super(props);
         this.state =  {
             Data : [],
-            Refreshing: false
+            Refreshing: false,
+            Total:0
         };
     }
     _renderItem = (item)=>{
@@ -502,7 +505,8 @@ export class MyCommentListPanel extends Component{
                     console.log(Data);
                     this.setState({
                         Refreshing:false,
-                        Data:Data
+                        Data:Data,
+                        Total : data.total
                     });
                 } else {
                     Toast.fail(data['msg']);
@@ -536,7 +540,7 @@ export class MyCommentListPanel extends Component{
             <View style={{height:'100%',width:'100%'}}>
                 <View style={{height:30,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12}}>
-                    <Text >共发表了20条评论</Text>
+                    <Text >共发表了{this.state.Total}条评论</Text>
                 </View>
                 <CommonListPanel
                     RealData = {this.state.Data}
@@ -565,7 +569,8 @@ export class MyPublishedTopicListPanel extends Component{
         super(props);
         this.state =  {
             Data : [],
-            Refreshing:false
+            Refreshing:false,
+            Total : 0
         };
     }
     _renderItem = (item)=>{
@@ -667,10 +672,10 @@ export class MyPublishedTopicListPanel extends Component{
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
-                    console.log(Data);
                     this.setState({
                         Refreshing:false,
-                        Data:Data
+                        Data:Data,
+                        Total : data.total
                     });
                 } else {
                     Toast.fail(data['msg']);
@@ -704,7 +709,7 @@ export class MyPublishedTopicListPanel extends Component{
             <View style={{height:'100%',width:'100%'}}>
                 <View style={{height:30,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12}}>
-                    <Text >共发布了20个话题</Text>
+                    <Text >共发布了{this.state.Total}个话题</Text>
                 </View>
                 <CommonListPanel
                     RealData = {this.state.Data}
@@ -733,7 +738,8 @@ export class MyCollectedTopicListPanel extends Component{
         super(props);
         this.state =  {
             Data : [],
-            Refreshing:false
+            Refreshing:false,
+            Total : 0
         };
     }
     _renderItem = (item)=>{
@@ -797,7 +803,8 @@ export class MyCollectedTopicListPanel extends Component{
                     console.log(Data);
                     this.setState({
                         Refreshing:false,
-                        Data:Data
+                        Data:Data,
+                        Total : data.total
                     });
                 } else {
                     Toast.fail(data['msg']);
@@ -831,7 +838,7 @@ export class MyCollectedTopicListPanel extends Component{
             <View style={{height:'100%',width:'100%'}}>
                 <View style={{height:30,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12}}>
-                    <Text >共收藏了10个话题</Text>
+                    <Text >共收藏了{this.state.Total}个话题</Text>
                 </View>
                 <CommonListPanel
                     RealData = {this.state.Data}
@@ -860,7 +867,8 @@ export class MyResponseListPanel extends Component{
         super(props);
         this.state =  {
             Data : [],
-            Refreshing : false
+            Refreshing : false,
+            Total : 0
         };
     }
     _renderItem = (item)=>{
@@ -1009,7 +1017,8 @@ export class MyResponseListPanel extends Component{
                     console.log(Data);
                     this.setState({
                         Refreshing:false,
-                        Data:Data
+                        Data:Data,
+                        Total : data.total
                     });
                 } else {
                     Toast.fail(data['msg']);
@@ -1043,7 +1052,7 @@ export class MyResponseListPanel extends Component{
             <View style={{height:'100%',width:'100%'}}>
                 <View style={{height:30,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12}}>
-                    <Text >共有20条回复</Text>
+                    <Text >共有{this.state.Total}条回复</Text>
                 </View>
                 <CommonListPanel
                     RealData = {this.state.Data}
