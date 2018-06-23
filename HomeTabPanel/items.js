@@ -2,7 +2,7 @@
 
 import React,{Component} from 'react';
 import {connect} from 'react-redux';
-import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity,FlatList,TouchableHighlight  } from 'react-native';
+import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity,FlatList,TouchableHighlight,WebView  } from 'react-native';
 import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Carousel,Grid,Toast} from 'antd-mobile';
 import {UserImage} from '../CommonComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -24,9 +24,6 @@ function mapDispatchToProps(dispatch,ownProps) {
     }
 }
 
-function mergeProps(stateProps, dispatchProps, ownProps) {
-    return Object.assign({}, ownProps, stateProps, dispatchProps)
-}
 
 
 const period = {
@@ -181,5 +178,51 @@ class LongSugarChartPanel extends Component {
     }
 }
 
-export const TodaySugarChart = connect(mapStateToProps,null,mergeProps,{withRef:true})(TodaySugarChartPanel);
+class RecentHealthPanel extends Component {
+    constructor(props){
+        super(props);
+    }
+
+    _healthGridDataWrapper = (initData)=>{
+        let Data = [
+            {text:''},
+            {text:'糖尿素用量'},
+            {text:'运动时长'},
+            {text:'体重'},
+            {text:'血压'}
+        ];
+        for(let i=0;i<initData.length;i++){
+            Data.push({text:initData[i].healthDate});
+            Data.push({text:initData[i].insulin});
+            Data.push({text:initData[i].sportTime});
+            Data.push({text:initData[i].weight});
+            Data.push({text:initData[i].bloodPressure});
+        }
+        return Data;
+    };
+
+    _renderGridItem = (el,index) => {
+        return (
+            <View style={{paddingTop:3}}>
+                <Text style={{fontSize:12,color:'black',textAlign:'center'}}>{el.text}</Text>
+            </View>
+        )
+    };
+
+    render(){
+        const HealthGridData = this._healthGridDataWrapper(this.props.HealthData);
+        return (
+            <Grid
+                data={HealthGridData}
+                columnNum={5}
+                itemStyle={{ height: 25 }}
+                renderItem={this._renderGridItem}
+            />
+        );
+    }
+}
+
+
+export const TodaySugarChart = connect(mapStateToProps,null)(TodaySugarChartPanel);
 export const LongSugarChart = connect(mapStateToProps,null)(LongSugarChartPanel);
+export const RecentHealth = connect(mapStateToProps,null)(RecentHealthPanel);

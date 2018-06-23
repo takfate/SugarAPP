@@ -156,7 +156,7 @@ class MoreHealthRecordPanel extends Component{
     _loadMoreData = () =>{
         if(this.state.Refreshing)return ;
         const {sessionId}  = this.props;
-        this.requestGetHealthRecordList(this.state.Data.slice(),sessionId,this.state.Data.length,10);
+        this.requestGetHealthRecordList(this.state.Data.slice(),sessionId,this.state.Data.length+1,10);
     };
 
     render(){

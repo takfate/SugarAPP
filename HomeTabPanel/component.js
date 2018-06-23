@@ -9,7 +9,7 @@ import {UserImage} from '../CommonComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {GridImageURL,makeCommonImageUrl} from "../CommonComponent";
 import httpRequest from '../httpRequest';
-import {TodaySugarChart} from './items';
+import {TodaySugarChart, RecentHealth} from './items';
 import Dimensions from 'Dimensions';
 const {width} = Dimensions.get('window');
 
@@ -254,8 +254,8 @@ class HomeTabPanel extends Component{
         const {sessionId} = this.props;
         this.requestGetRecommendArticle(sessionId);
         this.requestGetRecommendTopic(sessionId);
-        this.requestHealthRecord(sessionId,0,5);
         this.requestGetSugarRecord(sessionId);
+        this.requestHealthRecord(sessionId,0,5);
     }
 
     _navigateToUser = (ToUserId) =>{
@@ -275,47 +275,24 @@ class HomeTabPanel extends Component{
         this.requestHealthRecord(sessionId,0,5);
     };
 
-    refTodaySugarRecord = (instance)=>{
-        if(instance){
-            this.todaySugarRecord = instance.getWrappedInstance();
-        }
 
-    };
 
-    _healthGridDataWrapper = (initData)=>{
-        let Data = [
-            {text:''},
-            {text:'糖尿素用量'},
-            {text:'运动时长'},
-            {text:'体重'},
-            {text:'血压'}
-        ];
-        for(let i=0;i<initData.length;i++){
-            Data.push({text:initData[i].healthDate});
-            Data.push({text:initData[i].insulin});
-            Data.push({text:initData[i].sportTime});
-            Data.push({text:initData[i].weight});
-            Data.push({text:initData[i].bloodPressure});
-        }
-        return Data;
-    };
 
-    _renderGridItem = (el,index) => {
-        return (
-            <View style={{paddingTop:3}}>
-                <Text style={{fontSize:12,color:'black',textAlign:'center'}}>{el.text}</Text>
-            </View>
-        )
-    };
+
 
 
     _renderCarouselItem = ({item, index}) =>{
         const { navigate } = this.props.navigation;
         if(item.key==='1'){
             return (
-                <View style={{width:'100%',height:220,flexDirection:'row',justifyContent:'center',alignItems:'center'}} key='1'>
+                <TouchableOpacity
+                    onPress={()=>{navigate('HealthWeekly')}}
+                    style={{width:'100%',height:220,flexDirection:'row',justifyContent:'center',alignItems:'center'}}
+                    activeOpacity={0.85}
+                    key='1'
+                >
                     <Image source={{uri:makeCommonImageUrl('/static/appImg/weeks.jpg')}} style={{width:'100%',height:220}}/>
-                </View>
+                </TouchableOpacity>
             );
         }else if(item.key==='2'){
             return (
@@ -335,7 +312,7 @@ class HomeTabPanel extends Component{
                 </View>
             );
         }else{
-            const HealthGridData = this._healthGridDataWrapper(this.state.HealthData);
+
             return (
                 <View  key='3' style={{height:220,width:'100%'}}>
                     <View style={{
@@ -350,12 +327,7 @@ class HomeTabPanel extends Component{
                         <Button type='ghost' size='small' onClick={()=>{navigate('MoreHealthRecord')}}>查看更多</Button>
                     </View>
                     <View style={{paddingLeft:10,paddingRight:10}}>
-                        <Grid
-                            data={HealthGridData}
-                            columnNum={5}
-                            itemStyle={{ height: 25 }}
-                            renderItem={this._renderGridItem}
-                        />
+                        <RecentHealth HealthData={this.state.HealthData}/>
                     </View>
                 </View>
             );
