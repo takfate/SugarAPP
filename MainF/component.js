@@ -61,7 +61,7 @@ class MainF extends Component{
                             <HomeTabPanel navigation={this.props.navigation}/>
                         </TabBar.Item>
                         <TabBar.Item
-                            title={<Text><Icon name="graduation-cap" size={25}/>糖学院</Text>}
+                            title={<Text><Icon name="graduation-cap" size={25}/>糖学堂</Text>}
                             key="School"
                             selected={selectedTab==="School"}
                             onPress={()=>{SelectTab("School")}}

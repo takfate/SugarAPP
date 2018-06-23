@@ -185,7 +185,7 @@ class BbsTabPanel extends Component{
             <View style={{width:'100%',height:'100%'}}>
                 <View style={{height:55,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
-                    <Text style={{fontSize:18,color:'white'}}>糖圈</Text>
+                    <Text style={{fontSize:18,color:'white'}}><Icon name="compass" size={25}/>  糖圈</Text>
                     <View style={{width:50,height:45,flexDirection:'row',alignItems:'center'}}>
                         <TouchableOpacity onPress={()=>{navigate('BbsSearch')}} style={{paddingRight:10}}>
                             <Icon name="search" size={23} color="white"/>

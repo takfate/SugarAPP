@@ -3,9 +3,9 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity  } from 'react-native';
-import {Button, NavBar, Icon,Card,List,ListView,WhiteSpace,Badge} from 'antd-mobile';
+import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge} from 'antd-mobile';
 import {makeCommonImageUrl} from '../CommonComponent';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 const Brief = List.Item.Brief;
 
 
@@ -79,7 +79,7 @@ class MeTabPanel extends Component{
             <View style={{width:'100%',height:'100%'}}>
                 <View style={{height:55,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
-                    <Text style={{fontSize:18,color:'white'}}>我的</Text>
+                    <Text style={{fontSize:18,color:'white'}}><Icon name="user" size={25}/>  我的</Text>
                     <TouchableOpacity onPress={()=>{navigate('Settings')}}>
                         <Text style={{fontSize:18,color:'white'}} >设置</Text>
                     </TouchableOpacity>

@@ -147,7 +147,7 @@ class SchoolTabPanel extends Component{
             <View style={{height:"100%"}}>
                 <View style={{height:55,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
-                    <Text style={{fontSize:18,color:'white'}}>糖学堂</Text>
+                    <Text style={{fontSize:18,color:'white'}}><Icon name="graduation-cap" size={25}/>  糖学堂</Text>
                     <TouchableOpacity onPress={()=>{navigate('ArticleSearch')}}>
                         <Icon name="search" size={23} color="white" />
                     </TouchableOpacity>
