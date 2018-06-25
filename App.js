@@ -11,15 +11,6 @@ import store from './Store.js';
 
 import StackNav from './Navigator';
 
-import {
-    Platform,
-    StyleSheet,
-    Text,
-    View
-} from 'react-native';
-
-import {Button} from 'antd-mobile';
-
 
 
 class App extends Component {
