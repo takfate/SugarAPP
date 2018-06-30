@@ -66,6 +66,18 @@ class TodaySugarChartPanel extends Component {
                     data: this.props.ddd,
                     roam: false
                 },
+                {
+                    name: '理想最大值',
+                    type: 'line',
+                    data: this.props.dda,
+                    roam: false
+                },
+                {
+                    name: '理想最小值',
+                    type: 'line',
+                    data: this.props.ddi,
+                    roam: false
+                }
             ],
             grid:{
                 top:10,

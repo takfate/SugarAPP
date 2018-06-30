@@ -56,6 +56,16 @@ const period = {
     '6':'睡前',
 };
 
+const dreamBlood = {
+    '0':{min:3.9,max:6.1},
+    '1':{min:6.7,max:9.4},
+    '2':{min:5.0,max:8.0},
+    '3':{min:6.7,max:9.4},
+    '4':{min:5.0,max:8.0},
+    '5':{min:6.7,max:9.4},
+    '6':{min:6.7,max:8.0},
+};
+
 class HomeTabPanel extends Component{
 
     constructor(props){
@@ -67,7 +77,7 @@ class HomeTabPanel extends Component{
             Refreshing :false,
             CarouselData : [
                 {key:'1'},
-                {key:'2',ddx:[],ddd:[]},
+                {key:'2',ddx:[],ddd:[],dda:[],ddi:[]},
                 {key:'3'}
             ]
         };
@@ -221,18 +231,24 @@ class HomeTabPanel extends Component{
                 let data = response.data;
                 let newDdx = [];
                 let newDdd = [];
+                let newDda = [];
+                let newDdi = [];
                 if (data['code'] === 0) {
                     for (let key in data.level){
                         if(data.level[key]!=='0'){
                             newDdx.push(period[key]);
                             newDdd.push(parseFloat(data.level[key]));
+                            newDda.push(dreamBlood[key].max);
+                            newDdi.push(dreamBlood[key].min);
                         }
                     }
                     let newData = this.state.CarouselData.slice();
                     newData[1] = {
                         key:'2',
                         ddx:newDdx,
-                        ddd:newDdd
+                        ddd:newDdd,
+                        dda:newDda,
+                        ddi:newDdi
                     };
                     this.setState({CarouselData: newData});
                 } else {
@@ -308,7 +324,7 @@ class HomeTabPanel extends Component{
                         <Text style={{fontSize:17,color:'black',textAlign:'center'}}>今日血糖变化</Text>
                         <Button type='ghost' size='small' onClick={()=>{navigate('MoreSugarRecord')}}>查看更多</Button>
                     </View>
-                    <TodaySugarChart ddx={item.ddx} ddd={item.ddd}/>
+                    <TodaySugarChart ddx={item.ddx} ddd={item.ddd} dda={item.dda} ddi={item.ddi}/>
                 </View>
             );
         }else{

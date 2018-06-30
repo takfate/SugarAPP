@@ -24,6 +24,16 @@ const period = {
     '6':'睡前',
 };
 
+const dreamBlood = {
+    '0':{min:3.9,max:6.1},
+    '1':{min:6.7,max:9.4},
+    '2':{min:5.0,max:8.0},
+    '3':{min:6.7,max:9.4},
+    '4':{min:5.0,max:8.0},
+    '5':{min:6.7,max:9.4},
+    '6':{min:6.7,max:8.0},
+};
+
 
 class MoreSugarRecordPanel extends Component{
 
@@ -38,7 +48,9 @@ class MoreSugarRecordPanel extends Component{
         super(props);
         this.state = {
             ddd:[],
-            ddx:[]
+            ddx:[],
+            dda:[],
+            ddi:[]
         };
     }
 
@@ -59,14 +71,18 @@ class MoreSugarRecordPanel extends Component{
                 let data = response.data;
                 let newDdx = [];
                 let newDdd = [];
+                let newDda = [];
+                let newDdi = [];
                 if (data['code'] === 0) {
                     for (let key in data.level){
                         if(data.level[key]!=='0'){
                             newDdx.push(period[key]);
                             newDdd.push(parseFloat(data.level[key]));
+                            newDda.push(dreamBlood[key].max);
+                            newDdi.push(dreamBlood[key].min);
                         }
                     }
-                    this.setState({ddd: newDdd,ddx:newDdx});
+                    this.setState({ddd: newDdd,ddx:newDdx,dda:newDda, ddi:newDdi});
                 } else {
                     Toast.fail(data['msg']);
                 }
@@ -87,7 +103,7 @@ class MoreSugarRecordPanel extends Component{
                     <Card.Header title='今日血糖记录'/>
                     <Card.Body style={{height:200}}>
                         <Carousel dots={false}>
-                            <TodaySugarChart ddx={this.state.ddx} ddd={this.state.ddd}/>
+                            <TodaySugarChart ddx={this.state.ddx} ddd={this.state.ddd} dda={this.state.dda} ddi={this.state.ddi}/>
                         </Carousel>
                     </Card.Body>
                 </Card>

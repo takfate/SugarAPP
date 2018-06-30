@@ -1,11 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
 import {Provider} from 'react-redux';
 import store from './Store.js';
 
