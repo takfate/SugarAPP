@@ -53,7 +53,7 @@ class MoreHealthRecordPanel extends Component{
             Data  : [
                 {
                     List : [
-                        {text:''},
+                        {text:'日期'},
                         {text:'糖尿素用量'},
                         {text:'运动时长'},
                         {text:'体重'},
@@ -87,7 +87,7 @@ class MoreHealthRecordPanel extends Component{
     };
 
 
-    _dataWrapper = (initData) =>{
+    _dataWrapper = (initData) => {
         let Data = [];
         for(let i=0;i<initData.length;i++){
             Data.push({text:initData[i].healthDate});
@@ -96,6 +96,7 @@ class MoreHealthRecordPanel extends Component{
             Data.push({text:initData[i].weight});
             Data.push({text:initData[i].bloodPressure});
         }
+        console.log(Data);
         return {
             List :Data,
             key : md5(JSON.stringify(Data))
@@ -111,7 +112,9 @@ class MoreHealthRecordPanel extends Component{
         })
             .then((response) => {
                 let data = response.data;
+
                 if (data['code'] === 0) {
+
                     Data.push(this._dataWrapper(data.data));
                     this.setState({
                         Refreshing:false,
@@ -122,6 +125,7 @@ class MoreHealthRecordPanel extends Component{
                 }
             })
             .catch((error) => {
+                alert(error);
                 Toast.fail('网络好像有问题~');
             });
     };
@@ -132,7 +136,7 @@ class MoreHealthRecordPanel extends Component{
         let Data = [
             {
                 List : [
-                    {text:''},
+                    {text:'日期'},
                     {text:'糖尿素用量'},
                     {text:'运动时长'},
                     {text:'体重'},
@@ -145,18 +149,23 @@ class MoreHealthRecordPanel extends Component{
         this.requestGetHealthRecordList(Data,sessionId,0,10);
     };
 
+    _getItemCount = ()=>{
+        let cnt = 0;
+        for(let i=0;i<this.state.Data.length;i++){
+            cnt+=this.state.Data[i].List.length;
+        }
+        return parseInt(cnt/5)-1;
+    };
+
     componentDidMount(){
         const {sessionId}  = this.props;
         this.requestGetHealthRecordList(this.state.Data.slice(),sessionId,0,10);
     }
 
-
-
-
     _loadMoreData = () =>{
         if(this.state.Refreshing)return ;
         const {sessionId}  = this.props;
-        this.requestGetHealthRecordList(this.state.Data.slice(),sessionId,this.state.Data.length+1,10);
+        this.requestGetHealthRecordList(this.state.Data.slice(),sessionId,this._getItemCount(),10);
     };
 
     render(){
@@ -175,9 +184,7 @@ class MoreHealthRecordPanel extends Component{
             />
 
         );
-
     }
-
 }
 
 

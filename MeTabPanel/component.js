@@ -129,7 +129,7 @@ class MeTabPanel extends Component{
                         <List.Item arrow='horizontal' onClick={()=>{navigate('MyCollectedTopicList',{sessionId:sessionId})}}>
                             <Text style={MeCss.CommonItemText}>我收藏的话题</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyResponseList',{sessionId:sessionId})}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyResponseList',{sessionId:sessionId,userId:userId})}}>
                             <Text style={MeCss.CommonItemText}>我的回复</Text>
                         </List.Item>
                     </List>

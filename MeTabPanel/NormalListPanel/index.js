@@ -16,6 +16,7 @@ import CommonListPanel from '../CommonListPanel';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import httpRequest from "../../httpRequest";
 import {makeCommonImageUrl} from "../../CommonComponent";
+import {PostItem,CommentItem} from "./items";
 const Brief = List.Item.Brief;
 
 
@@ -585,7 +586,7 @@ export class MyPublishedTopicListPanel extends Component{
                         <Text>{item.item.CommentCount}</Text>
                     </View>
                     <View style={{flexDirection:'row'}}>
-                        <Icon name='star' color='yellow' style={{marginRight:5,marginTop:4}}/>
+                        <Icon name='star' color='orange' style={{marginRight:5,marginTop:4}}/>
                         <Text>{item.item.CollectedCount}</Text>
                     </View>
                     <View style={{flexDirection:'row'}}>
@@ -771,7 +772,7 @@ export class MyCollectedTopicListPanel extends Component{
                     </Card.Body>
                     <Card.Footer
                         content={
-                        item.item.LastFloor===0?<Text>楼主还未更新</Text>:<Text>楼主更新到了{item.item.LastFloor}楼</Text>}
+                            item.item.LastFloor===0?<Text>楼主还未更新</Text>:<Text>楼主更新到了{item.item.LastFloor}楼</Text>}
                     />
                 </Card>
             </TouchableHighlight>
@@ -876,7 +877,7 @@ export class MyResponseListPanel extends Component{
     }
     _renderItem = (item)=>{
         const { navigate } = this.props.navigation;
-        const {sessionId}  = this.props.navigation.state.params;
+        const {sessionId,userId}  = this.props.navigation.state.params;
         let FooterContent = null;
         let score = parseInt(item.item.Score);
         if(score>0){
@@ -930,7 +931,8 @@ export class MyResponseListPanel extends Component{
                             Floor:item.item.Floor,
                             TopicId:item.item.TopicId,
                             sessionId:sessionId,
-                            PostId :item.item.PostId
+                            PostId :item.item.PostId,
+                            userId:userId
                         })
                     }}
                 >
@@ -1118,6 +1120,7 @@ export class SubPostDetailPanel extends Component{
                 let data = response.data;
                 if (data['code'] === 0) {
                     let resData=data.data[0];
+
                     Data.push({
                         key:'0',
                         PostId : resData['replyId'],
@@ -1135,6 +1138,7 @@ export class SubPostDetailPanel extends Component{
                 }
             })
             .catch((error) => {
+                // alert(error);
                 Toast.fail('网络好像有问题~');
             });
     };
@@ -1216,115 +1220,32 @@ export class SubPostDetailPanel extends Component{
         this.setState({newComment:''});
     };
 
+    _navigateToUser =(ToUserId) =>{
+        const {userId} = this.props.navigation.state.params;
+        const { navigate } = this.props.navigation;
+        navigate("UserInfo",{
+            isLoginUser :userId===ToUserId,
+            UserId : ToUserId
+        });
+    };
+
     _renderItem = (item)=>{
         const { navigate } = this.props.navigation;
         if(item.item.key==='0'){
             return (
-                <View>
-                    <Card full>
-                        <Card.Header
-                            title={
-                                <View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
-                                    <View style={{flex:1}}>
-                                        <TouchableOpacity
-                                            onPress={()=>{navigate("UserInfo",{
-                                                IsLoginUser :false,
-                                                UserId : '100'
-                                            })}}
-                                        >
-                                            <Text style={{color:'black'}}>{item.item.UserNickName}</Text>
-                                        </TouchableOpacity>
-                                        <Text style={{fontSize:10}}>{item.item.PostTime}</Text>
-                                    </View>
-                                    <View style={{width:100,paddingLeft:85}}>
-                                        <TouchableOpacity onPress={()=>{}} >
-                                            <Icon name="trash" size={14} />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-
-                            }
-                            thumb={
-                                <TouchableOpacity
-                                    onPress={()=>{navigate("UserInfo",{
-                                        IsLoginUser :false,
-                                        UserId : '100'
-                                    })}}
-                                >
-                                    <Image source={require('./head.jpg')} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
-                                </TouchableOpacity>
-                            }
-                        />
-                        <Card.Body>
-                            <Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:13}}>
-                                {item.item.Content}
-                            </Text>
-                        </Card.Body>
-                        <Card.Footer
-                            content={
-                                <View
-                                    style={{
-                                        width:120,
-                                        height:45,
-                                        flexDirection:'row',
-                                        alignItems:'center'
-                                    }}
-                                >
-                                    <Button size="small" >
-                                        <Icon name="caret-up" size={15}/>
-                                        <Text>  1213</Text>
-                                    </Button>
-                                    <Button size="small" style={{marginLeft:5}}>
-                                        <Icon name="caret-down" size={15}/>
-                                    </Button>
-                                </View>
-                            }
-                            style={{
-                                height:30,
-                                width:'100%',
-                                flexDirection:'row',
-                                alignItems:'center',
-                                borderTopWidth:1,
-                                borderTopColor:'#DDDDDD',
-                                paddingTop:5
-                            }}
-                        />
-                    </Card>
-                    <WhiteSpace size="lg"/>
-                </View>
+                    <PostItem
+                        key={item.item.key}
+                        item={item.item}
+                        navigation={this.props.navigation}
+                    />
             );
         }else{
             return (
-
-                <Card>
-                    <Card.Header
-                        title={
-                            <TouchableOpacity
-                                onPress={()=>{navigate("UserInfo",{
-                                    IsLoginUser :false,
-                                    UserId : '100'
-                                })}}
-                            >
-                                <Text>{item.item.UserNickName}</Text>
-                            </TouchableOpacity>
-                        }
-                        thumb={
-                            <TouchableOpacity
-                                onPress={()=>{navigate("UserInfo",{
-                                    IsLoginUser :false,
-                                    UserId : '100'
-                                })}}
-                            >
-                                <Image source={require('./head.jpg')} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
-                            </TouchableOpacity>
-                        }
-                    />
-
-                    <Card.Body style={{paddingLeft:15}}>
-                        <Text>{item.item.Content}</Text>
-                    </Card.Body>
-                    <Card.Footer content = {"上 10000, 下 200"} extra={item.item.PostTime} />
-                </Card>
+                <CommentItem
+                    key={item.item.key}
+                    item={item.item}
+                    navigation={this.props.navigation}
+                />
             );
         }
 
