@@ -45,8 +45,11 @@ class SettingPanel extends Component{
     requestLogout = (sessionId)=>{
         const {Logout} = this.props;
         const {goBack} = this.props.navigation;
-        httpRequest.post('/logout', {
-            session_id:sessionId
+        httpRequest.get('/accounts/logout', {
+            params:{
+                session_id:sessionId
+            }
+
         })
             .then((response) => {
                 let data = response.data;

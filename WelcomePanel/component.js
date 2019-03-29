@@ -65,14 +65,16 @@ class WelcomePanel extends Component{
         let phone = this._phoneWrapper(Phone);
         let password = isMD5?Password:md5(Password);
         const {changeToLoginState} = this.props;
-        httpRequest.post('/login', {
-            tel:phone,
-            password:password
+        httpRequest.get('/accounts/login', {
+            params:{
+                phone_number:phone,
+                password:password
+            }
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
-                    console.log(data['session_id']);
+                    data = data.data;
                     changeToLoginState(data['session_id'],data.userId,data.username,data.iconUrl,phone,data.isCheck===1);
                     storage.save({
                         key:'loginUser',
