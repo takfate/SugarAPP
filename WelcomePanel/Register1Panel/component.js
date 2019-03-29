@@ -66,8 +66,10 @@ class Register1Panel extends Component{
 
     requestGetVerCode = () => {
         let phone = this._phoneWrapper(this.state.Phone);
-        httpRequest.post('/getCode',{
-            tel:phone
+        httpRequest.get('/accounts/code',{
+            params: {
+                phone_number:phone
+            }
         })
             .then((response)=> {
                 let data = response.data;
@@ -81,6 +83,8 @@ class Register1Panel extends Component{
             })
             .catch( (error) => {
                 Toast.fail('网络好像有问题~');
+                alert(error)
+
             });
     };
 

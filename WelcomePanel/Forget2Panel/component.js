@@ -39,9 +39,9 @@ class Forget2Panel extends Component{
         const {params} = this.props.navigation.state;
         const {goBack} = this.props.navigation;
         let newPassword = md5(this.state.newPassword);
-        httpRequest.post('/alterPassword', {
-            tel:params.Phone,
-            verifyCode:params.VerCode,
+        httpRequest.post('/accounts/alter/password', {
+            phone_number:params.Phone,
+            code:params.VerCode,
             password : newPassword
         })
             .then((response) => {

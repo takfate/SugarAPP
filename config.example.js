@@ -1,2 +1,2 @@
-export const BaseUrl = "http://IP or domain";
-export const wsUrl = "wss://IP or domain";
+export const BaseUrl = "http://127.0.0.1";
+export const wsUrl = "ws://127.0.0.1";

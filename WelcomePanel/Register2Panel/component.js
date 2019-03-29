@@ -45,11 +45,11 @@ class Register2Panel extends Component{
         const {params}  = this.props.navigation.state;
         let nickname = this.state.NickName;
         let password = md5(this.state.Password);
-        httpRequest.post('/register', {
-            tel:params.Phone,
+        httpRequest.post('/accounts/register', {
+            phone_number:params.Phone,
             username: nickname,
             password:password,
-            verifyCode : params.VerCode
+            code : params.VerCode
         })
             .then((response) => {
                 let data = response.data;
