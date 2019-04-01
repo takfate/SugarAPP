@@ -96,14 +96,16 @@ class SchoolTabPanel extends Component{
 
     requestGetArticleList = (Data,sessionId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getFromXGetNArticle', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/school/articles', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            }
+
         })
             .then((response) => {
                 let data = response.data;
-
                 if (data['code'] === 0) {
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));

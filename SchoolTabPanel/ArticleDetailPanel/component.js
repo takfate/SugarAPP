@@ -78,15 +78,16 @@ class CommentListPanel extends Component {
 
     requestGetCommentList = (Data,sessionId,articleId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/GetFromXGetNComment', {
-            session_id:sessionId,
-            articleId:articleId,
-            x:x,
-            n:n
+        httpRequest.get('/school/article/comments', {
+            params:{
+                session_id:sessionId,
+                article_id:articleId,
+                begin_id:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
-
                 if (data['code'] === 0) {
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
@@ -100,6 +101,7 @@ class CommentListPanel extends Component {
                 }
             })
             .catch((error) => {
+                alert(error);
                 Toast.fail('网络好像有问题~');
             });
     };
@@ -207,24 +209,29 @@ class ArticleDetailPanel extends Component{
     }
 
     requestArticleInfo = (seesionId,articleId)=>{
-        httpRequest.post('/userGetArticle', {
-            session_id : seesionId,
-            articleId :articleId
+        httpRequest.get('/school/article', {
+            params:{
+                session_id : seesionId,
+                article_id :articleId
+            }
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
+                    // alert(JSON.stringify(data));
                     this.setState({
                         ArticleUrl: data['contentUrl'],
                         CommentCount : data['comNumber'],
-                        Collected : data['favorite']===1
+                        Collected : data['collected']
                     })
                 } else {
                     Toast.fail(data['msg']);
                 }
             })
             .catch((error) => {
-                Toast.fail('网络好像有问题~');
+                // alert(223213);
+                Toast.fail('网络好像有问题1~');
             });
     };
 
@@ -258,7 +265,7 @@ class ArticleDetailPanel extends Component{
                 }
             })
             .catch((error) => {
-                Toast.fail('网络好像有问题~');
+                Toast.fail('网络好像有问题2~');
             });
     };
 
@@ -278,7 +285,7 @@ class ArticleDetailPanel extends Component{
                 }
             })
             .catch((error) => {
-                Toast.fail('网络好像有问题~');
+                Toast.fail('网络好像有问题3~');
             });
     };
 
@@ -288,9 +295,9 @@ class ArticleDetailPanel extends Component{
 
     requestAddArticleComment = (sessionId,ArticleId,Content)=>{
         Toast.loading('正在评论',0);
-        httpRequest.post('/addComment', {
+        httpRequest.post('/school/article/comment', {
             session_id:sessionId,
-            articleId:ArticleId,
+            article_id:ArticleId,
             content:Content
         })
             .then((response) => {
@@ -304,7 +311,7 @@ class ArticleDetailPanel extends Component{
                 }
             })
             .catch((error) => {
-                Toast.fail('网络好像有问题~');
+                Toast.fail('网络好像有问题4~');
             });
     };
 
