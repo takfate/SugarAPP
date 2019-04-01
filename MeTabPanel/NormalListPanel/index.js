@@ -47,14 +47,17 @@ export class MyWatchListPanel extends Component{
 
     requestGetMyWatchList = (Data,sessionId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getFollowList', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/accounts/following', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
@@ -68,7 +71,7 @@ export class MyWatchListPanel extends Component{
                 }
             })
             .catch((error) => {
-                // alert(error);
+                alert(error);
                 Toast.fail('网络好像有问题~');
             });
     };
@@ -170,7 +173,7 @@ export class WatchMeListPanel extends Component{
 
     _dataWrapper = (initData) =>{
         return {
-            key : initData['followMeId '].toString(),
+            key : initData['followMeId'].toString(),
             UserNickName :initData['username'],
             UserImageUrl : initData['iconUrl']
         };
@@ -178,14 +181,18 @@ export class WatchMeListPanel extends Component{
 
     requestGetWatchMeList = (Data,sessionId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getFollowMeList', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/accounts/follower', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
+                    // alert(JSON.stringify(data));
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
@@ -199,7 +206,7 @@ export class WatchMeListPanel extends Component{
                 }
             })
             .catch((error) => {
-                // alert(error);
+                alert(error);
                 Toast.fail('网络好像有问题~');
             });
     };
