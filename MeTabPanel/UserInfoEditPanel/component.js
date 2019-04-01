@@ -72,22 +72,24 @@ class UserInfoEditPanel extends Component{
     }
 
     requestGetMyInfo = (sessionId)=>{
-        httpRequest.post('/getUserInfoBySessionId', {
-            session_id:sessionId
+        httpRequest.get('/accounts/info', {
+            params:{
+                session_id:sessionId
+            },
         })
             .then((response) => {
                 let data = response.data;
-                // alert(JSON.stringify(data));
                 if (data['code'] === 0) {
+                    data = data.data;
                     this.setState({
                         HeadImageUrl : data['iconUrl'],
                         NickName : data['username'],
                         Gender  : data['gender'],
-                        Age : data['age']===null?'':data['age'].toString(),
+                        Age : data['age'],
                         Job : data['job'],
                         Location : data['area'],
-                        Height: data['height']===null?'':data['height'].toString(),
-                        Weight : data['weight']===null?'':data['weight'].toString(),
+                        Height: data['height']===0?'':data['height'].toString(),
+                        Weight : data['weight']===0?'':data['weight'].toString(),
                         Score : data['integral']
                     });
                 } else {
@@ -112,7 +114,7 @@ class UserInfoEditPanel extends Component{
     };
 
     requestSaveInfo = (sessionId,NickName,Gender,Height,Weight,Location,Job,Age) => {
-        httpRequest.post('/alterUserInfo', {
+        httpRequest.post('/accounts/alter', {
             session_id:sessionId,
             username:NickName,
             gender:Gender,
@@ -146,13 +148,6 @@ class UserInfoEditPanel extends Component{
         return(
             <ScrollView style={UserInfoEditCss.MainView}>
                 <List >
-                    <List.Item
-                        extra={<Image source={{uri:makeCommonImageUrl(this.state.HeadImageUrl)}} style={UserInfoEditCss.HeaderImage}/>}
-                        onClick={()=>{}}
-                        arrow="horizontal"
-                    >
-                        头像
-                    </List.Item>
                     <List.Item
                         extra={this.state.NickName}
                         onClick={()=>{navigate('NickNameEdit',{onUpdate:this._updateInfo,data:this.state.NickName})}}

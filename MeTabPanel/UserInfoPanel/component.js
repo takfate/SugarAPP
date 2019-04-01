@@ -72,12 +72,15 @@ class MyInfoPanel extends Component {
 
 
     requestGetMyInfo = (sessionId)=>{
-        httpRequest.post('/getUserInfoBySessionId', {
-            session_id:sessionId
+        httpRequest.get('/accounts/info', {
+            params:{
+                session_id:sessionId
+            },
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
                     this.setState({
                         HeadImageUrl : data['iconUrl'],
                         NickName : data['username'],
