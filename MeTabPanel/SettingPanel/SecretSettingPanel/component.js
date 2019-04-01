@@ -17,6 +17,16 @@ const SecretSettingCss = StyleSheet.create({
     }
 });
 
+const FrontToBack = {
+    showPhone:"show_phone_number",
+    showGender:"show_gender",
+    showAge : "show_age",
+    showJob : "show_job",
+    showArea : "show_area",
+    showHeight : "show_height",
+    showWeight : "show_weight"
+};
+
 function mapStateToProps(state) {
     return state.MainF;
 }
@@ -91,7 +101,7 @@ class SecretSettingPanel extends Component{
             show_area : this.state.showArea,
             show_job : this.state.showJob,
         };
-        Data[key]=value;
+        Data[FrontToBack[key]]=value;
         Data.session_id=sessionId;
         httpRequest.post('/accounts/alter/privacy', Data)
             .then((response) => {
