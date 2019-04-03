@@ -59,10 +59,10 @@ class ArticleCommentItemPanel extends Component {
     };
 
     requestValueArticleComment = (sessionId,commentId,isLike)=> {
-        httpRequest.post('/alterCommentLikes', {
+        httpRequest.post('/school/article/comments/value', {
             session_id:sessionId,
-            commentId:commentId,
-            isLike:isLike
+            article_comment_id:commentId,
+            value:isLike
         })
             .then((response) => {
                 let data = response.data;
