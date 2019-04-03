@@ -159,13 +159,16 @@ class OtherUserInfoPanel extends  Component{
     }
 
     requestGetUserInfo = (sessionId,UserId)=>{
-        httpRequest.post('/getOtherUserInfo', {
-            session_id:sessionId,
-            otherUserId:UserId
+        httpRequest.get('/accounts/info', {
+            params:{
+                session_id:sessionId,
+                other_user_id:UserId
+            }
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
                     this.setState({
                         HeadImageUrl : data['iconUrl'],
                         NickName : data['username'],
@@ -175,8 +178,8 @@ class OtherUserInfoPanel extends  Component{
                         Location : data['area'],
                         Height: data['height'],
                         Weight : data['weight'],
-                        Score : data['integral'],
-                        Focus : data['isFollow']===1
+                        Score : data['level'],
+                        Focus : data['isFollow']
                     });
                 } else {
                     Toast.fail(data['msg']);
@@ -195,9 +198,9 @@ class OtherUserInfoPanel extends  Component{
     }
 
     requestFocusOtherUser = (sessionId,UserId)=>{
-        httpRequest.post('/addFollow', {
+        httpRequest.post('/accounts/following/follow', {
             session_id:sessionId,
-            followId : UserId
+            other_user_id : UserId
         })
             .then((response) => {
                 let data = response.data;
@@ -213,9 +216,9 @@ class OtherUserInfoPanel extends  Component{
     };
 
     requestUnfocusOtherUser = (sessionId,UserId)=>{
-        httpRequest.post('/removeFollow', {
+        httpRequest.post('/accounts/following/ignore', {
             session_id:sessionId,
-            followId : UserId
+            other_user_id : UserId
         })
             .then((response) => {
                 let data = response.data;
@@ -291,6 +294,7 @@ class UserInfoPanel extends Component{
     });
 
     render(){
+        // alert(this.props.navigation.state.params.isLoginUser);
         const {sessionId,navigation} = this.props;
         if(this.props.navigation.state.params.isLoginUser){
             return <MyInfoPanel sessionId={sessionId} navigation={navigation}/>;
