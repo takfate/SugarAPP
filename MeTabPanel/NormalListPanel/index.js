@@ -338,15 +338,18 @@ export class MyCollectedArticleListPanel extends Component{
 
     requestGetMyCollectedArticleList = (Data,sessionId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getFavoriteArticle', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/school/articles/user-collected', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            },
         })
             .then((response) => {
                 let data = response.data;
 
                 if (data['code'] === 0) {
+                    data = data.data;
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
@@ -499,14 +502,17 @@ export class MyCommentListPanel extends Component{
 
     requestGetMyArticleCommentList = (Data,sessionId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getCommentByUserId', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/school/articles/user-comments', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            },
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }

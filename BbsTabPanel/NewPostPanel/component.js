@@ -72,22 +72,15 @@ class NewPostPanel extends Component{
 
     _submitPost = ()=>{
         const {sessionId} = this.props;
-        this.requestNewTopic(sessionId,this.state.TextContent,[]);
+        this.requestNewTopic(sessionId,this.state.TextContent);
     };
 
-    _updateImageList = (files, type, index) => {
-        console.log(files, type, index);
-        this.setState({
-            ImageList : files,
-        });
-    };
 
-    requestNewTopic = (sessionId,Content,Images)=>{
+    requestNewTopic = (sessionId,Content)=>{
         Toast.loading('正在发布');
-        httpRequest.post('/addTopic', {
+        httpRequest.post('/bbs/topic/publish', {
             session_id:sessionId,
             content : Content,
-            pictureList:JSON.stringify(Images)
         })
             .then((response) => {
                 let data = response.data;
@@ -116,14 +109,6 @@ class NewPostPanel extends Component{
                             count={300}
                             value={this.state.TextContent}
                             onChange={this._updateTextContent}
-                        />
-                    </View>
-
-                    <WhiteSpace size="lg" />
-                    <View style={{paddingLeft:10,paddingRight:10}}>
-                        <ImagePicker
-                            files={this.state.ImageList}
-                            onChange={this._updateImageList}
                         />
                     </View>
                 </ScrollView>

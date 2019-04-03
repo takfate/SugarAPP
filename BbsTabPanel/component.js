@@ -63,8 +63,7 @@ class BbsTabPanel extends Component{
             UserImageUrl : initData['iconUrl'],
             LastPostTime : initData['lastTime'],
             Content : initData['content'],
-            Images : [initData['picture1'],initData['picture2'],initData['picture3']],
-            CommentCount : initData['replyNum']+initData['comNum']
+            CommentCount : initData['replyCount']
         };
     };
 
@@ -79,10 +78,13 @@ class BbsTabPanel extends Component{
 
     requestGetTopicList = (Data,sessionId,existTopicList,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getLastTopic', {
-            session_id:sessionId,
-            topicIdList:JSON.stringify(existTopicList),
-            n:n
+        httpRequest.get('/bbs/topics', {
+            params:{
+                session_id:sessionId,
+                topic_id_list:JSON.stringify(existTopicList),
+                need_number:n
+            }
+
         })
             .then((response) => {
                 let data = response.data;

@@ -143,11 +143,14 @@ class BbsSearchPanel extends Component{
 
     requestSearchTopic = (Data,sessionId,Content,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/searchTopic', {
-            session_id:sessionId,
-            keyword :Content ,
-            x:x,
-            n:n
+        httpRequest.get('/bbs/topics/search', {
+            params:{
+                session_id:sessionId,
+                content :Content ,
+                begin_id:x,
+                need_number:n
+            }
+
         })
             .then((response) => {
                 let data = response.data;

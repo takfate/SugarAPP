@@ -45,10 +45,10 @@ class PostMainItemPanel extends Component {
     };
 
     requestValueTopic = (sessionId,topicId,isLike)=>{
-        httpRequest.post('/alterTopicLikes', {
+        httpRequest.post('/bbs/topic/value', {
             session_id:sessionId,
-            topicId:topicId,
-            isLike:isLike
+            topic_id:topicId,
+            value:isLike
         })
             .then((response) => {
                 let data = response.data;

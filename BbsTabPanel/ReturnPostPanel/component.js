@@ -69,23 +69,15 @@ class ReturnPostPanel extends Component{
     _submitPost = ()=>{
         const {sessionId} = this.props;
         const {params} = this.props.navigation.state;
-        this.requestReturnTopic(sessionId,params.topicId,this.state.TextContent,[]);
+        this.requestReturnTopic(sessionId,params.topicId,this.state.TextContent);
     };
 
-    _updateImageList = (files, type, index) => {
-        console.log(files, type, index);
-        this.setState({
-            ImageList : files,
-        });
-    };
-
-    requestReturnTopic = (sessionId,topicId,Content,Images)=>{
+    requestReturnTopic = (sessionId,topicId,Content)=>{
         Toast.loading('正在发布');
-        httpRequest.post('/addReply', {
+        httpRequest.post('/bbs/topic/lord-reply/publish', {
             session_id:sessionId,
-            topicId : topicId,
+            topic_id : topicId,
             content : Content,
-            pictureList:JSON.stringify(Images)
         })
             .then((response) => {
                 let data = response.data;
@@ -114,14 +106,6 @@ class ReturnPostPanel extends Component{
                             count={300}
                             value={this.state.TextContent}
                             onChange={this._updateTextContent}
-                        />
-                    </View>
-
-                    <WhiteSpace size="lg" />
-                    <View style={{paddingLeft:10,paddingRight:10}}>
-                        <ImagePicker
-                            files={this.state.ImageList}
-                            onChange={this._updateImageList}
                         />
                     </View>
                 </ScrollView>

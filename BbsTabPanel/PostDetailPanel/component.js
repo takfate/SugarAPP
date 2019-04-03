@@ -78,11 +78,14 @@ class SubPostListPanel extends Component {
 
     requestGetPostCommentList = (Data,sessionId,replyId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getSubReplyFromXGetN', {
-            session_id:sessionId,
-            replyId:replyId,
-            x:x,
-            n:n
+        httpRequest.get('/bbs/topic/layer-reply', {
+            params:{
+                session_id:sessionId,
+                topic_lord_reply_id:replyId,
+                begin_floor:x,
+                need_number:n
+            }
+
         })
             .then((response) => {
                 let data = response.data;
@@ -105,9 +108,9 @@ class SubPostListPanel extends Component {
 
     requestNewPostCommment = (sessionId,replyId,Content) =>{
         Toast.loading('正在发表');
-        httpRequest.post('/addSubReply', {
+        httpRequest.post('/bbs/topic/layer-reply/publish', {
             session_id : sessionId,
-            replyId : replyId,
+            topic_lord_reply_id : replyId,
             content :Content
         })
             .then((response) => {
@@ -275,9 +278,12 @@ class PostDetailPanel extends Component{
 
     requestGetTopicDetail = (Data,sessionId,topicId)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getTopicByTopicId', {
-            session_id:sessionId,
-            topicId:topicId
+        httpRequest.get('/bbs/topic', {
+            params:{
+                session_id:sessionId,
+                topic_id:topicId
+            }
+
         })
             .then((response) => {
                 let data = response.data;
@@ -292,7 +298,6 @@ class PostDetailPanel extends Component{
                         PostTime : resData['topicTime'],
                         Content : resData['content'],
                         Collected : resData['favorite']===1,
-                        Images : [resData['picture1'],resData['picture2'],resData['picture3'],resData['picture4'],resData['picture5']],
                         Score : resData['likes']
                     });
                     // alert(JSON.stringify(Data));
@@ -307,11 +312,14 @@ class PostDetailPanel extends Component{
     };
 
     requestGetTopicPostList = (Data,sessionId,topicId,x,n) =>{
-        httpRequest.post('/getReplyFromXGetN', {
-            session_id:sessionId,
-            topicId:topicId,
-            x:x,
-            n:n
+        httpRequest.get('/bbs/topic/lord-reply', {
+            params:{
+                session_id:sessionId,
+                topic_id:topicId,
+                begin_floor:x,
+                need_number:n
+            }
+
         })
             .then((response) => {
                 let data = response.data;
