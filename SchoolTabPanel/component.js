@@ -90,7 +90,7 @@ class SchoolTabPanel extends Component{
             Content : initData['content'],
             PostTime : initData['articleTime'],
             ImageUrl : initData['imgUrl'],
-            ViewCount : initData['views']
+            ViewCount : initData['views'].toString()
         };
     };
 

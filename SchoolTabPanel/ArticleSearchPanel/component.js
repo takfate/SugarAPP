@@ -119,12 +119,14 @@ class ArticleSearchPanel extends Component{
 
     requestSearchArticle = (Data,sessionId,Content,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/searchArticle', {
-            session_id:sessionId,
-            labelName : JSON.stringify([]),
-            keyword :Content ,
-            x:x,
-            n:n
+        httpRequest.get('/school/articles/search', {
+            params:{
+                session_id:sessionId,
+                content :Content ,
+                begin_id:x,
+                need_number:n
+            }
+
         })
             .then((response) => {
                 let data = response.data;
