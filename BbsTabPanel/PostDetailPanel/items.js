@@ -64,9 +64,9 @@ class PostMainItemPanel extends Component {
     };
 
     requestDeleteTopic = (sessionId,TopicId)=>{
-        httpRequest.post('/removeTopic', {
+        httpRequest.post('/bbs/topic/remove', {
             session_id:sessionId,
-            topicId :TopicId
+            topic_id :TopicId
         })
             .then((response) => {
                 let data = response.data;
@@ -82,9 +82,9 @@ class PostMainItemPanel extends Component {
     };
 
     requestCollectTopic = (sessionId,TopicId)=>{
-        httpRequest.post('/addFavoriteTopic', {
+        httpRequest.post('/bbs/topic/user-collect', {
             session_id:sessionId,
-            topicId:TopicId
+            topic_id:TopicId
         })
             .then((response) => {
                 let data = response.data;
@@ -100,9 +100,9 @@ class PostMainItemPanel extends Component {
     };
 
     requestUncollectTopic = (sessionId,TopicId)=>{
-        httpRequest.post('/removeFavoriteTopic', {
+        httpRequest.post('/bbs/topic/user-cancel-collect', {
             session_id:sessionId,
-            topicId:TopicId
+            topic_id:TopicId
         })
             .then((response) => {
                 let data = response.data;
@@ -263,10 +263,10 @@ class PostCommonItemPanel extends Component {
 
 
     requestValuePost = (sessionId,postId,isLike) => {
-        httpRequest.post('/alterReplyLikes', {
+        httpRequest.post('/bbs/topic/lord-reply/value', {
             session_id:sessionId,
-            replyId:postId,
-            isLike:isLike
+            topic_lord_reply_id:postId,
+            value:isLike
         })
             .then((response) => {
                 let data = response.data;
@@ -282,9 +282,9 @@ class PostCommonItemPanel extends Component {
     };
 
     requestDeletePost = (sessionId,PostId)=>{
-        httpRequest.post('/removeReply', {
+        httpRequest.post('/bbs/topic/lord-reply/remove', {
             session_id:sessionId,
-            replyId:PostId
+            topic_lord_reply_id:PostId
         })
             .then((response) => {
                 let data = response.data;
@@ -462,10 +462,10 @@ class PostCommentItemPanel extends Component {
     };
 
     requestValuePostComment = (sessionId,CommentId,isLike)=> {
-        httpRequest.post('/alterSubReplyLikes', {
+        httpRequest.post('/bbs/topic/layer-reply/value', {
             session_id:sessionId,
-            subreplyId:CommentId,
-            isLike:isLike
+            topic_layer_reply_id:CommentId,
+            value:isLike
         })
             .then((response) => {
                 let data = response.data;

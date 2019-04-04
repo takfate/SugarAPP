@@ -231,7 +231,7 @@ class ArticleDetailPanel extends Component{
             })
             .catch((error) => {
                 // alert(223213);
-                Toast.fail('网络好像有问题1~');
+                Toast.fail('网络好像有问题~');
             });
     };
 
@@ -252,9 +252,9 @@ class ArticleDetailPanel extends Component{
     requestCollectArticle = ()=>{
         const {sessionId}  = this.props;
         const {params} = this.props.navigation.state;
-        httpRequest.post('/addFavorite', {
+        httpRequest.post('/school/articles/user-collect', {
             session_id:sessionId,
-            articleId:params.ArticleId
+            article_id:params.ArticleId
         })
             .then((response) => {
                 let data = response.data;
@@ -265,16 +265,16 @@ class ArticleDetailPanel extends Component{
                 }
             })
             .catch((error) => {
-                Toast.fail('网络好像有问题2~');
+                Toast.fail('网络好像有问题~');
             });
     };
 
     requestCancelCollectArticle = ()=>{
         const {sessionId}  = this.props;
         const {params} = this.props.navigation.state;
-        httpRequest.post('/removeFavorite', {
+        httpRequest.post('/school/articles/user-cancel-collect', {
             session_id:sessionId,
-            articleId:params.ArticleId
+            article_id:params.ArticleId
         })
             .then((response) => {
                 let data = response.data;
@@ -285,7 +285,7 @@ class ArticleDetailPanel extends Component{
                 }
             })
             .catch((error) => {
-                Toast.fail('网络好像有问题3~');
+                Toast.fail('网络好像有问题~');
             });
     };
 
@@ -311,7 +311,7 @@ class ArticleDetailPanel extends Component{
                 }
             })
             .catch((error) => {
-                Toast.fail('网络好像有问题4~');
+                Toast.fail('网络好像有问题~');
             });
     };
 

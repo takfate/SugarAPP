@@ -269,7 +269,6 @@ class PostDetailPanel extends Component{
             UserImageUrl : initData['iconUrl'],
             PostTime : initData['replyTime'],
             Content : initData['content'],
-            Images : [initData['picture1'],initData['picture2'],initData['picture3'],initData['picture4'],initData['picture5']],
             Score : initData['likes'],
             CommentCount : initData['comNumber']
         };
@@ -297,7 +296,7 @@ class PostDetailPanel extends Component{
                         UserImageUrl : resData['iconUrl'],
                         PostTime : resData['topicTime'],
                         Content : resData['content'],
-                        Collected : resData['favorite']===1,
+                        Collected : resData['favorite'],
                         Score : resData['likes']
                     });
                     // alert(JSON.stringify(Data));

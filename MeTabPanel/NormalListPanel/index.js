@@ -571,7 +571,7 @@ export class MyCommentListPanel extends Component{
     }
 }
 
-export class MyPublishedTopicListPanel extends Component{
+export class MyPublishedTopicListPanel extends Component {
 
     static navigationOptions = {
         headerTitle:"我发布的话题",
@@ -675,14 +675,17 @@ export class MyPublishedTopicListPanel extends Component{
 
     requestGetMyPublishedTopicList = (Data,sessionId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getTopicByUserId', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/bbs/topics/user-published', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
@@ -807,10 +810,12 @@ export class MyCollectedTopicListPanel extends Component{
 
     requestGetMyCollectedTopicList = (Data,sessionId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getFavoriteTopic', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/bbs/topics/user-collected', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
@@ -1021,10 +1026,12 @@ export class MyResponseListPanel extends Component{
 
     requestGetMyResponseList = (Data,sessionId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getUserReplyAndSubReply', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/bbs/topics/user-replies', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
