@@ -339,7 +339,7 @@ class ArticleDetailPanel extends Component{
                             height:'100%',
                             width:'100%',
                         }}
-                        source={{uri:makeCommonImageUrl(this.state.ArticleUrl)}}
+                        source={{uri:makeCommonImageUrl(this.state.ArticleUrl)+"?session_id="+sessionId}}
                         startInLoadingState={true}
                     />
                     <View

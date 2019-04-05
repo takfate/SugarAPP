@@ -665,10 +665,9 @@ export class MyPublishedTopicListPanel extends Component {
         return {
             key : initData['topicId'].toString(),
             Content : initData['content'],
-            CommentCount : initData['replyNum'] + initData['comNum'],
+            CommentCount : initData['replyCount'],
             Score : initData['likes'],
             PostTime : initData['topicTime'],
-            ImageList : [initData['picture1'],initData['picture2'],initData['picture3']],
             CollectedCount : initData['favoriteNum']
         };
     };
@@ -800,7 +799,6 @@ export class MyCollectedTopicListPanel extends Component{
         return {
             key : initData['topicId'].toString(),
             Content : initData['content'],
-            ImageList : [initData['picture1'],initData['picture2'],initData['picture3']],
             UserId  : initData['userId'],
             UserImageUrl : initData['iconUrl'],
             UserNickName : initData['username'],
@@ -820,6 +818,7 @@ export class MyCollectedTopicListPanel extends Component{
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
@@ -1036,6 +1035,7 @@ export class MyResponseListPanel extends Component{
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
@@ -1050,6 +1050,7 @@ export class MyResponseListPanel extends Component{
                 }
             })
             .catch((error) => {
+                alert(error);
                 Toast.fail('网络好像有问题~');
             });
     };
