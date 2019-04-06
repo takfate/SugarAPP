@@ -75,7 +75,7 @@ class WelcomePanel extends Component{
                 let data = response.data;
                 if (data['code'] === 0) {
                     data = data.data;
-                    changeToLoginState(data['session_id'],data.userId,data.username,data.iconUrl,phone,data.isCheck===1);
+                    changeToLoginState(data['session_id'],data.userId,data.username,data.iconUrl,phone,data.isCheck);
                     storage.save({
                         key:'loginUser',
                         data:{

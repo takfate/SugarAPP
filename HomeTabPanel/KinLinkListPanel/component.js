@@ -40,8 +40,10 @@ class KinLinkListPanel extends Component{
 
     requestGetKinList = (sessionId)=>{
         Toast.loading('正在获取');
-        httpRequest.post('/getUserFamilyList', {
-            session_id:sessionId
+        httpRequest.get('/home/families', {
+            params:{
+                session_id:sessionId
+            }
         })
             .then((response) => {
                 let data = response.data;
@@ -51,7 +53,7 @@ class KinLinkListPanel extends Component{
                         kinList.push({
                             Phone:data.data[i]['tel'],
                             CallName:data.data[i]['nickname'],
-                            key : data.data[i]['familyId'],
+                                key : data.data[i]['familyId'],
                         });
                     }
                     this.setState({KinList:kinList});

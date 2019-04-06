@@ -73,8 +73,10 @@ class KinLinkPanel extends Component{
 
     requestGetVerCode = () => {
         let phone = this._phoneWrapper(this.state.Phone);
-        httpRequest.post('/getCode',{
-            tel:phone
+        httpRequest.get('/accounts/code',{
+            params:{
+                phone_number:phone,
+            }
         })
             .then((response)=> {
                 let data = response.data;
@@ -93,11 +95,11 @@ class KinLinkPanel extends Component{
 
     requestLinkKin = (sessionId,CallName,Phone,VerCode)=>{
         const {goBack} = this.props.navigation;
-        httpRequest.post('/alterUserFamily',{
+        httpRequest.post('/home/family/link',{
             session_id:sessionId,
-            nickname:CallName,
-            tel:Phone,
-            verifyCode:VerCode
+            call_name:CallName,
+            phone_number:Phone,
+            code:VerCode
         })
             .then((response)=> {
                 let data = response.data;

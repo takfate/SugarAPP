@@ -114,7 +114,7 @@ class HomeTabPanel extends Component{
 
     requestAttend = (sessionId)=>{
         Toast.loading('正在签到');
-        httpRequest.post('/alterUserCheckTime', {
+        httpRequest.post('/home/checkin', {
             session_id:sessionId,
         })
             .then((response) => {
@@ -202,10 +202,12 @@ class HomeTabPanel extends Component{
 
     requestHealthRecord = (sessionId,x,n)=>{
         let Data = [];
-        httpRequest.post('/getHealthRecords', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/home/health/records', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
@@ -223,9 +225,11 @@ class HomeTabPanel extends Component{
     requestGetSugarRecord = (sessionId)=>{
         let nowDate = new Date();
         let bloodDate = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
-        httpRequest.post('/getUserOneDayBlood', {
-            session_id : sessionId,
-            bloodDate : bloodDate
+        httpRequest.get('/home/health/record', {
+            params:{
+                session_id : sessionId,
+                record_date : bloodDate
+            }
         })
             .then((response) => {
                 let data = response.data;
@@ -234,6 +238,7 @@ class HomeTabPanel extends Component{
                 let newDda = [];
                 let newDdi = [];
                 if (data['code'] === 0) {
+                    data = data.data;
                     for (let key in data.level){
                         if(data.level[key]!=='0'){
                             newDdx.push(period[key]);
@@ -290,11 +295,6 @@ class HomeTabPanel extends Component{
         this.requestGetSugarRecord(sessionId);
         this.requestHealthRecord(sessionId,0,5);
     };
-
-
-
-
-
 
 
     _renderCarouselItem = ({item, index}) =>{

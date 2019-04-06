@@ -105,16 +105,16 @@ class MoreHealthRecordPanel extends Component{
 
     requestGetHealthRecordList = (Data,sessionId,x,n)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getHealthRecords', {
-            session_id:sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/home/health/records', {
+            params:{
+                session_id:sessionId,
+                begin_id:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
-
                 if (data['code'] === 0) {
-
                     Data.push(this._dataWrapper(data.data));
                     this.setState({
                         Refreshing:false,

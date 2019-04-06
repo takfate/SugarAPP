@@ -81,12 +81,12 @@ class SugarRecordPanel extends Component{
     requestSaveSugarRecord = (sessionId,Period,bLevel,bTime,bloodDate)=>{
         const {goBack} = this.props.navigation;
         Toast.loading('正在添加');
-        httpRequest.post('/saveBloodSugar', {
+        httpRequest.post('/home/blood-sugar/record', {
             session_id:sessionId,
             period:Period,
-            bLevel:bLevel,
-            bTime:bTime,
-            bloodDate:bloodDate
+            blood_sugar_value:bLevel,
+            record_time:bTime,
+            record_date:bloodDate
         })
             .then((response) => {
                 let data = response.data;

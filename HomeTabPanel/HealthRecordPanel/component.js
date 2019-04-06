@@ -201,14 +201,14 @@ class HealthRecordPanel extends Component{
     requestSaveHealthRecord = (sessionId,insulin,sportTime,weight,bloodPressure,healthTime,healthDate)=>{
         const {goBack} = this.props.navigation;
         Toast.loading('正在添加');
-        httpRequest.post('/saveHealthRecords', {
+        httpRequest.post('/home/health/record', {
             session_id:sessionId,
             insulin:insulin,
-            sportTime:sportTime,
+            sport_time:sportTime,
             weight:weight,
-            bloodPressure:bloodPressure,
-            healthTime:healthTime,
-            healthDate:healthDate
+            blood_pressure:bloodPressure,
+            record_time:healthTime,
+            record_date:healthDate
         })
             .then((response) => {
                 let data = response.data;
