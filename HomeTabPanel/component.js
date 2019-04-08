@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity,FlatList,TouchableHighlight,RefreshControl  } from 'react-native';
 import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Grid,Toast,WingBlank} from 'antd-mobile';
 import Carousel from 'react-native-snap-carousel';
-import {UserImage} from '../CommonComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {GridImageURL,makeCommonImageUrl} from "../CommonComponent";
 import httpRequest from '../httpRequest';
@@ -151,51 +150,6 @@ class HomeTabPanel extends Component{
         };
     };
 
-    requestGetRecommendArticle = (sessionId)=>{
-        let Data = [];
-        httpRequest.post('/getRecommendArticle', {
-            session_id:sessionId,
-        })
-            .then((response) => {
-                let data = response.data;
-                if (data['code'] === 0) {
-                    for(let i=0;i<data.data.length;i++){
-                        Data.push(this._articleDataWrapper(data.data[i]));
-                    }
-                    this.setState({
-                        ArticleData:Data
-                    });
-                } else {
-                    Toast.fail(data['msg']);
-                }
-            })
-            .catch((error) => {
-                Toast.fail('网络好像有问题~');
-            });
-    };
-
-    requestGetRecommendTopic = (sessionId)=>{
-        let Data = [];
-        httpRequest.post('/getRecommendTopic', {
-            session_id:sessionId,
-        })
-            .then((response) => {
-                let data = response.data;
-                if (data['code'] === 0) {
-                    for(let i=0;i<data.data.length;i++){
-                        Data.push(this._topicDataWrapper(data.data[i]));
-                    }
-                    this.setState({
-                        TopicData : Data
-                    });
-                } else {
-                    Toast.fail(data['msg']);
-                }
-            })
-            .catch((error) => {
-                Toast.fail('网络好像有问题~');
-            });
-    };
 
     requestHealthRecord = (sessionId,x,n)=>{
         let Data = [];
@@ -270,8 +224,6 @@ class HomeTabPanel extends Component{
 
     componentDidMount(){
         const {sessionId} = this.props;
-        // this.requestGetRecommendArticle(sessionId);
-        // this.requestGetRecommendTopic(sessionId);
         this.requestGetSugarRecord(sessionId);
         this.requestHealthRecord(sessionId,0,5);
     }
@@ -287,8 +239,6 @@ class HomeTabPanel extends Component{
 
     _refresh = ()=>{
         const {sessionId} = this.props;
-        // this.requestGetRecommendArticle(sessionId);
-        // this.requestGetRecommendTopic(sessionId);
         this.requestGetSugarRecord(sessionId);
         this.requestHealthRecord(sessionId,0,5);
     };
@@ -363,6 +313,11 @@ class HomeTabPanel extends Component{
                 <View style={{height:55,flexDirection:'row',justifyContent:'space-between',
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
                     <Text style={{fontSize:18,color:'white'}}><Icon name="home" size={25}/>  糖家</Text>
+                    <Badge dot>
+                        <TouchableOpacity onPress={()=>{navigate("MessageList")}} style={{paddingRight:2}}>
+                            <Icon name="envelope" size={23} color="white"/>
+                        </TouchableOpacity>
+                    </Badge>
                 </View>
                 <ScrollView
                     style={{width:'100%',height:'100%'}}
@@ -384,70 +339,12 @@ class HomeTabPanel extends Component{
                     />
                     <Grid data={GridData}  onClick={this._gridOnClick} />
                     <WhiteSpace size="lg"/>
-                    {/*<Card full>*/}
-                        {/*<Card.Header title="推荐文章" />*/}
-                        {/*<Card.Body style={{paddingTop:0,paddingBottom:0}}>*/}
-                            {/*{this.state.ArticleData.map(item=>(*/}
-                                {/*<TouchableHighlight*/}
-                                    {/*onPress={()=>{navigate('ArticleDetail',{*/}
-                                        {/*ArticleId: item.key,*/}
-                                        {/*Title :item.Title*/}
-                                    {/*})}}*/}
-                                    {/*key={item.key}*/}
-                                {/*>*/}
-                                    {/*<Card full style={{borderBottomWidth:0}}>*/}
-                                        {/*<Card.Header*/}
-                                            {/*title={item.Title}*/}
-                                            {/*thumb={<Image source={{uri:makeCommonImageUrl(item.ImageUrl)}} style={HomeCss.ItemImage}/>}*/}
-                                        {/*/>*/}
-                                        {/*<Card.Footer content = {item.PostTime} extra={item.ViewCount}/>*/}
-                                    {/*</Card>*/}
-                                {/*</TouchableHighlight>*/}
-                            {/*))}*/}
-                        {/*</Card.Body>*/}
-                    {/*</Card>*/}
-                    {/*<WhiteSpace size='md'/>*/}
-                    {/*<Card full>*/}
-                        {/*<Card.Header title="推荐话题" />*/}
-                        {/*<Card.Body style={{paddingTop:0,paddingBottom:0}}>*/}
-                            {/*{this.state.TopicData.map(item=>(*/}
-                                {/*<TouchableHighlight onPress={()=>{navigate('PostDetail',{topicId:item.key})}} key={item.key}>*/}
-                                    {/*<Card full style={{borderBottomWidth:0}}>*/}
-                                        {/*<Card.Header*/}
-                                            {/*title={<View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>*/}
-                                                {/*<View style={{flex:1}}>*/}
-                                                    {/*<TouchableOpacity*/}
-                                                        {/*onPress={()=>this._navigateToUser(item.UserId)}*/}
-                                                    {/*>*/}
-                                                        {/*<Text style={{color:'black'}}>{item.UserNickName}</Text>*/}
-                                                    {/*</TouchableOpacity>*/}
-                                                    {/*<Text style={{fontSize:10}}>{item.LastPostTime}</Text>*/}
-                                                {/*</View>*/}
-                                                {/*<View style={{width:100,paddingLeft:15,flexDirection:'row',justifyContent:'flex-end'}}>*/}
-                                                    {/*<Icon name="comment" size={15}/>*/}
-                                                    {/*<Text style={{fontSize:12,marginLeft:3}}>{item.CommentCount}</Text>*/}
-                                                {/*</View>*/}
-                                            {/*</View>}*/}
-                                            {/*thumb={*/}
-                                                {/*<TouchableOpacity*/}
-                                                    {/*onPress={()=>this._navigateToUser(item.UserId)}*/}
-                                                {/*>*/}
-                                                    {/*<Image source={{uri:makeCommonImageUrl(item.UserImageUrl)}} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>*/}
-                                                {/*</TouchableOpacity>*/}
-                                            {/*}*/}
-                                        {/*/>*/}
+                    <Card full>
+                        <Card.Header title="推荐糖友" />
+                        <Card.Body style={{paddingTop:0,paddingBottom:0}}>
 
-                                        {/*<Card.Body >*/}
-                                            {/*<Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:15}}>*/}
-                                                {/*{item.Content}*/}
-                                            {/*</Text>*/}
-                                        {/*</Card.Body>*/}
-
-                                    {/*</Card>*/}
-                                {/*</TouchableHighlight>*/}
-                            {/*))}*/}
-                        {/*</Card.Body>*/}
-                    {/*</Card>*/}
+                        </Card.Body>
+                    </Card>
                 </ScrollView>
             </View>
         );

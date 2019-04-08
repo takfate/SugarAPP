@@ -81,7 +81,7 @@ class MeTabPanel extends Component{
                     alignItems:'center',paddingLeft:12,paddingRight:12,backgroundColor:"#108EE9"}}>
                     <Text style={{fontSize:18,color:'white'}}><Icon name="user" size={25}/>  我的</Text>
                     <TouchableOpacity onPress={()=>{navigate('Settings')}}>
-                        <Text style={{fontSize:18,color:'white'}} >设置</Text>
+                        <Icon name="gear" size={23} color="white"/>
                     </TouchableOpacity>
                 </View>
                 <ScrollView style={MeCss.MainView}>
@@ -107,10 +107,10 @@ class MeTabPanel extends Component{
                         <List.Item arrow='horizontal' onClick={()=>{navigate('WatchMeList',{sessionId:sessionId,userId:userId.toString()})}}>
                             <Text style={MeCss.CommonItemText}>关注我的人</Text>
                         </List.Item>
+                        <List.Item arrow='horizontal' onClick={()=>{}}>
+                            <Text style={MeCss.CommonItemText}>我的群组</Text>
+                        </List.Item>
 
-                        {/*<List.Item arrow='horizontal' onClick={()=>{}}>*/}
-                            {/*<Text style={MeCss.CommonItemText}>我的消息</Text>*/}
-                        {/*</List.Item>*/}
                     </List>
                     <WhiteSpace size="xl"/>
                     <List >
