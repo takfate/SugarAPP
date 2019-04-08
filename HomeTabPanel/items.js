@@ -101,10 +101,12 @@ class LongSugarChartPanel extends Component {
     }
 
     requestGetSugarRecord = (sessionId,x,n)=>{
-        httpRequest.post('/getBloodSugar', {
-            session_id : sessionId,
-            x:x,
-            n:n
+        httpRequest.get('/home/blood-sugar/records', {
+            params:{
+                session_id : sessionId,
+                begin_id:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
@@ -114,7 +116,7 @@ class LongSugarChartPanel extends Component {
                 let newDdx = [];
                 if (data['code'] === 0) {
                     for(let i=data.data.length-1;i>=0;i--){
-                        newAvead.push(parseFloat(data.data[i]['averageBlood']));
+                        newAvead.push(data.data[i]['averageBlood']);
                         newMaxd.push(data.data[i]['maxBlood']);
                         newMind.push(data.data[i]['minBlood']);
                         newDdx.push(data.data[i]['bloodDate'].split('-')[2])
@@ -130,6 +132,7 @@ class LongSugarChartPanel extends Component {
                 }
             })
             .catch((error) => {
+                alert(error);
                 Toast.fail('网络好像有问题~');
             });
     };

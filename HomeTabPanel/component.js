@@ -104,9 +104,6 @@ class HomeTabPanel extends Component{
                     this._submitAttend();
                 }
                 break;
-            case '智能医生':
-                navigate('SugarDoctor');
-                break;
             default :
                 return ;
         }
@@ -225,7 +222,7 @@ class HomeTabPanel extends Component{
     requestGetSugarRecord = (sessionId)=>{
         let nowDate = new Date();
         let bloodDate = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
-        httpRequest.get('/home/health/record', {
+        httpRequest.get('/home/blood-sugar/record', {
             params:{
                 session_id : sessionId,
                 record_date : bloodDate
@@ -273,8 +270,8 @@ class HomeTabPanel extends Component{
 
     componentDidMount(){
         const {sessionId} = this.props;
-        this.requestGetRecommendArticle(sessionId);
-        this.requestGetRecommendTopic(sessionId);
+        // this.requestGetRecommendArticle(sessionId);
+        // this.requestGetRecommendTopic(sessionId);
         this.requestGetSugarRecord(sessionId);
         this.requestHealthRecord(sessionId,0,5);
     }
@@ -290,8 +287,8 @@ class HomeTabPanel extends Component{
 
     _refresh = ()=>{
         const {sessionId} = this.props;
-        this.requestGetRecommendArticle(sessionId);
-        this.requestGetRecommendTopic(sessionId);
+        // this.requestGetRecommendArticle(sessionId);
+        // this.requestGetRecommendTopic(sessionId);
         this.requestGetSugarRecord(sessionId);
         this.requestHealthRecord(sessionId,0,5);
     };
@@ -356,7 +353,6 @@ class HomeTabPanel extends Component{
         const GridData = [
             {text:isAttend?"已签到" : "签到",icon:GridImageURL('attend')},
             {text:'糖导',icon:GridImageURL('guide')},
-            {text:'智能医生',icon:GridImageURL('doctor')},
             {text:'家属关联',icon:GridImageURL('link')},
             {text:'血糖记录',icon:GridImageURL('sugar')},
             {text:'每日健康记录',icon:GridImageURL('health')},
@@ -388,70 +384,70 @@ class HomeTabPanel extends Component{
                     />
                     <Grid data={GridData}  onClick={this._gridOnClick} />
                     <WhiteSpace size="lg"/>
-                    <Card full>
-                        <Card.Header title="推荐文章" />
-                        <Card.Body style={{paddingTop:0,paddingBottom:0}}>
-                            {this.state.ArticleData.map(item=>(
-                                <TouchableHighlight
-                                    onPress={()=>{navigate('ArticleDetail',{
-                                        ArticleId: item.key,
-                                        Title :item.Title
-                                    })}}
-                                    key={item.key}
-                                >
-                                    <Card full style={{borderBottomWidth:0}}>
-                                        <Card.Header
-                                            title={item.Title}
-                                            thumb={<Image source={{uri:makeCommonImageUrl(item.ImageUrl)}} style={HomeCss.ItemImage}/>}
-                                        />
-                                        <Card.Footer content = {item.PostTime} extra={item.ViewCount}/>
-                                    </Card>
-                                </TouchableHighlight>
-                            ))}
-                        </Card.Body>
-                    </Card>
-                    <WhiteSpace size='md'/>
-                    <Card full>
-                        <Card.Header title="推荐话题" />
-                        <Card.Body style={{paddingTop:0,paddingBottom:0}}>
-                            {this.state.TopicData.map(item=>(
-                                <TouchableHighlight onPress={()=>{navigate('PostDetail',{topicId:item.key})}} key={item.key}>
-                                    <Card full style={{borderBottomWidth:0}}>
-                                        <Card.Header
-                                            title={<View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>
-                                                <View style={{flex:1}}>
-                                                    <TouchableOpacity
-                                                        onPress={()=>this._navigateToUser(item.UserId)}
-                                                    >
-                                                        <Text style={{color:'black'}}>{item.UserNickName}</Text>
-                                                    </TouchableOpacity>
-                                                    <Text style={{fontSize:10}}>{item.LastPostTime}</Text>
-                                                </View>
-                                                <View style={{width:100,paddingLeft:15,flexDirection:'row',justifyContent:'flex-end'}}>
-                                                    <Icon name="comment" size={15}/>
-                                                    <Text style={{fontSize:12,marginLeft:3}}>{item.CommentCount}</Text>
-                                                </View>
-                                            </View>}
-                                            thumb={
-                                                <TouchableOpacity
-                                                    onPress={()=>this._navigateToUser(item.UserId)}
-                                                >
-                                                    <Image source={{uri:makeCommonImageUrl(item.UserImageUrl)}} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>
-                                                </TouchableOpacity>
-                                            }
-                                        />
+                    {/*<Card full>*/}
+                        {/*<Card.Header title="推荐文章" />*/}
+                        {/*<Card.Body style={{paddingTop:0,paddingBottom:0}}>*/}
+                            {/*{this.state.ArticleData.map(item=>(*/}
+                                {/*<TouchableHighlight*/}
+                                    {/*onPress={()=>{navigate('ArticleDetail',{*/}
+                                        {/*ArticleId: item.key,*/}
+                                        {/*Title :item.Title*/}
+                                    {/*})}}*/}
+                                    {/*key={item.key}*/}
+                                {/*>*/}
+                                    {/*<Card full style={{borderBottomWidth:0}}>*/}
+                                        {/*<Card.Header*/}
+                                            {/*title={item.Title}*/}
+                                            {/*thumb={<Image source={{uri:makeCommonImageUrl(item.ImageUrl)}} style={HomeCss.ItemImage}/>}*/}
+                                        {/*/>*/}
+                                        {/*<Card.Footer content = {item.PostTime} extra={item.ViewCount}/>*/}
+                                    {/*</Card>*/}
+                                {/*</TouchableHighlight>*/}
+                            {/*))}*/}
+                        {/*</Card.Body>*/}
+                    {/*</Card>*/}
+                    {/*<WhiteSpace size='md'/>*/}
+                    {/*<Card full>*/}
+                        {/*<Card.Header title="推荐话题" />*/}
+                        {/*<Card.Body style={{paddingTop:0,paddingBottom:0}}>*/}
+                            {/*{this.state.TopicData.map(item=>(*/}
+                                {/*<TouchableHighlight onPress={()=>{navigate('PostDetail',{topicId:item.key})}} key={item.key}>*/}
+                                    {/*<Card full style={{borderBottomWidth:0}}>*/}
+                                        {/*<Card.Header*/}
+                                            {/*title={<View style={{flexDirection:'row',alignItems:'center',width:'100%'}}>*/}
+                                                {/*<View style={{flex:1}}>*/}
+                                                    {/*<TouchableOpacity*/}
+                                                        {/*onPress={()=>this._navigateToUser(item.UserId)}*/}
+                                                    {/*>*/}
+                                                        {/*<Text style={{color:'black'}}>{item.UserNickName}</Text>*/}
+                                                    {/*</TouchableOpacity>*/}
+                                                    {/*<Text style={{fontSize:10}}>{item.LastPostTime}</Text>*/}
+                                                {/*</View>*/}
+                                                {/*<View style={{width:100,paddingLeft:15,flexDirection:'row',justifyContent:'flex-end'}}>*/}
+                                                    {/*<Icon name="comment" size={15}/>*/}
+                                                    {/*<Text style={{fontSize:12,marginLeft:3}}>{item.CommentCount}</Text>*/}
+                                                {/*</View>*/}
+                                            {/*</View>}*/}
+                                            {/*thumb={*/}
+                                                {/*<TouchableOpacity*/}
+                                                    {/*onPress={()=>this._navigateToUser(item.UserId)}*/}
+                                                {/*>*/}
+                                                    {/*<Image source={{uri:makeCommonImageUrl(item.UserImageUrl)}} style={{width:25,height:25,borderRadius:12,marginRight:10}}/>*/}
+                                                {/*</TouchableOpacity>*/}
+                                            {/*}*/}
+                                        {/*/>*/}
 
-                                        <Card.Body >
-                                            <Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:15}}>
-                                                {item.Content}
-                                            </Text>
-                                        </Card.Body>
+                                        {/*<Card.Body >*/}
+                                            {/*<Text style={{color:'black',marginLeft:15,marginRight:15,fontSize:15}}>*/}
+                                                {/*{item.Content}*/}
+                                            {/*</Text>*/}
+                                        {/*</Card.Body>*/}
 
-                                    </Card>
-                                </TouchableHighlight>
-                            ))}
-                        </Card.Body>
-                    </Card>
+                                    {/*</Card>*/}
+                                {/*</TouchableHighlight>*/}
+                            {/*))}*/}
+                        {/*</Card.Body>*/}
+                    {/*</Card>*/}
                 </ScrollView>
             </View>
         );

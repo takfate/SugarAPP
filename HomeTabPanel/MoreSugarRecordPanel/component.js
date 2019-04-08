@@ -63,9 +63,11 @@ class MoreSugarRecordPanel extends Component{
     requestGetSugarRecord = (sessionId)=>{
         let nowDate = new Date();
         let bloodDate = nowDate.getFullYear()+'-'+(nowDate.getMonth()+1)+'-'+nowDate.getDate();
-        httpRequest.post('/getUserOneDayBlood', {
-            session_id : sessionId,
-            bloodDate : bloodDate
+        httpRequest.get('/home/blood-sugar/record', {
+            params:{
+                session_id : sessionId,
+                record_date : bloodDate
+            }
         })
             .then((response) => {
                 let data = response.data;
@@ -74,6 +76,7 @@ class MoreSugarRecordPanel extends Component{
                 let newDda = [];
                 let newDdi = [];
                 if (data['code'] === 0) {
+                    data = data.data;
                     for (let key in data.level){
                         if(data.level[key]!=='0'){
                             newDdx.push(period[key]);
