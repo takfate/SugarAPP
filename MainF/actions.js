@@ -15,7 +15,7 @@ export const change_to_login_state = (sessionId,userId,nickName,iconUrl,Phone,is
         nickName:nickName,
         iconUrl:iconUrl,
         Phone:Phone,
-        isAttend : isAttend
+        isAttend : isAttend,
     }
 };
 

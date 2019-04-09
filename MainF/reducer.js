@@ -1,5 +1,6 @@
 import * as ActionTypes from './actionTypes';
 
+
 const MainFState = {
     selectedTab : "Home",
     sessionId : null,
@@ -30,8 +31,7 @@ const MainFState = {
         dsPlan : '基础一针',
         complication :'',
         navigationKey : ''
-    }
-
+    },
 };
 
 const reducer = function(state = MainFState,action){
@@ -41,7 +41,7 @@ const reducer = function(state = MainFState,action){
         case ActionTypes.CHANGE_TO_LOGIN_STATE:
             return {...state,sessionId:action.sessionId,userId:action.userId,loginUserInfo:{
                     ...state.loginUserInfo,HeadImageUrl:action.iconUrl,NickName:action.nickName,Phone:action.Phone,
-                    isAttend:action.isAttend
+                    isAttend:action.isAttend,
                 }
             };
         case ActionTypes.GUIDE_CLEAR:

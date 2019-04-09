@@ -247,6 +247,7 @@ class OtherUserInfoPanel extends  Component{
 
     render(){
         const {navigate} = this.props.navigation;
+        const {params} = this.props.navigation.state;
         return (
             <ScrollView style={UserInfoCss.MainView}>
                 <List >
@@ -275,7 +276,11 @@ class OtherUserInfoPanel extends  Component{
                         >
                             {this.state.Focus?'已关注':'关注'}
                         </Button>
-                        {/*<Button onClick={()=>{navigate('Chat')}}>私信</Button>*/}
+                        <Button onClick={()=>{navigate('Chat', {
+                            TargetUserName: this.state.NickName,
+                            TargetUserId:params.UserId,
+                            TargetUserImageUrl:this.state.HeadImageUrl
+                            })}}>私信</Button>
                     </List.Item>
                 </List>
 

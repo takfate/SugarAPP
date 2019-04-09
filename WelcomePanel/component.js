@@ -7,7 +7,9 @@ import md5 from 'js-md5';
 import {change_to_login_state} from '../MainF/actions';
 
 
-function mapStateToProps(state) {
+function mapStateToProps(state,ownProps) {
+    return state.MainF;
+
 }
 
 function mapDispatchToProps(dispatch) {
@@ -97,6 +99,7 @@ class WelcomePanel extends Component{
 
     _submitLogin = ()=>{
         this.requestLogin(this.state.Phone,this.state.Password,false);
+
     };
 
     componentWillMount(){
@@ -119,6 +122,8 @@ class WelcomePanel extends Component{
 
     render(){
         const { navigate } = this.props.navigation;
+        const {socketIO} = this.props;
+
         if(this.state.isCover){
             return (
                 <View style={{height:'100%',width:'100%'}}>
@@ -172,4 +177,4 @@ class WelcomePanel extends Component{
 }
 
 
-export default connect(null,mapDispatchToProps)(WelcomePanel);
+export default connect(mapStateToProps,mapDispatchToProps)(WelcomePanel);

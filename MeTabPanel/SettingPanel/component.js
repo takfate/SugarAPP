@@ -25,7 +25,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         Logout : ()=> {
-            dispatch(actions.change_to_login_state(null,null,'','',''));
+            dispatch(actions.change_to_login_state(
+                null,null,'','','',null));
         }
     }
 }
@@ -43,7 +44,7 @@ class SettingPanel extends Component{
     }
 
     requestLogout = (sessionId)=>{
-        const {Logout} = this.props;
+        const {Logout,socketIO} = this.props;
         const {goBack} = this.props.navigation;
         httpRequest.get('/accounts/logout', {
             params:{
@@ -58,6 +59,7 @@ class SettingPanel extends Component{
                         key:'loginUser'
                     });
                     goBack();
+                    socketIO.close();
                     Logout();
 
                 } else {

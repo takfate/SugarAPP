@@ -107,7 +107,7 @@ class MeTabPanel extends Component{
                         <List.Item arrow='horizontal' onClick={()=>{navigate('WatchMeList',{sessionId:sessionId,userId:userId.toString()})}}>
                             <Text style={MeCss.CommonItemText}>关注我的人</Text>
                         </List.Item>
-                        <List.Item arrow='horizontal' onClick={()=>{}}>
+                        <List.Item arrow='horizontal' onClick={()=>{navigate('MyGroup',{sessionId:sessionId,userId:userId.toString()})}}>
                             <Text style={MeCss.CommonItemText}>我的群组</Text>
                         </List.Item>
 

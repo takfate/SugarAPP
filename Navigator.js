@@ -23,6 +23,7 @@ import {
 } from './MeTabPanel/UserInfoEditPanel/InfoItemEditPanel';
 import SecretSettingPanel from './MeTabPanel/SettingPanel/SecretSettingPanel';
 import ChatPanel from './MeTabPanel/ChatPanel';
+import MyGroupListPanel from'./MeTabPanel/MyGroupListPanel';
 
 import {
     MyWatchListPanel,
@@ -136,6 +137,9 @@ const StackNav = StackNavigator(
         },
         SubPostDetail : {
             screen :SubPostDetailPanel
+        },
+        MyGroup : {
+            screen: MyGroupListPanel
         },
 
         // School
