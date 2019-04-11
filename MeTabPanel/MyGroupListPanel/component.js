@@ -8,30 +8,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import httpRequest from "../../httpRequest";
 import CommonListPanel from '../CommonListPanel';
 
-const Brief = List.Item.Brief;
-
-
-
-const BbsCss = StyleSheet.create({
-    MainView :{
-        backgroundColor:'#F5F5F5',
-    },
-    ItemSeparator : {
-        height:5,
-        backgroundColor:'#F5F5F5'
-    },
-    ItemContent:{
-        paddingLeft:15,
-        paddingRight:15
-    },
-    ItemImage:{
-        marginRight:15,
-        width:80,
-        height:80
-    }
-
-});
-
 
 function mapStateToProps(state,ownProps) {
     return state.MainF;
@@ -44,13 +20,19 @@ function mapDispatchToProps(dispatch) {
 }
 
 class MyGroupListPanel extends Component{
-
-    static navigationOptions = {
+    static navigationOptions = ({ navigation }) =>({
         headerTitle:"我的群组",
         headerStyle:{
             height:55,
         },
-    };
+        headerRight:
+            <TouchableOpacity
+                onPress={()=>{navigation.navigate('CreateGroup')}}
+                style={{paddingRight:12}}
+            >
+                <Icon name="plus" size={23} />
+            </TouchableOpacity>
+    });
     constructor(props){
         super(props);
         this.state =  {

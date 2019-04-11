@@ -10,7 +10,7 @@ const Brief = List.Item.Brief;
 
 const CommonListCss = StyleSheet.create({
     MainView :{
-        backgroundColor:'#F5F5F5',
+        backgroundColor:'white',
         paddingBottom:20
     }
 });

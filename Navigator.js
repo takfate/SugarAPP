@@ -24,6 +24,7 @@ import {
 import SecretSettingPanel from './MeTabPanel/SettingPanel/SecretSettingPanel';
 import ChatPanel from './MeTabPanel/ChatPanel';
 import MyGroupListPanel from'./MeTabPanel/MyGroupListPanel';
+import CreateGroupPanel from './MeTabPanel/MyGroupListPanel/CreateGroupPanel';
 
 import {
     MyWatchListPanel,
@@ -140,6 +141,9 @@ const StackNav = StackNavigator(
         },
         MyGroup : {
             screen: MyGroupListPanel
+        },
+        CreateGroup:{
+            screen: CreateGroupPanel
         },
 
         // School
