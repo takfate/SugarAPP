@@ -32,7 +32,7 @@ class CreateGroupPanel extends Component{
         },
         headerRight:
             <TouchableOpacity
-                onPress={()=>{alert(JSON.stringify(navigation.state.params))}}
+                onPress={navigation.state.params?navigation.state.params.createPress:null}
                 style={{paddingRight:12}}
             >
                 <Text style={{fontSize:16}}>创建</Text>
@@ -89,6 +89,29 @@ class CreateGroupPanel extends Component{
             });
     };
 
+    requestCreateGroup = (sessionId,GroupName,GroupMembers)=>{
+        const { navigation } = this.props;
+        Toast.loading("正在创建");
+        httpRequest.post('/social/group/create', {
+            session_id:sessionId,
+            group_name:GroupName,
+            group_members:JSON.stringify(GroupMembers)
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.success("创建成功");
+                    navigation.goBack();
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                alert(error);
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
     _refresh = ()=>{
         if(this.state.Refreshing)return ;
         const {sessionId}  = this.props;
@@ -96,13 +119,14 @@ class CreateGroupPanel extends Component{
     };
 
     _clickCreateGroup = ()=>{
-        alert(this.state);
+        const {sessionId}  = this.props;
+        this.requestCreateGroup(sessionId,this.state.GroupName,this.state.SelectedUsers)
     };
 
     componentDidMount(){
         const {sessionId}  = this.props;
         this.props.navigation.setParams({
-           createPress : this._clickCreateGroup
+            createPress : this._clickCreateGroup
         });
         this.requestGetMyWatchList(this.state.FollowingUserData.slice(),sessionId,0,10);
     }
@@ -127,30 +151,29 @@ class CreateGroupPanel extends Component{
     _renderItem = (item)=>{
         const { navigate } = this.props.navigation;
         return (
-                <CheckboxItem
-                    key={item.item.key}
-                    checked={this.state.SelectedMap[item.item.key]}
-                    onChange={
-                        (ev)=>{
-                            this.setState({
-                                SelectedMap:{
-                                    ...this.state.SelectedMap,
-                                    [item.item.key]:ev.target.checked
-                                }
-                            });
-                            let newData = this.state.SelectedUsers.slice();
-                            if(ev.target.checked){
-                                newData.push(item.item.key);
-                            }else{
-                                newData.splice(newData.findIndex(v=>v===item.item.key),1);
+            <CheckboxItem
+                key={item.item.key}
+                checked={this.state.SelectedMap[item.item.key]}
+                onChange={
+                    (ev)=>{
+                        this.setState({
+                            SelectedMap:{
+                                ...this.state.SelectedMap,
+                                [item.item.key]:ev.target.checked
                             }
-                            this.setState({SelectedUsers:newData});
-
+                        });
+                        let newData = this.state.SelectedUsers.slice();
+                        if(ev.target.checked){
+                            newData.push(item.item.key);
+                        }else{
+                            newData.splice(newData.findIndex(v=>v===item.item.key),1);
                         }
+                        this.setState({SelectedUsers:newData});
                     }
-                >
-                    <Text style={{fontSize:18,Color:"black"}}>{item.item.UserNickName}</Text>
-                </CheckboxItem>
+                }
+            >
+                <Text style={{fontSize:18,Color:"black"}}>{item.item.UserNickName}</Text>
+            </CheckboxItem>
 
         ) ;
     };

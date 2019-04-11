@@ -47,7 +47,8 @@ class MyGroupListPanel extends Component{
         return {
             key : initData['groupId'].toString(),
             GroupName :initData['name'],
-            MemberCount : initData['memberCount']
+            MemberCount : initData['memberCount'],
+            Host: initData['host']
         };
     };
 
@@ -117,7 +118,8 @@ class MyGroupListPanel extends Component{
             >
                 <Card full>
                     <Card.Header
-                        title={item.item.name}
+                        title={item.item.GroupName+`(${item.item.MemberCount})`}
+                        extra={item.item.Host?"由我创建":""}
                     >
                     </Card.Header>
                 </Card>

@@ -133,6 +133,10 @@ class ChatPanel extends Component{
     };
 
     requestGetLatestMessageList = (sessionId,TargetUserId,LatestMessageId,NeedNumber)=>{
+        if (this.LatestDataLoading){
+            return ;
+        }
+        this.LatestDataLoading = true;
         httpRequest.get('/social/chatting/records/latest', {
             params:{
                 session_id:sessionId,
@@ -150,6 +154,7 @@ class ChatPanel extends Component{
                     this.setState(previousState => ({
                         messages: GiftedChat.append(previousState.messages, newMessages),
                     }));
+                    this.LatestDataLoading = false;
                 } else {
                     Toast.fail(data['msg']);
                 }
@@ -191,8 +196,11 @@ class ChatPanel extends Component{
     loadMoreHistory = ()=>{
         const {TargetUserId} = this.props.navigation.state.params;
         const {sessionId} = this.props;
-        let lastId = this.state.messages.length-1;
-        this.requestGetHistoryMessageList(sessionId,TargetUserId,this.state.messages[lastId]._id,10);
+        let lastId = 0;
+        if(this.state.messages.length > 0){
+            lastId = this.state.messages[this.state.messages.length - 1]._id;
+        }
+        this.requestGetHistoryMessageList(sessionId,TargetUserId,lastId,10);
     };
 
     componentWillMount(){
@@ -204,6 +212,7 @@ class ChatPanel extends Component{
     componentDidMount(){
         const {sessionId} = this.props;
         const {TargetUserId} = this.props.navigation.state.params;
+        this.LatestDataLoading = false;
         this.updateMessageTimer = setInterval(()=>{
             let latestId = 0;
             if(this.state.messages.length > 0){
