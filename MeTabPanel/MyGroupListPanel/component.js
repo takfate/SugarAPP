@@ -84,7 +84,7 @@ class MyGroupListPanel extends Component{
     };
 
     _refresh = ()=>{
-        if(this.state.Refreshing)return ;
+        if(this.state.Refreshing) return ;
         const {sessionId}  = this.props.navigation.state.params;
         this.requestGetGroupList([],sessionId,0,10);
     };
@@ -114,7 +114,7 @@ class MyGroupListPanel extends Component{
         const { navigate } = this.props.navigation;
         return (
             <TouchableHighlight
-                onPress={()=>{this._navigateToUser(item.item.key)}}
+                onPress={()=>{navigate("GroupChat",{GroupId:item.item.key,GroupName:item.item.GroupName})}}
             >
                 <Card full>
                     <Card.Header

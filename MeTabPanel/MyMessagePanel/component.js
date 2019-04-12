@@ -12,39 +12,6 @@ import {
 const Brief = List.Item.Brief;
 
 
-const MyMessageCss = StyleSheet.create({
-    MainView :{
-        backgroundColor:'#F5F5F5',
-        paddingBottom:20
-    },
-    HeaderItem : {
-        backgroundColor:"#108EE9"
-    },
-    HeaderImage :{
-        width:64,
-        height:64,
-        marginRight:15,
-        borderColor:"#2994BD",
-        borderRadius:2,
-        borderWidth:2
-
-    },
-    HeaderItemText:{
-        fontSize:18,
-        color:'white',
-    },
-    HeaderItemBrief:{
-        color:'white',
-    },
-    CommonItem : {
-        backgroundColor:"#108EE9"
-    },
-    CommonItemText :  {
-        fontSize:18,
-        color:'black',
-    }
-});
-
 class MyMessagePanel extends Component{
 
     constructor(props){

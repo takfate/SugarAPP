@@ -35,7 +35,7 @@ class CreateGroupPanel extends Component{
                 onPress={navigation.state.params?navigation.state.params.createPress:null}
                 style={{paddingRight:12}}
             >
-                <Text style={{fontSize:16}}>创建</Text>
+                <Text style={{fontSize:18,color:"black"}}>创建</Text>
             </TouchableOpacity>
     });
     constructor(props){

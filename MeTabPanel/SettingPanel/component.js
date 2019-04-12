@@ -59,7 +59,6 @@ class SettingPanel extends Component{
                         key:'loginUser'
                     });
                     goBack();
-                    socketIO.close();
                     Logout();
 
                 } else {

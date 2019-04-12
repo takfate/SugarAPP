@@ -5,19 +5,19 @@ import {connect} from 'react-redux';
 import {View, Text, ScrollView, Image, StyleSheet, RefreshControl} from 'react-native';
 import {Button, NavBar, Icon, Card, List, ListView, WhiteSpace, Progress, Toast} from 'antd-mobile';
 import { GiftedChat } from 'react-native-gifted-chat'
-import httpRequest from "../../httpRequest";
-import {GridImageURL, makeCommonImageUrl} from "../../CommonComponent";
+import httpRequest from "../../../httpRequest";
+import {makeCommonImageUrl} from "../../../CommonComponent";
 
-const Brief = List.Item.Brief;
 
 
 function mapStateToProps(state) {
     return state.MainF;
 }
 
-class ChatPanel extends Component{
+
+class GroupChatPanel extends Component{
     static navigationOptions = ({ navigation }) =>({
-        headerTitle: <Text style={{fontSize:15,color:'black'}}>{navigation.state.params.TargetUserName}</Text>,
+        headerTitle: <Text style={{fontSize:15,color:'black'}}>{navigation.state.params.GroupName}</Text>,
         headerStyle:{
             height:55,
         }
@@ -48,10 +48,8 @@ class ChatPanel extends Component{
     };
 
     messageWrapper = (messageList)=>{
-        const {TargetUserId,TargetUserName,TargetUserImageUrl} = this.props.navigation.state.params;
         const {userId,loginUserInfo} = this.props;
         let messages = [];
-
         for(let i=0;i<messageList.length;i++){
             let user = {};
             if (messageList[i]["host"]) {
@@ -62,9 +60,9 @@ class ChatPanel extends Component{
                 }
             }else{
                 user = {
-                    _id: TargetUserId,
-                    name:TargetUserName,
-                    avatar: makeCommonImageUrl(TargetUserImageUrl),
+                    _id: messageList[i]["senderId"],
+                    name:messageList[i]["senderUserName"],
+                    avatar: makeCommonImageUrl(messageList[i]["imageUrl"]),
                 }
             }
             messages.push({
@@ -77,11 +75,11 @@ class ChatPanel extends Component{
         return messages;
     };
 
-    requestSendMessageToUser = (sessionId,userId,content,TargetUserId)=>{
-        httpRequest.post('/social/chatting/send', {
+    requestSendMessageToUser = (sessionId,content,GroupId)=>{
+        httpRequest.post('/social/group/chatting/send', {
             session_id:sessionId,
             content:content,
-            target_user_id : TargetUserId
+            group_id : GroupId
         })
             .then((response) => {
                 let data = response.data;
@@ -100,15 +98,15 @@ class ChatPanel extends Component{
             });
     };
 
-    requestGetLatestMessageList = (sessionId,TargetUserId,LatestMessageId,NeedNumber)=>{
+    requestGetLatestMessageList = (sessionId,GroupId,LatestMessageId,NeedNumber)=>{
         if (this.LatestDataLoading){
             return ;
         }
         this.LatestDataLoading = true;
-        httpRequest.get('/social/chatting/records/latest', {
+        httpRequest.get('/social/group/chatting/records/latest', {
             params:{
                 session_id:sessionId,
-                target_user_id:TargetUserId,
+                group_id:GroupId,
                 latest_message_id : LatestMessageId,
                 need_number:NeedNumber
             }
@@ -131,12 +129,13 @@ class ChatPanel extends Component{
                 Toast.fail('网络好像有问题~');
             });
     };
-    requestGetHistoryMessageList = (sessionId,TargetUserId,OldestMessageId,NeedNumber)=>{
+
+    requestGetHistoryMessageList = (sessionId,GroupId,OldestMessageId,NeedNumber)=>{
         this.setState({refreshing:true});
-        httpRequest.get('/social/chatting/records', {
+        httpRequest.get('/social/group/chatting/records', {
             params:{
                 session_id:sessionId,
-                target_user_id:TargetUserId,
+                group_id:GroupId,
                 oldest_message_id : OldestMessageId,
                 need_number:NeedNumber
             }
@@ -160,34 +159,32 @@ class ChatPanel extends Component{
             });
     };
 
-    
-
     loadMoreHistory = ()=>{
-        const {TargetUserId} = this.props.navigation.state.params;
+        const {GroupId} = this.props.navigation.state.params;
         const {sessionId} = this.props;
         let lastId = 0;
         if(this.state.messages.length > 0){
             lastId = this.state.messages[this.state.messages.length - 1]._id;
         }
-        this.requestGetHistoryMessageList(sessionId,TargetUserId,lastId,10);
+        this.requestGetHistoryMessageList(sessionId,GroupId,lastId,10);
     };
 
     componentWillMount(){
-        const {TargetUserId} = this.props.navigation.state.params;
-        const {sessionId,userId} = this.props;
-        this.requestGetHistoryMessageList(sessionId,TargetUserId,0,10)
+        const {GroupId} = this.props.navigation.state.params;
+        const {sessionId} = this.props;
+        this.requestGetHistoryMessageList(sessionId,GroupId,0,10);
     };
 
     componentDidMount(){
         const {sessionId} = this.props;
-        const {TargetUserId} = this.props.navigation.state.params;
+        const {GroupId} = this.props.navigation.state.params;
         this.LatestDataLoading = false;
         this.updateMessageTimer = setInterval(()=>{
             let latestId = 0;
             if(this.state.messages.length > 0){
                 latestId = this.state.messages[0]._id;
             }
-            this.requestGetLatestMessageList(sessionId,TargetUserId,latestId,10);
+            this.requestGetLatestMessageList(sessionId,GroupId,latestId,10);
         },2000)
     }
 
@@ -196,10 +193,9 @@ class ChatPanel extends Component{
     }
 
     onSend = (messages = [])=> {
-        const {sessionId,userId} = this.props;
-        const {TargetUserId} = this.props.navigation.state.params;
-
-        this.requestSendMessageToUser(sessionId,userId,messages[0].text,TargetUserId);
+        const {sessionId} = this.props;
+        const {GroupId} = this.props.navigation.state.params;
+        this.requestSendMessageToUser(sessionId,messages[0].text,GroupId);
 
     };
 
@@ -222,6 +218,7 @@ class ChatPanel extends Component{
                 isLoadingEarlier={this.state.refreshing}
                 showUserAvatar
                 showAvatarForEveryMessage
+                renderUsernameOnMessage
             />
 
         );
@@ -230,4 +227,4 @@ class ChatPanel extends Component{
 
 }
 
-export default connect(mapStateToProps,null)(ChatPanel);
+export default connect(mapStateToProps,null)(GroupChatPanel);
