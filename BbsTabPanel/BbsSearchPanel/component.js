@@ -277,7 +277,7 @@ class BbsSearchPanel extends Component{
                         <FlatList
                             style={BbsSearchCss.MainView}
                             data={this.state.Data}
-                            initialNumToRender={3}
+                            initialNumToRender={10}
                             renderItem = {this._renderSearchedItem}
                             ItemSeparatorComponent = {this._SearchedSeparator}
                             refreshing={this.state.Refreshing}

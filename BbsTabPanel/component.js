@@ -200,7 +200,7 @@ class BbsTabPanel extends Component{
                 <FlatList
                     style={BbsCss.MainView}
                     data={this.state.Data}
-                    initialNumToRender={3}
+                    initialNumToRender={10}
                     renderItem = {this._renderItem}
                     ItemSeparatorComponent = {this._separator}
                     refreshing={this.state.Refreshing}

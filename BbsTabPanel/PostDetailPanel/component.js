@@ -186,7 +186,7 @@ class SubPostListPanel extends Component {
                 <FlatList
                     style={CommentListCss.MainView}
                     data={this.state.Data}
-                    initialNumToRender={3}
+                    initialNumToRender={10}
                     renderItem = {this._renderItem}
                     ItemSeparatorComponent = {this._separator}
                     refreshing={this.state.Refreshing}
@@ -433,7 +433,7 @@ class PostDetailPanel extends Component{
                     <FlatList
                         style={PostDetailCss.MainView}
                         data={this.state.Data}
-                        initialNumToRender={3}
+                        initialNumToRender={10}
                         renderItem = {this._renderItem}
                         ItemSeparatorComponent = {this._separator}
                         refreshing={this.state.Refreshing}

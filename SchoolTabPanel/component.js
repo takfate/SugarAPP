@@ -157,7 +157,7 @@ class SchoolTabPanel extends Component{
                 <FlatList
                     style={SchoolCss.MainView}
                     data={this.state.Data}
-                    initialNumToRender={3}
+                    initialNumToRender={10}
                     renderItem = {this._renderItem}
                     ItemSeparatorComponent = {this._separator}
                     refreshing={this.state.Refreshing}

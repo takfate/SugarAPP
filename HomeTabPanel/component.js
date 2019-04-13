@@ -15,25 +15,6 @@ const {width} = Dimensions.get('window');
 const Brief = List.Item.Brief;
 
 
-const HomeCss = StyleSheet.create({
-    MainView :{
-        backgroundColor:'#F5F5F5',
-    },
-    ItemSeparator : {
-        height:5,
-        backgroundColor:'#F5F5F5'
-    },
-    ItemContent:{
-        paddingLeft:15,
-        paddingRight:15
-    },
-    ItemImage:{
-        marginRight:15,
-        width:48,
-        height:48
-    }
-
-});
 
 function mapStateToProps(state,ownProps) {
     return state.MainF;
