@@ -2,9 +2,10 @@
 
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
-import {View, Text, ScrollView, Image, StyleSheet, RefreshControl} from 'react-native';
-import {Button, NavBar, Icon, Card, List, ListView, WhiteSpace, Progress, Toast} from 'antd-mobile';
-import { GiftedChat } from 'react-native-gifted-chat'
+import {View, Text, ScrollView, Image, StyleSheet, RefreshControl, TouchableOpacity} from 'react-native';
+import {Button, NavBar, Card, List, ListView, WhiteSpace, Progress, Toast} from 'antd-mobile';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { GiftedChat } from 'react-native-gifted-chat';
 import httpRequest from "../../../httpRequest";
 import {makeCommonImageUrl} from "../../../CommonComponent";
 
@@ -20,7 +21,14 @@ class GroupChatPanel extends Component{
         headerTitle: <Text style={{fontSize:15,color:'black'}}>{navigation.state.params.GroupName}</Text>,
         headerStyle:{
             height:55,
-        }
+        },
+        headerRight:
+            <TouchableOpacity
+                onPress={navigation.state.params?navigation.state.params.settingPress:null}
+                style={{paddingRight:12}}
+            >
+                <Icon name="gear" size={23} color="black"/>
+            </TouchableOpacity>
     });
 
     constructor(props){
@@ -159,6 +167,13 @@ class GroupChatPanel extends Component{
             });
     };
 
+    _clickGroupSetting = ()=>{
+        const {sessionId}  = this.props;
+        const {navigate} = this.props.navigation;
+        const {GroupId,GroupName} = this.props.navigation.state.params;
+        navigate("GroupInfo",{GroupId:GroupId,GroupName:GroupName,ChatPanelKey:this.props.navigation.state.key});
+    };
+
     loadMoreHistory = ()=>{
         const {GroupId} = this.props.navigation.state.params;
         const {sessionId} = this.props;
@@ -185,7 +200,10 @@ class GroupChatPanel extends Component{
                 latestId = this.state.messages[0]._id;
             }
             this.requestGetLatestMessageList(sessionId,GroupId,latestId,10);
-        },2000)
+        },2000);
+        this.props.navigation.setParams({
+            settingPress : this._clickGroupSetting
+        });
     }
 
     componentWillUnmount(){
