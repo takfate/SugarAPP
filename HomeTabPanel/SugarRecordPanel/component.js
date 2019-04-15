@@ -1,8 +1,10 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {ScrollView, Text, View} from 'react-native';
-import {Button, Card, List, Picker, Slider, WhiteSpace,Toast} from 'antd-mobile';
+import {ScrollView, Text, View,TouchableWithoutFeedback} from 'react-native';
+import {Button, Card, List, Picker, Slider, WhiteSpace,Toast,Flex,WingBlank} from 'antd-mobile';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import httpRequest from '../../httpRequest';
+import {RadiusButton} from '../../CommonComponent';
 
 function mapStateToProps(state) {
     return state.MainF;
@@ -115,6 +117,12 @@ class SugarRecordPanel extends Component{
         this.requestSaveSugarRecord(sessionId,this.state.sugarPeriod[0],sugarValue,HourMinute,datetime);
     };
 
+    _renderAudioToast = ()=>{
+        return (
+            <Icon name="microphone" size={80} color="white"/>
+        )
+    };
+
     render(){
         const { navigate } = this.props.navigation;
         const {params} =  this.props.navigation.state;
@@ -153,13 +161,30 @@ class SugarRecordPanel extends Component{
                     <List.Item arrow="horizontal">时间段</List.Item>
                 </Picker>
                 <WhiteSpace size='lg'/>
-                <Button
-                    type='primary'
-                    style={{marginLeft:15,marginRight:15}}
-                    onClick={this._submitSaveSugarRecord}
-                >
-                    保存
-                </Button>
+                <WingBlank>
+                    <Flex justify="center" align="center">
+                        <Flex.Item>
+                            <Flex justify="center" align="center">
+                                <RadiusButton
+                                    text="语音输入"
+                                    onPressIn={()=>{Toast.info(this._renderAudioToast(),0)}}
+                                    onPressOut={()=>{Toast.hide()}}
+                                />
+                            </Flex>
+                        </Flex.Item>
+                        <Flex.Item>
+                            <Flex justify="center" align="center">
+                                <Button
+                                    type='primary'
+                                    style={{borderRadius:70,width:140,height:140}}
+                                    onClick={this._submitSaveSugarRecord}
+                                >
+                                    保存记录
+                                </Button>
+                            </Flex>
+                        </Flex.Item>
+                    </Flex>
+                </WingBlank>
             </ScrollView>
 
         );

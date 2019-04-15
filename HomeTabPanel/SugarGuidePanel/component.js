@@ -54,9 +54,6 @@ class SugarGuidePanel extends Component{
     componentDidMount(){
         const {sessionId} = this.props;
         this.ws = new WebSocket(makeWebSocketUrl(sessionId));
-        // this.ws.onopen = (evt) => {
-        //     Toast.info('连接打开',1);
-        // };
 
         this.ws.onmessage = (evt) => {
             let data = JSON.parse(evt.data);
@@ -68,10 +65,6 @@ class SugarGuidePanel extends Component{
         this.ws.onerror = (evt)=>{
             Toast.info('网络好像有问题~',1);
         };
-
-        // this.ws.onclose = (evt) => {
-        //     Toast.info('连接关闭',1);
-        // };
     };
 
     componentWillUnmount(){

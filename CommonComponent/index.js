@@ -1,5 +1,5 @@
 import React,{PropTypes,Component} from 'react';
-import {View,Text,ScrollView,Image,StyleSheet} from 'react-native';
+import {View,Text,ScrollView,Image,TouchableWithoutFeedback} from 'react-native';
 import {BaseUrl,wsUrl} from '../config';
 
 
@@ -22,6 +22,58 @@ export class UserImage extends Component{
     }
 }
 
+export class RadiusButton extends Component{
+    constructor(props){
+        super(props);
+
+    }
+
+    render(){
+        return (
+            <View
+                style={{
+                    backgroundColor:'green',
+                    borderRadius:70,
+                    width:140,
+                    height:140,
+
+                }}
+            >
+                <TouchableWithoutFeedback
+                    hitSlop={{
+                        top:60,
+                        left:60,
+                        right:60,
+                        bottom:60
+                    }}
+                    onPressIn={this.props.onPressIn}
+                    onPressOut={this.props.onPressOut}
+                >
+                    <View
+                        style={{
+                            backgroundColor:'green',
+                            borderRadius:70,
+                            width:140,
+                            height:140,
+                            alignItems:'center',
+                            justifyContent:'center',
+                        }}
+                    >
+                        <Text style={{
+                            fontSize:18,
+                            color:'black',
+                        }}
+                        >
+                            {this.props.text}
+                        </Text>
+                    </View>
+                </TouchableWithoutFeedback>
+            </View>
+
+        );
+    }
+}
+
 
 export const makeCommonImageUrl = (suffix) => {
     return BaseUrl + suffix;
@@ -32,5 +84,5 @@ export const GridImageURL  = (name)=>{
 };
 
 export const makeWebSocketUrl = (sessionId)=>{
-  return `${wsUrl}/webSocket?session_id=${sessionId}`
+    return `${wsUrl}/webSocket?session_id=${sessionId}`
 };
