@@ -198,9 +198,20 @@ class ChatPanel extends Component{
     onSend = (messages = [])=> {
         const {sessionId,userId} = this.props;
         const {TargetUserId} = this.props.navigation.state.params;
-
         this.requestSendMessageToUser(sessionId,userId,messages[0].text,TargetUserId);
+    };
 
+    _navigateToUser =(ToUserId) =>{
+        const {userId} = this.props;
+        const { navigate } = this.props.navigation;
+        navigate("UserInfo",{
+            isLoginUser :userId===ToUserId,
+            UserId : ToUserId
+        });
+    };
+
+    _clickUserAvatar = (user)=>{
+        this._navigateToUser(user._id)
     };
 
     render(){
@@ -222,6 +233,7 @@ class ChatPanel extends Component{
                 isLoadingEarlier={this.state.refreshing}
                 showUserAvatar
                 showAvatarForEveryMessage
+                onPressAvatar={this._clickUserAvatar}
             />
 
         );

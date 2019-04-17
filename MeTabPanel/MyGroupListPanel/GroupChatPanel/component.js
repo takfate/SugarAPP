@@ -214,11 +214,23 @@ class GroupChatPanel extends Component{
         const {sessionId} = this.props;
         const {GroupId} = this.props.navigation.state.params;
         this.requestSendMessageToUser(sessionId,messages[0].text,GroupId);
+    };
 
+    _navigateToUser =(ToUserId) =>{
+        const {userId} = this.props;
+        const { navigate } = this.props.navigation;
+        navigate("UserInfo",{
+            isLoginUser :userId===ToUserId,
+            UserId : ToUserId
+        });
+    };
+
+    _clickUserAvatar = (user)=>{
+        this._navigateToUser(user._id)
     };
 
     render(){
-        const { navigate } = this.props.navigation;
+
         const {userId,loginUserInfo}  = this.props;
         return (
 
@@ -237,6 +249,7 @@ class GroupChatPanel extends Component{
                 showUserAvatar
                 showAvatarForEveryMessage
                 renderUsernameOnMessage
+                onPressAvatar={this._clickUserAvatar}
             />
 
         );

@@ -60,6 +60,7 @@ export class MessageListPanel extends Component{
             groupName : initData["groupName"],
             senderUserName : initData['senderUserName'],
             updatedTime : new Date(initData["updatedTime"]),
+            groupId : initData['groupId'].toString()
         };
     };
 
@@ -71,6 +72,7 @@ export class MessageListPanel extends Component{
             otherImageUrl : initData['otherImageUrl'],
             otherUserName : initData['otherUserName'],
             updatedTime : new Date(initData["updatedTime"]),
+            userId : initData['otherId'].toString()
         };
     };
 
@@ -184,8 +186,7 @@ export class MessageListPanel extends Component{
                             source={require('./head.jpg')}
                         />
                     }
-                    onClick={()=>{}}
-                    // extra={<Text>{item.item.updatedTime.toString()}</Text>}
+                    onClick={()=>{navigate("GroupChat",{GroupId:item.item.groupId,GroupName:item.item.groupName})}}
                     extra={<Text>{item.item.updatedTime.getHours()+":"+item.item.updatedTime.getMinutes()}</Text>}
                 >
                     <Text style={{color:'black',fontSize:18}}>{item.item.groupName}</Text>
@@ -208,8 +209,11 @@ export class MessageListPanel extends Component{
                             source={{uri:makeCommonImageUrl(item.item.otherImageUrl)}}
                         />
                     }
-                    onClick={()=>{}}
-                    // extra={<Text>{item.item.updatedTime.toString()}</Text>}
+                    onClick={()=>{navigate('Chat', {
+                        TargetUserName: item.item.otherUserName,
+                        TargetUserId:item.item.userId,
+                        TargetUserImageUrl:item.item.otherImageUrl
+                    })}}
                     extra={<Text>{item.item.updatedTime.getHours()+":"+item.item.updatedTime.getMinutes()}</Text>}
                 >
                     <Text style={{color:'black',fontSize:18}}>{item.item.otherUserName}</Text>
