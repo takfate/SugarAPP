@@ -1,8 +1,11 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
-import {ScrollView,View,Text,TextInput,TouchableOpacity } from 'react-native';
-import {TabBar,Button,InputItem,WhiteSpace,Slider,Card,Picker,List,Modal,Toast } from 'antd-mobile';
+import {ScrollView, View, Text, TextInput, TouchableOpacity, Platform} from 'react-native';
+import {TabBar, Button, InputItem, WhiteSpace, Slider, Card, Picker, List, Modal, Toast, Flex} from 'antd-mobile';
 import httpRequest from "../../httpRequest";
+import {RadiusButton} from "../../CommonComponent";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {AudioRecorder, AudioUtils} from "react-native-audio";
 
 function mapStateToProps(state) {
     return state.MainF;
@@ -11,37 +14,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 }
 
-
-const TimeSelctionData = [
-    {
-        label: '早餐前',
-        value: 'breforeBF',
-    },
-    {
-        label: '早餐后',
-        value: 'afterBF',
-    },
-    {
-        label: '午餐前',
-        value: 'breforeLC',
-    },
-    {
-        label: '午餐后',
-        value: 'afterLC',
-    },
-    {
-        label: '晚餐前',
-        value: 'breforeDN',
-    },
-    {
-        label: '晚餐后',
-        value: 'afterDN',
-    },
-    {
-        label: '睡前',
-        value: 'breforeSP',
-    },
-];
 
 
 const YDSData = function () {
@@ -147,7 +119,13 @@ class HealthRecordPanel extends Component{
             BSValueChange : false,
             BS1ValueChange : false,
             BS2ValueChange : false,
-            BSModalVisible : false
+            BSModalVisible : false,
+            currentTime: 0.0,
+            recording: false,
+            stoppedRecording: false,
+            finished: false,
+            audioPath: AudioUtils.DocumentDirectoryPath + '/sugar_record.aac',
+            hasPermission: undefined,
         };
     }
 
@@ -238,9 +216,117 @@ class HealthRecordPanel extends Component{
         }else{
             Toast.fail('请填写完整的健康记录');
         }
-
     };
 
+
+    _prepareRecordingPath = (audioPath)=>{
+        AudioRecorder.prepareRecordingAtPath(audioPath, {
+            SampleRate: 22050,
+            Channels: 1,
+            AudioEncoding: "aac",
+            AudioEncodingBitRate: 32000,
+            IncludeBase64:true
+        });
+    };
+
+    async _stop() {
+        if (!this.state.recording) {
+            alert('Can\'t stop, not recording!');
+            return;
+        }
+
+        this.setState({stoppedRecording: true, recording: false});
+
+        try {
+            const filePath = await AudioRecorder.stopRecording();
+
+            if (Platform.OS === 'android') {
+                this._finishRecording(true, filePath);
+            }
+            return filePath;
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    async _record() {
+        if (this.state.recording) {
+            alert('Already recording!');
+            return;
+        }
+
+        if (!this.state.hasPermission) {
+            alert('Can\'t record, no permission granted!');
+            return;
+        }
+
+        if(this.state.stoppedRecording){
+            this._prepareRecordingPath(this.state.audioPath);
+        }
+
+        this.setState({recording: true});
+
+        try {
+            const filePath = await AudioRecorder.startRecording();
+            // alert(`start on ${filePath}`);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    _finishRecording(didSucceed, filePath, fileSize) {
+        this.setState({ finished: didSucceed ,currentTime:0.0});
+        // alert(`Finished recording of duration ${this.state.currentTime} seconds at path: ${filePath} and size of ${fileSize || 0} bytes`);
+    }
+
+    componentDidMount(){
+        const {sessionId} = this.props;
+        AudioRecorder.requestAuthorization().then((isAuthorised) => {
+            this.setState({ hasPermission: isAuthorised });
+
+            if (!isAuthorised) return;
+
+            this._prepareRecordingPath(this.state.audioPath);
+
+            AudioRecorder.onProgress = (data) => {
+                this.setState({currentTime: Math.floor(data.currentTime)});
+            };
+
+            AudioRecorder.onFinished = (data) => {
+                this.requestParseHealthVoice(sessionId,data.base64);
+                // Android callback comes in the form of a promise instead.
+                if (Platform.OS === 'ios') {
+                    this._finishRecording(data.status === "OK", data.audioFileURL, data.audioFileSize);
+                }
+            };
+        });
+    }
+
+    requestParseHealthVoice = (sessionId,audio)=>{
+        Toast.loading('正在解析',0);
+        httpRequest.post('/home/health/voice', {
+            session_id:sessionId,
+            audio:audio
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.hide();
+                    alert(JSON.stringify(data));
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
+    _renderAudioToast = ()=>{
+        return (
+            <Icon name="microphone" size={80} color="white"/>
+        )
+    };
 
     render(){
         const { navigate } = this.props.navigation;
@@ -326,13 +412,34 @@ class HealthRecordPanel extends Component{
                     </List>
                 </Modal>
                 <WhiteSpace size='lg'/>
-                <Button
-                    type='primary'
-                    style={{marginLeft:15,marginRight:15}}
-                    onClick={this._submitSaveHealthRecord}
-                >
-                    保存
-                </Button>
+                <Flex justify="center" align="center">
+                    <Flex.Item>
+                        <Flex justify="center" align="center">
+                            <RadiusButton
+                                text={this.state.currentTime}
+                                onPressIn={()=>{
+                                    Toast.info(this._renderAudioToast(),0);
+                                    this._record();
+                                }}
+                                onPressOut={()=>{
+                                    Toast.hide();
+                                    this._stop();
+                                }}
+                            />
+                        </Flex>
+                    </Flex.Item>
+                    <Flex.Item>
+                        <Flex justify="center" align="center">
+                            <Button
+                                type='primary'
+                                style={{borderRadius:70,width:140,height:140}}
+                                onClick={this._submitSaveHealthRecord}
+                            >
+                                保存记录
+                            </Button>
+                        </Flex>
+                    </Flex.Item>
+                </Flex>
             </ScrollView>
         );
     }

@@ -145,7 +145,7 @@ class SugarRecordPanel extends Component{
     }
 
     _finishRecording(didSucceed, filePath, fileSize) {
-        this.setState({ finished: didSucceed });
+        this.setState({ finished: didSucceed,currentTime:0.0 });
         // alert(`Finished recording of duration ${this.state.currentTime} seconds at path: ${filePath} and size of ${fileSize || 0} bytes`);
     }
 

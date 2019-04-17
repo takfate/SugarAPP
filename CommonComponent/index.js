@@ -1,6 +1,7 @@
 import React,{PropTypes,Component} from 'react';
 import {View,Text,ScrollView,Image,TouchableWithoutFeedback} from 'react-native';
 import {BaseUrl,wsUrl} from '../config';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 
@@ -25,14 +26,37 @@ export class UserImage extends Component{
 export class RadiusButton extends Component{
     constructor(props){
         super(props);
-
+        this.state = {
+            buttonBackGroundColor:'#3AAB69'
+        };
     }
+
+    toggleButtonColorIn = (d)=>{
+        this.setState(
+            {
+                buttonBackGroundColor: d?
+                    '#3AAB69':
+                    '#329159'
+            }
+        )
+    };
+
+    _pressIn = ()=>{
+        this.toggleButtonColorIn(true);
+        this.props.onPressIn();
+
+    };
+
+    _pressOut = ()=>{
+        this.toggleButtonColorIn(false);
+        this.props.onPressOut();
+    };
 
     render(){
         return (
             <View
                 style={{
-                    backgroundColor:'green',
+                    backgroundColor:this.state.buttonBackGroundColor,
                     borderRadius:70,
                     width:140,
                     height:140,
@@ -46,12 +70,12 @@ export class RadiusButton extends Component{
                         right:60,
                         bottom:60
                     }}
-                    onPressIn={this.props.onPressIn}
-                    onPressOut={this.props.onPressOut}
+                    onPressIn={this._pressIn}
+                    onPressOut={this._pressOut}
                 >
                     <View
                         style={{
-                            backgroundColor:'green',
+                            backgroundColor:this.state.buttonBackGroundColor,
                             borderRadius:70,
                             width:140,
                             height:140,
@@ -59,9 +83,10 @@ export class RadiusButton extends Component{
                             justifyContent:'center',
                         }}
                     >
+                        <Icon name="microphone" size={50} color="white"/>
                         <Text style={{
                             fontSize:18,
-                            color:'black',
+                            color:'white',
                         }}
                         >
                             {this.props.text}
