@@ -3,12 +3,13 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {View,Text,ScrollView,Image,StyleSheet,TouchableOpacity,FlatList,TouchableHighlight,RefreshControl  } from 'react-native';
-import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Grid,Toast,WingBlank} from 'antd-mobile';
+import {Button, NavBar,Card,List,ListView,WhiteSpace,Badge,Grid,Toast,Flex} from 'antd-mobile';
 import Carousel from 'react-native-snap-carousel';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {GridImageURL,makeCommonImageUrl} from "../CommonComponent";
 import httpRequest from '../httpRequest';
 import {TodaySugarChart, RecentHealth} from './items';
+import CommonListPanel from '../MeTabPanel/CommonListPanel';
 import Dimensions from 'Dimensions';
 const {width} = Dimensions.get('window');
 
@@ -51,8 +52,7 @@ class HomeTabPanel extends Component{
     constructor(props){
         super(props);
         this.state = {
-            ArticleData : [],
-            TopicData : [],
+            RecommendUserData : [],
             HealthData : [],
             Refreshing :false,
             CarouselData : [
@@ -107,33 +107,8 @@ class HomeTabPanel extends Component{
             });
     };
 
-    _articleDataWrapper = (initData)=>{
-        return {
-            key : initData['articleId'].toString(),
-            Title :initData['title'],
-            Content : initData['content'],
-            PostTime : initData['articleTime'],
-            ImageUrl : initData['imgUrl'],
-            ViewCount : initData['views']
-        };
-    };
-
-    _topicDataWrapper = (initData)=>{
-        return {
-            key : initData['topicId'].toString(),
-            UserId : initData['userId'],
-            UserNickName : initData['username'],
-            UserImageUrl : initData['iconUrl'],
-            LastPostTime : initData['lastTime'],
-            Content : initData['content'],
-            Images : [initData['picture1'],initData['picture2'],initData['picture3']],
-            CommentCount : initData['replyNum']+initData['comNum']
-        };
-    };
-
 
     requestHealthRecord = (sessionId,x,n)=>{
-        let Data = [];
         httpRequest.get('/home/health/records', {
             params:{
                 session_id:sessionId,
@@ -197,6 +172,66 @@ class HomeTabPanel extends Component{
             });
     };
 
+    _recommendUserWrapper = (initData) =>{
+        return {
+            key :initData['ID'].toString(),
+            UserImageUrl: initData['HeadPortraitUrl'],
+            UserNickName : initData['UserName']
+        };
+    };
+
+    _renderRecommendUserItem = (item)=>{
+        const { navigate } = this.props.navigation;
+        return (
+            <List.Item
+                key={item.item.key}
+                thumb={
+                    <Image
+                        style={{
+                            height:40,
+                            width:40,
+                            marginRight:10,
+                            marginTop:10,
+                            marginBottom:10,
+                            borderRadius:20,
+                        }}
+                        source={{uri:makeCommonImageUrl(item.item.UserImageUrl)}}
+                    />
+                }
+                onClick={()=>{this._navigateToUser(item.item.key)}}
+            >
+                <Text style={{color:'black',fontSize:17}}>{item.item.UserNickName}</Text>
+            </List.Item>
+        );
+    };
+
+    requestGetRecommendUserList = (sessionId)=>{
+        this.setState({Refreshing:true});
+        httpRequest.get('/social/recommend', {
+            params:{
+                session_id:sessionId,
+            }
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    let Data = [];
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._recommendUserWrapper(data.data[i]))
+                    }
+                    this.setState({
+                        Refreshing:false,
+                        RecommendUserData:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
     _submitAttend = ()=>{
         const {sessionId} = this.props;
         this.requestAttend(sessionId);
@@ -207,6 +242,7 @@ class HomeTabPanel extends Component{
         const {sessionId} = this.props;
         this.requestGetSugarRecord(sessionId);
         this.requestHealthRecord(sessionId,0,5);
+        this._refreshRecommendUser();
     }
 
     _navigateToUser = (ToUserId) =>{
@@ -216,6 +252,11 @@ class HomeTabPanel extends Component{
             isLoginUser :userId===ToUserId,
             UserId : ToUserId
         });
+    };
+
+    _refreshRecommendUser = ()=>{
+        const {sessionId} = this.props;
+        this.requestGetRecommendUserList(sessionId);
     };
 
     _refresh = ()=>{
@@ -321,9 +362,27 @@ class HomeTabPanel extends Component{
                     <Grid data={GridData}  onClick={this._gridOnClick} />
                     <WhiteSpace size="lg"/>
                     <Card full>
-                        <Card.Header title="推荐糖友" />
+                        <Card.Header title={
+                            <Flex justify="between" align="center">
+                                <Flex.Item>
+                                    <Flex justify="between" align="start">
+                                        <Text style={{color:'black',fontSize:18}}>推荐糖友</Text>
+                                    </Flex>
+                                </Flex.Item>
+                                <Flex justify="between" align="end">
+                                    <TouchableOpacity onPress={this._refreshRecommendUser}>
+                                        <Text style={{color:'black',fontSize:15}}>换一批</Text>
+                                    </TouchableOpacity>
+                                </Flex>
+                            </Flex>
+                        }/>
                         <Card.Body style={{paddingTop:0,paddingBottom:0}}>
-
+                            <CommonListPanel
+                                RealData = {this.state.RecommendUserData}
+                                InitNum = {10}
+                                RenderItem = {this._renderRecommendUserItem}
+                                style={{height:'100%'}}
+                            />
                         </Card.Body>
                     </Card>
                 </ScrollView>

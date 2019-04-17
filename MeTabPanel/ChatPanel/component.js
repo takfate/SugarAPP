@@ -218,7 +218,6 @@ class ChatPanel extends Component{
         const { navigate } = this.props.navigation;
         const {userId,loginUserInfo}  = this.props;
         return (
-
             <GiftedChat
                 messages={this.state.messages}
                 onSend={messages => this.onSend(messages)}
