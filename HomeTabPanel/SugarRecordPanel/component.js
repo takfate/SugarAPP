@@ -1,10 +1,11 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {ScrollView, Text, View,TouchableWithoutFeedback} from 'react-native';
-import {Button, Card, List, Picker, Slider, WhiteSpace,Toast,Flex,WingBlank} from 'antd-mobile';
+import {ScrollView, Text, View,Platform} from 'react-native';
+import {Button, Card, Flex, List, Picker, Slider, Toast, WhiteSpace, WingBlank,Modal} from 'antd-mobile';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import httpRequest from '../../httpRequest';
 import {RadiusButton} from '../../CommonComponent';
+import {AudioRecorder, AudioUtils} from 'react-native-audio';
 
 function mapStateToProps(state) {
     return state.MainF;
@@ -44,6 +45,7 @@ const TimeSelctionData = [
     },
 ];
 
+
 const checkOutTime = ()=>{
     let nowDate = new Date();
     let Hour = nowDate.getHours();
@@ -76,8 +78,98 @@ class SugarRecordPanel extends Component{
         super(props);
         this.state = {
             sugarValue : 100,
-            sugarPeriod : [checkOutTime()]
+            sugarPeriod : [checkOutTime()],
+            currentTime: 0.0,
+            recording: false,
+            stoppedRecording: false,
+            finished: false,
+            audioPath: AudioUtils.DocumentDirectoryPath + '/sugar_record.aac',
+            hasPermission: undefined,
         }
+    }
+
+    _prepareRecordingPath = (audioPath)=>{
+        AudioRecorder.prepareRecordingAtPath(audioPath, {
+            SampleRate: 22050,
+            Channels: 1,
+            AudioEncoding: "aac",
+            AudioEncodingBitRate: 32000,
+            IncludeBase64:true
+        });
+    };
+
+
+    async _stop() {
+        if (!this.state.recording) {
+            alert('Can\'t stop, not recording!');
+            return;
+        }
+
+        this.setState({stoppedRecording: true, recording: false});
+
+        try {
+            const filePath = await AudioRecorder.stopRecording();
+
+            if (Platform.OS === 'android') {
+                this._finishRecording(true, filePath);
+            }
+            return filePath;
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    async _record() {
+        if (this.state.recording) {
+            alert('Already recording!');
+            return;
+        }
+
+        if (!this.state.hasPermission) {
+            alert('Can\'t record, no permission granted!');
+            return;
+        }
+
+        if(this.state.stoppedRecording){
+            this._prepareRecordingPath(this.state.audioPath);
+        }
+
+        this.setState({recording: true});
+
+        try {
+            const filePath = await AudioRecorder.startRecording();
+            // alert(`start on ${filePath}`);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    _finishRecording(didSucceed, filePath, fileSize) {
+        this.setState({ finished: didSucceed });
+        // alert(`Finished recording of duration ${this.state.currentTime} seconds at path: ${filePath} and size of ${fileSize || 0} bytes`);
+    }
+
+    componentDidMount(){
+        const {sessionId} = this.props;
+        AudioRecorder.requestAuthorization().then((isAuthorised) => {
+            this.setState({ hasPermission: isAuthorised });
+
+            if (!isAuthorised) return;
+
+            this._prepareRecordingPath(this.state.audioPath);
+
+            AudioRecorder.onProgress = (data) => {
+                this.setState({currentTime: Math.floor(data.currentTime)});
+            };
+
+            AudioRecorder.onFinished = (data) => {
+                this.requestParseBloodSugarVoice(sessionId,data.base64);
+                // Android callback comes in the form of a promise instead.
+                if (Platform.OS === 'ios') {
+                    this._finishRecording(data.status === "OK", data.audioFileURL, data.audioFileSize);
+                }
+            };
+        });
     }
 
     requestSaveSugarRecord = (sessionId,Period,bLevel,bTime,bloodDate)=>{
@@ -104,8 +196,41 @@ class SugarRecordPanel extends Component{
             });
     };
 
+    requestParseBloodSugarVoice = (sessionId,audio)=>{
+        Toast.loading('正在解析',0);
+        httpRequest.post('/home/blood-sugar/voice', {
+            session_id:sessionId,
+            audio:audio
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    Toast.hide();
+                    let sugarValue = data.data['value'];
+                    let periodValue = data.data['periodValue'];
+                    let periodLabel = data.data['periodLabel'];
+                    Modal.alert("解析成功",`解析到[${periodLabel}:${sugarValue} mmol/L]\n是否正确？`,[
+                        {text:"确定",onPress:()=>{
+                            this._updatePeriod([periodValue]);
+                            this._updateSugarValue((sugarValue*10).toFixed(0))
+                        }},
+                        {text:"取消",onPress:()=>{}}
+                    ])
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
+    };
+
     _updatePeriod = (value)=>{
         this.setState({sugarPeriod:value});
+    };
+
+    _updateSugarValue = (value)=>{
+        this.setState({sugarValue:value})
     };
 
     _submitSaveSugarRecord = ()=>{
@@ -142,7 +267,7 @@ class SugarRecordPanel extends Component{
                             step={1}
                             dots
                             value={this.state.sugarValue}
-                            onChange={(value)=>{this.setState({sugarValue:value})}}
+                            onChange={this._updateSugarValue}
                         />
                         <View style={{width:'100%',height:100,flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                             <Text style={{fontSize:25,color:'black'}}>
@@ -166,9 +291,15 @@ class SugarRecordPanel extends Component{
                         <Flex.Item>
                             <Flex justify="center" align="center">
                                 <RadiusButton
-                                    text="语音输入"
-                                    onPressIn={()=>{Toast.info(this._renderAudioToast(),0)}}
-                                    onPressOut={()=>{Toast.hide()}}
+                                    text={this.state.currentTime}
+                                    onPressIn={()=>{
+                                        Toast.info(this._renderAudioToast(),0);
+                                        this._record();
+                                    }}
+                                    onPressOut={()=>{
+                                        Toast.hide();
+                                        this._stop();
+                                    }}
                                 />
                             </Flex>
                         </Flex.Item>
