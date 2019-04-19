@@ -61,7 +61,7 @@ class WelcomePanel extends Component{
 
     requestLogin = (Phone,Password,isMD5)=>{
         if(!this._checkCovered(Phone,Password)){
-            Toast.fail('登录信息不完整');
+            Toast.offline('登录信息不完整');
             return ;
         }
         let phone = this._phoneWrapper(Phone);
@@ -77,7 +77,7 @@ class WelcomePanel extends Component{
                 let data = response.data;
                 if (data['code'] === 0) {
                     data = data.data;
-                    changeToLoginState(data['session_id'],data.userId,data.username,data.iconUrl,phone,data.isCheck);
+                    changeToLoginState(data['session_id'],data.userId.toString(),data.username,data.iconUrl,phone,data.isCheck);
                     storage.save({
                         key:'loginUser',
                         data:{
@@ -88,7 +88,7 @@ class WelcomePanel extends Component{
                     this.setState({isCover:false});
                 } else {
                     this.setState({isCover:false});
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

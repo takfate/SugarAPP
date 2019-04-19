@@ -92,7 +92,7 @@ class ChatPanel extends Component{
                         messages: GiftedChat.append(previousState.messages, messages),
                     }));
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -124,7 +124,7 @@ class ChatPanel extends Component{
                     }));
                     this.LatestDataLoading = false;
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -152,7 +152,7 @@ class ChatPanel extends Component{
                     }));
                     this.setState({refreshing:false});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

@@ -77,7 +77,7 @@ class SecretSettingPanel extends Component{
                         showWeight : data['showWeight']
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -109,7 +109,7 @@ class SecretSettingPanel extends Component{
                 if (data['code'] === 0) {
                     this.setState({[key]:value});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

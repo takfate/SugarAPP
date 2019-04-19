@@ -56,12 +56,10 @@ class CommentListPanel extends Component {
     constructor(props){
         super(props);
         this.state = {
-            Data :[
-
-            ],
+            Data :[],
             Refreshing:false,
-
         };
+        this.props.onRef(this);
     }
 
     _dataWrapper = (initData) =>{
@@ -97,7 +95,7 @@ class CommentListPanel extends Component {
                         Data:Data
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -226,7 +224,7 @@ class ArticleDetailPanel extends Component{
                         Collected : data['collected']
                     })
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -261,7 +259,7 @@ class ArticleDetailPanel extends Component{
                 if (data['code'] === 0) {
                     this.setState({Collected:true});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -281,7 +279,7 @@ class ArticleDetailPanel extends Component{
                 if (data['code'] === 0) {
                     this.setState({Collected:false});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -303,11 +301,15 @@ class ArticleDetailPanel extends Component{
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
-                    Toast.hide();
                     Toast.success('评论成功',1);
-                    this.setState({NewCommentContent:''});
+                    this.setState({
+                        NewCommentContent:'',
+                        CommentCount: this.state.CommentCount + 1,
+                        InputFocus:false
+                    });
+                    this.commentList._loadMoreData();
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -327,11 +329,18 @@ class ArticleDetailPanel extends Component{
         const {params} = this.props.navigation.state;
         return(
             <Drawer
-                sidebar={<CommentListPanel navigate={navigate} sessionId={sessionId} articleId={params.ArticleId} userId={userId}/>}
+                sidebar={
+                    <CommentListPanel
+                        navigate={navigate}
+                        sessionId={sessionId}
+                        articleId={params.ArticleId}
+                        userId={userId}
+                        onRef={(e)=>{this.commentList=e}}
+                    />
+                }
                 open={this.state.CommentListOpen}
                 position='right'
                 onOpenChange={this._updateOpenState}
-
             >
                 <View style={{width:"100%",height:"100%",flexDirection:'column',justifyContent:'flex-end'}}>
                     <WebView

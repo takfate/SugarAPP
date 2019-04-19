@@ -87,7 +87,7 @@ class MoreSugarRecordPanel extends Component{
                     }
                     this.setState({ddd: newDdd,ddx:newDdx,dda:newDda, ddi:newDdi});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

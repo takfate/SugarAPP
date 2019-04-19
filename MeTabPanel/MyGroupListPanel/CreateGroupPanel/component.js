@@ -92,7 +92,7 @@ class CreateGroupPanel extends Component{
                         Total:data.total,
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -113,9 +113,10 @@ class CreateGroupPanel extends Component{
                 let data = response.data;
                 if (data['code'] === 0) {
                     Toast.success("创建成功");
+                    navigation.state.params.backRefresh();
                     navigation.goBack();
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -143,7 +144,7 @@ class CreateGroupPanel extends Component{
                         RecommendUserData:Data
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

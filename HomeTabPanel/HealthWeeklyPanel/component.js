@@ -48,7 +48,7 @@ class HealthWeeklyPanel extends Component {
                 if (data['code'] === 0) {
 
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                     goBack();
                 }
             })

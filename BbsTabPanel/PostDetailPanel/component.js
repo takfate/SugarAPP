@@ -98,7 +98,7 @@ class SubPostListPanel extends Component {
                         Data:Data
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -106,7 +106,7 @@ class SubPostListPanel extends Component {
             });
     };
 
-    requestNewPostCommment = (sessionId,replyId,Content) =>{
+    requestNewPostComment = (sessionId,replyId,Content) =>{
         Toast.loading('正在发表');
         httpRequest.post('/bbs/topic/layer-reply/publish', {
             session_id : sessionId,
@@ -117,9 +117,10 @@ class SubPostListPanel extends Component {
                 let data = response.data;
                 if (data['code'] === 0) {
                     Toast.success('发表成功',1);
+                    this._loadMoreData();
                     this.setState({newComment:''});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -172,7 +173,7 @@ class SubPostListPanel extends Component {
 
     _submitNewComment = () =>{
         const {sessionId} = this.props;
-        this.requestNewPostCommment(sessionId,this.state.selectedPostId,this.state.newComment);
+        this.requestNewPostComment(sessionId,this.state.selectedPostId,this.state.newComment);
     };
 
     render(){
@@ -246,7 +247,10 @@ class PostDetailPanel extends Component{
             height:55,
         },
         headerRight:
-            <TouchableOpacity onPress={()=>{navigation.navigate('ReturnPost',{topicId:navigation.state.params.topicId})}}>
+            <TouchableOpacity onPress={()=>{navigation.navigate('ReturnPost',{
+                topicId:navigation.state.params.topicId,
+                backRefresh: navigation.state.params?navigation.state.params.backRefresh:null
+            })}}>
                 <Text style={{fontSize:18,color:'black',marginRight:10}} >回帖</Text>
             </TouchableOpacity>
     });
@@ -286,7 +290,6 @@ class PostDetailPanel extends Component{
         })
             .then((response) => {
                 let data = response.data;
-
                 if (data['code'] === 0) {
                     let resData=data.data;
                     Data.push({
@@ -302,7 +305,7 @@ class PostDetailPanel extends Component{
                     // alert(JSON.stringify(Data));
                     this.requestGetTopicPostList(Data,sessionId,topicId,0,10);
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -352,6 +355,9 @@ class PostDetailPanel extends Component{
         const {sessionId}  = this.props;
         const {params} = this.props.navigation.state;
         this.requestGetTopicDetail(this.state.Data.slice(),sessionId,params.topicId);
+        this.props.navigation.setParams({
+            backRefresh:this._loadMoreData
+        });
     }
 
 

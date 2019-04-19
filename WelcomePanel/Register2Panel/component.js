@@ -57,7 +57,7 @@ class Register2Panel extends Component{
                     Toast.success('注册成功',2);
                     goBack(params._backKey);
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

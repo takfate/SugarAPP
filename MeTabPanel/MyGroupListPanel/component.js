@@ -27,7 +27,9 @@ class MyGroupListPanel extends Component{
         },
         headerRight:
             <TouchableOpacity
-                onPress={()=>{navigation.navigate('CreateGroup')}}
+                onPress={()=>{navigation.navigate('CreateGroup',{
+                    backRefresh:navigation.state.params?navigation.state.params.backRefresh:null
+                })}}
                 style={{paddingRight:12}}
             >
                 <Icon name="plus" size={23} />
@@ -74,7 +76,7 @@ class MyGroupListPanel extends Component{
                         Total:data.total
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -92,6 +94,7 @@ class MyGroupListPanel extends Component{
     componentDidMount(){
         const {sessionId}  = this.props.navigation.state.params;
         this.requestGetGroupList(this.state.Data.slice(),sessionId,0,10);
+        this.props.navigation.setParams({backRefresh:this._refresh})
     }
 
 
@@ -114,7 +117,11 @@ class MyGroupListPanel extends Component{
         const { navigate } = this.props.navigation;
         return (
             <TouchableHighlight
-                onPress={()=>{navigate("GroupChat",{GroupId:item.item.key,GroupName:item.item.GroupName})}}
+                onPress={()=>{navigate("GroupChat",{
+                    GroupId:item.item.key,
+                    GroupName:item.item.GroupName,
+                    backRefresh: this._refresh
+                })}}
             >
                 <Card full>
                     <Card.Header

@@ -114,7 +114,7 @@ export class MessageListPanel extends Component{
                         ExistU2u : ExU2uData
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

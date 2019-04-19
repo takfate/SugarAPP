@@ -52,7 +52,7 @@ class PostItemPanel extends Component {
                 if (data['code'] === 0) {
                     this.setState({Score:this.state.Score+isLike});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -202,7 +202,7 @@ class CommentItemPanel extends Component {
                 if (data['code'] === 0) {
                     this.setState({UserScore:this.state.UserScore+isLike});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

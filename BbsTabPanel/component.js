@@ -98,7 +98,7 @@ class BbsTabPanel extends Component{
                         Data:Data
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -192,7 +192,7 @@ class BbsTabPanel extends Component{
                         <TouchableOpacity onPress={()=>{navigate('BbsSearch')}} style={{paddingRight:10}}>
                             <Icon name="search" size={23} color="white"/>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>{navigate('NewPost')}}>
+                        <TouchableOpacity onPress={()=>{navigate('NewPost',{refreshList:this._refresh})}}>
                             <Icon name="plus" size={23} color="white"/>
                         </TouchableOpacity>
                     </View>

@@ -69,7 +69,7 @@ class ArticleCommentItemPanel extends Component {
                 if (data['code'] === 0) {
                     this.setState({UserScore:this.state.UserScore+isLike});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

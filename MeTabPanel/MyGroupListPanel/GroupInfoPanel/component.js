@@ -81,7 +81,7 @@ class GroupInfoPanel extends Component{
                         Host:data.host
                     })
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -107,7 +107,7 @@ class GroupInfoPanel extends Component{
                         Total: this.state.Total - 1
                     })
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -118,7 +118,7 @@ class GroupInfoPanel extends Component{
 
     requestRemoveGroup = (sessionId,groupId)=>{
         const {goBack} = this.props.navigation;
-        const {ChatPanelKey} = this.props.navigation.state.params;
+        const {ChatPanelKey,backRefresh} = this.props.navigation.state.params;
         httpRequest.post('/social/group/remove', {
             session_id:sessionId,
             group_id:groupId,
@@ -127,9 +127,10 @@ class GroupInfoPanel extends Component{
                 let data = response.data;
                 if (data['code'] === 0) {
                     Toast.success("解散成功");
+                    backRefresh();
                     goBack(ChatPanelKey);
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -161,9 +162,10 @@ class GroupInfoPanel extends Component{
     }
 
 
-    _navigateToUser =(ToUserId) =>{
+    _navigateToUser = (ToUserId) =>{
         const {userId} = this.props;
         const {navigate} = this.props.navigation;
+        alert(typeof ToUserId+" "+typeof userId);
         navigate("UserInfo",{
             isLoginUser :userId===ToUserId,
             UserId : ToUserId
@@ -177,9 +179,12 @@ class GroupInfoPanel extends Component{
     };
 
     _clickRemoveGroup = ()=>{
-        const {GroupId} = this.props.navigation.state.params;
+        const {GroupId,GroupName} = this.props.navigation.state.params;
         const {sessionId}  = this.props;
-        this.requestRemoveGroup(sessionId,GroupId);
+        Modal.alert("解散群组",`确定要解散${GroupName}吗？`,[
+            {text:"确定", onPress:()=>{this.requestRemoveGroup(sessionId,GroupId)}},
+            {text:"取消",onPress:()=>{}}
+        ]);
     };
 
     _renderItem = (item)=>{

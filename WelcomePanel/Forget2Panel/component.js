@@ -50,7 +50,7 @@ class Forget2Panel extends Component{
                     Toast.success('密码修改成功');
                     goBack(params._backKey);
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

@@ -67,7 +67,7 @@ export class MyWatchListPanel extends Component{
                         Total:data.total
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -202,7 +202,7 @@ export class WatchMeListPanel extends Component{
                         Total:data.total
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -360,7 +360,7 @@ export class MyCollectedArticleListPanel extends Component{
                         Total:data.total
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -523,7 +523,7 @@ export class MyCommentListPanel extends Component{
                         Total : data.total
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -694,7 +694,7 @@ export class MyPublishedTopicListPanel extends Component {
                         Total : data.total
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -828,7 +828,7 @@ export class MyCollectedTopicListPanel extends Component{
                         Total : data.total
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -1046,7 +1046,7 @@ export class MyResponseListPanel extends Component{
                         Total : data.total
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -1155,7 +1155,7 @@ export class SubPostDetailPanel extends Component{
                     });
                     this.requestGetPostCommentList(Data,sessionId,postId,0,10);
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -1182,7 +1182,7 @@ export class SubPostDetailPanel extends Component{
                         Data:Data
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -1203,7 +1203,7 @@ export class SubPostDetailPanel extends Component{
                     Toast.success('发表成功',1);
                     this.setState({newComment:''});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

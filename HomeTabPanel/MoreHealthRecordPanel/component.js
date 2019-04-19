@@ -121,7 +121,7 @@ class MoreHealthRecordPanel extends Component{
                         Data:Data
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

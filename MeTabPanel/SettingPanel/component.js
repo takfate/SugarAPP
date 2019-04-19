@@ -62,7 +62,7 @@ class SettingPanel extends Component{
                     Logout();
 
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

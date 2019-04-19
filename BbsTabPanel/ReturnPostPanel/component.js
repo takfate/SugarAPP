@@ -83,6 +83,7 @@ class ReturnPostPanel extends Component{
                 let data = response.data;
                 if (data['code'] === 0) {
                     Toast.success('发布成功',1);
+                    this.props.navigation.state.params.backRefresh();
                     this.props.navigation.goBack();
                 } else {
                     Toast.fail(data['msg']);

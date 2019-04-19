@@ -98,7 +98,7 @@ class GroupChatPanel extends Component{
                         messages: GiftedChat.append(previousState.messages, messages),
                     }));
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -130,7 +130,7 @@ class GroupChatPanel extends Component{
                     }));
                     this.LatestDataLoading = false;
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -159,7 +159,7 @@ class GroupChatPanel extends Component{
                     }));
                     this.setState({refreshing:false});
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -170,8 +170,13 @@ class GroupChatPanel extends Component{
     _clickGroupSetting = ()=>{
         const {sessionId}  = this.props;
         const {navigate} = this.props.navigation;
-        const {GroupId,GroupName} = this.props.navigation.state.params;
-        navigate("GroupInfo",{GroupId:GroupId,GroupName:GroupName,ChatPanelKey:this.props.navigation.state.key});
+        const {GroupId,GroupName,backRefresh} = this.props.navigation.state.params;
+        navigate("GroupInfo",{
+            GroupId:GroupId,
+            GroupName:GroupName,
+            ChatPanelKey:this.props.navigation.state.key,
+            backRefresh:backRefresh
+        });
     };
 
     loadMoreHistory = ()=>{
@@ -202,7 +207,7 @@ class GroupChatPanel extends Component{
             this.requestGetLatestMessageList(sessionId,GroupId,latestId,10);
         },2000);
         this.props.navigation.setParams({
-            settingPress : this._clickGroupSetting
+            settingPress : this._clickGroupSetting,
         });
     }
 

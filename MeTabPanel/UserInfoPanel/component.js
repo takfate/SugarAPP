@@ -93,7 +93,7 @@ class MyInfoPanel extends Component {
                         Score : data['integral']
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -182,7 +182,7 @@ class OtherUserInfoPanel extends  Component{
                         Focus : data['isFollow']
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -207,7 +207,7 @@ class OtherUserInfoPanel extends  Component{
                 if (data['code'] === 0) {
                     this.requestGetUserInfo(sessionId,UserId);
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -225,7 +225,7 @@ class OtherUserInfoPanel extends  Component{
                 if (data['code'] === 0) {
                     this.requestGetUserInfo(sessionId,UserId);
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

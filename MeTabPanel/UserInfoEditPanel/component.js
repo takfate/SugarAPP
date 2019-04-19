@@ -93,7 +93,7 @@ class UserInfoEditPanel extends Component{
                         Score : data['integral']
                     });
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -129,7 +129,7 @@ class UserInfoEditPanel extends Component{
                 if (data['code'] === 0) {
                     Toast.success('保存成功');
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

@@ -78,7 +78,7 @@ class Register1Panel extends Component{
                     this.setState({LeftTime:60,cycling:true});
                     let timer = setInterval(()=>{this._updateLeftTime(timer)},1000)
                 }else{
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch( (error) => {

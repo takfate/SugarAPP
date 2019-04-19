@@ -191,7 +191,7 @@ class HealthRecordPanel extends Component{
                     Toast.success('添加成功',1);
                     goBack();
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -211,7 +211,7 @@ class HealthRecordPanel extends Component{
             let BS = this.state.BS1Value[0]+','+this.state.BS2Value[0];
             this.requestSaveHealthRecord(sessionId,YDS,PE,Weight,BS,time,datetime);
         }else{
-            Toast.fail('请填写完整的健康记录');
+            Toast.offline('请填写完整的健康记录');
         }
     };
 
@@ -336,7 +336,7 @@ class HealthRecordPanel extends Component{
                     }
 
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

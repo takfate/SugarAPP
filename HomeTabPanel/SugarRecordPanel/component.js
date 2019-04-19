@@ -188,7 +188,7 @@ class SugarRecordPanel extends Component{
                     Toast.success('添加成功',1);
                     goBack();
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
@@ -217,7 +217,7 @@ class SugarRecordPanel extends Component{
                         {text:"取消",onPress:()=>{}}
                     ])
                 } else {
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {

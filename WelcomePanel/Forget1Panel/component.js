@@ -72,7 +72,7 @@ class Forget1Panel extends Component{
                     this.setState({LeftTime:60,cycling:true});
                     let timer = setInterval(()=>{this._updateLeftTime(timer)},1000)
                 }else{
-                    Toast.fail(data['msg']);
+                    Toast.offline(data['msg']);
                 }
             })
             .catch( (error) => {
@@ -90,7 +90,7 @@ class Forget1Panel extends Component{
             });
 
         }else{
-            Toast.fail('信息填写不完整',1);
+            Toast.offline('信息填写不完整',1);
         }
     };
 
