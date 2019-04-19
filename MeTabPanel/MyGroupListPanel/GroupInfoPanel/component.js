@@ -165,7 +165,6 @@ class GroupInfoPanel extends Component{
     _navigateToUser = (ToUserId) =>{
         const {userId} = this.props;
         const {navigate} = this.props.navigation;
-        alert(typeof ToUserId+" "+typeof userId);
         navigate("UserInfo",{
             isLoginUser :userId===ToUserId,
             UserId : ToUserId

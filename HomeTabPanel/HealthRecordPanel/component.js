@@ -172,6 +172,16 @@ class HealthRecordPanel extends Component{
 
     };
 
+    _updatePressure = (bs1,bs2)=>{
+        this.setState({
+            BS1Value:bs1,
+            BS1ValueChange:true,
+            BS2Value:bs2,
+            BS2ValueChange:true,
+            BSValue:'舒张压 '+bs1+',收缩压 '+ bs2,
+            BSValueChange:true,
+        });
+    };
 
     requestSaveHealthRecord = (sessionId,insulin,sportTime,weight,bloodPressure,healthTime,healthDate)=>{
         const {goBack} = this.props.navigation;
@@ -310,37 +320,55 @@ class HealthRecordPanel extends Component{
                 if (data['code'] === 0) {
                     data = data.data;
                     Toast.hide();
-                    alert(JSON.stringify(data));
-                    if (Object.keys(data).length === 0){
+                    let pass = 0;
+                    let parseResult = `解析到\n`;
+                    if(data.hasOwnProperty("insulin")) {
+                        parseResult += `[胰岛素用量：${data["insulin"]}U]\n`;
+                        pass++;
+                    }
+                    if(data.hasOwnProperty("sportsTime")){
+                        parseResult += `[运动时长：${data["sportsTime"]["hour"]}小时${data["sportsTime"]["minute"]}分钟]\n`;
+                        pass++;
+                    }
+                    if(data.hasOwnProperty("weight")){
+                        parseResult += `[体重：${data["weight"]}千克]\n`;
+                        pass++;
+                    }
+                    if(data.hasOwnProperty("pressure1") && data.hasOwnProperty("pressure2")){
+                        parseResult += `[舒张压：${data["pressure1"]}mmHg]\n`;
+                        parseResult += `[收缩压：${data["pressure2"]}mmHg]\n`;
+                        pass++;
+                    }
+                    if(pass===0){
                         Toast.offline("解析失败，请仔细阅读上方提示再次尝试录音")
                     }else{
-                        let parseResult = `解析到\n`;
-                        if(data.hasOwnProperty("insulin")) {
-                            parseResult += `[胰岛素用量：${data["insulin"]}U]\n`;
-                        }
-                        if(data.hasOwnProperty("weight")){
-                            parseResult += `[体重：${data["weight"]}千克]\n`;
-                        }
-                        if(data.hasOwnProperty("sportsTime")){
-                            parseResult += `[运动时长：${data["sportsTime"]["hour"]}小时${data["sportsTime"]["minute"]}分钟]\n`;
-                        }
-                        if(data.hasOwnProperty("pressure1") && data.hasOwnProperty("pressure2")){
-                            parseResult += `[舒张压：${data["pressure1"]}U]\n`;
-                            parseResult += `[收缩压：${data["pressure2"]}U]\n`;
-                        }
                         parseResult+=`是否正确？`;
                         Modal.alert(`解析成功`,parseResult,[
-                            {text:"确定",onPress:()=>{}},
+                            {text:"确定",onPress:()=>{
+                                    if(data.hasOwnProperty("insulin")) {
+                                        let insulin = data["insulin"].toFixed(1).toString().split(".");
+                                        this._updateYDS([insulin[0],"."+insulin[1]]);
+                                    }
+                                    if(data.hasOwnProperty("sportsTime")){
+                                        let sportsTime = data["sportsTime"];
+                                        this._updatePE([sportsTime["hour"].toString(),sportsTime["minute"].toString()])
+                                    }
+                                    if(data.hasOwnProperty("weight")){
+                                        let weight = data["weight"].toFixed(1).toString().split(".");
+                                        this._updateWeight([weight[0],"."+weight[1]]);
+                                    }
+                                    if(data.hasOwnProperty("pressure1") && data.hasOwnProperty("pressure2")){
+                                        this._updatePressure([data["pressure1"]],[data["pressure2"]])
+                                    }
+                                }},
                             {text:"取消",onPress:()=>{}}
-                        ])
+                        ]);
                     }
-
                 } else {
                     Toast.offline(data['msg']);
                 }
             })
             .catch((error) => {
-                alert(JSON.stringify(err))
                 Toast.fail('网络好像有问题~');
             });
     };
