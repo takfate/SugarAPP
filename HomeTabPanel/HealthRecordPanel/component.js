@@ -1,7 +1,7 @@
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
 import {ScrollView, View, Text, TextInput, TouchableOpacity, Platform} from 'react-native';
-import {TabBar, Button, InputItem, WhiteSpace, Slider, Card, Picker, List, Modal, Toast, Flex} from 'antd-mobile';
+import {TabBar, Button, InputItem, WhiteSpace, Slider, NoticeBar, Picker, List, Modal, Toast, Flex} from 'antd-mobile';
 import httpRequest from "../../httpRequest";
 import {RadiusButton} from "../../CommonComponent";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -172,9 +172,6 @@ class HealthRecordPanel extends Component{
 
     };
 
-    _updatePeriod = (value)=>{
-        this.setState({sugarPeriod:value});
-    };
 
     requestSaveHealthRecord = (sessionId,insulin,sportTime,weight,bloodPressure,healthTime,healthDate)=>{
         const {goBack} = this.props.navigation;
@@ -311,13 +308,39 @@ class HealthRecordPanel extends Component{
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
+                    data = data.data;
                     Toast.hide();
                     alert(JSON.stringify(data));
+                    if (Object.keys(data).length === 0){
+                        Toast.offline("解析失败，请仔细阅读上方提示再次尝试录音")
+                    }else{
+                        let parseResult = `解析到\n`;
+                        if(data.hasOwnProperty("insulin")) {
+                            parseResult += `[胰岛素用量：${data["insulin"]}U]\n`;
+                        }
+                        if(data.hasOwnProperty("weight")){
+                            parseResult += `[体重：${data["weight"]}千克]\n`;
+                        }
+                        if(data.hasOwnProperty("sportsTime")){
+                            parseResult += `[运动时长：${data["sportsTime"]["hour"]}小时${data["sportsTime"]["minute"]}分钟]\n`;
+                        }
+                        if(data.hasOwnProperty("pressure1") && data.hasOwnProperty("pressure2")){
+                            parseResult += `[舒张压：${data["pressure1"]}U]\n`;
+                            parseResult += `[收缩压：${data["pressure2"]}U]\n`;
+                        }
+                        parseResult+=`是否正确？`;
+                        Modal.alert(`解析成功`,parseResult,[
+                            {text:"确定",onPress:()=>{}},
+                            {text:"取消",onPress:()=>{}}
+                        ])
+                    }
+
                 } else {
                     Toast.fail(data['msg']);
                 }
             })
             .catch((error) => {
+                alert(JSON.stringify(err))
                 Toast.fail('网络好像有问题~');
             });
     };
@@ -335,6 +358,9 @@ class HealthRecordPanel extends Component{
 
         return (
             <ScrollView style={{height:'100%',width:'100%',backgroundColor:'white'}}>
+                <NoticeBar marqueeProps={{loop: true, leading: 500, trailing: 800, fps: 60, style: {}}}>
+                    提示：在进行语音输入时，每一项后尽量有停顿，体重的默认单位为千克/公斤，血压请分别说出舒张压和收缩压。
+                </NoticeBar>
                 <List>
                     <List.Item extra={<Text style={{fontSize:12}}>{today}</Text>}>日期</List.Item>
                     <Picker data={YDSData}

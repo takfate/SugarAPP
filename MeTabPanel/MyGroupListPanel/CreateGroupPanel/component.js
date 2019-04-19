@@ -24,6 +24,7 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
+
 class CreateGroupPanel extends Component{
     static navigationOptions = ({ navigation }) =>({
         headerTitle:"创建群组",
@@ -44,17 +45,28 @@ class CreateGroupPanel extends Component{
             GroupName: '',
             Refreshing:false,
             SelectedUsers : [],
+            SelectedCount : 0,
             FollowingUserData : [],
-            SelectedMap:{}
+            RecommendUserData : [],
         };
     }
 
 
-    _dataWrapper = (initData) =>{
+    _dataFollowingUserWrapper = (initData) =>{
         return {
             key : initData['followId'].toString(),
             UserNickName :initData['username'],
-            UserImageUrl : initData['iconUrl']
+            UserImageUrl : initData['iconUrl'],
+            selected:false,
+        };
+    };
+
+    _dataRecommendUserWrapper = (initData) =>{
+        return {
+            key :initData['ID'].toString(),
+            UserImageUrl: initData['HeadPortraitUrl'],
+            UserNickName : initData['UserName'],
+            selected:false,
         };
     };
 
@@ -72,12 +84,12 @@ class CreateGroupPanel extends Component{
                 if (data['code'] === 0) {
                     data = data.data;
                     for(let i=0;i<data.data.length;i++){
-                        Data.push(this._dataWrapper(data.data[i]));
+                        Data.push(this._dataFollowingUserWrapper(data.data[i]));
                     }
                     this.setState({
                         Refreshing:false,
                         FollowingUserData:Data,
-                        Total:data.total
+                        Total:data.total,
                     });
                 } else {
                     Toast.fail(data['msg']);
@@ -95,7 +107,7 @@ class CreateGroupPanel extends Component{
         httpRequest.post('/social/group/create', {
             session_id:sessionId,
             group_name:GroupName,
-            group_members:JSON.stringify(GroupMembers)
+            group_members:JSON.stringify(Array.from(new Set(GroupMembers)))
         })
             .then((response) => {
                 let data = response.data;
@@ -112,10 +124,31 @@ class CreateGroupPanel extends Component{
             });
     };
 
-    _refresh = ()=>{
-        if(this.state.Refreshing)return ;
-        const {sessionId}  = this.props;
-        this.requestGetMyWatchList([],sessionId,0,10);
+    requestGetRecommendUserList = (sessionId)=>{
+        this.setState({Refreshing:true});
+        httpRequest.get('/social/recommend', {
+            params:{
+                session_id:sessionId,
+            }
+        })
+            .then((response) => {
+                let data = response.data;
+                if (data['code'] === 0) {
+                    let Data = [];
+                    for(let i=0;i<data.data.length;i++){
+                        Data.push(this._dataRecommendUserWrapper(data.data[i]));
+                    }
+                    this.setState({
+                        Refreshing:false,
+                        RecommendUserData:Data
+                    });
+                } else {
+                    Toast.fail(data['msg']);
+                }
+            })
+            .catch((error) => {
+                Toast.fail('网络好像有问题~');
+            });
     };
 
     _clickCreateGroup = ()=>{
@@ -128,16 +161,18 @@ class CreateGroupPanel extends Component{
         this.props.navigation.setParams({
             createPress : this._clickCreateGroup
         });
-        this.requestGetMyWatchList(this.state.FollowingUserData.slice(),sessionId,0,10);
+        this.requestGetMyWatchList([],sessionId,0,15);
+        this.requestGetRecommendUserList(sessionId);
     }
 
 
-    _loadMoreData = () =>{
+    _loadFollowingUserMoreData = () =>{
         if(this.state.Refreshing)return ;
         const {sessionId}  = this.props;
         this.requestGetMyWatchList(this.state.FollowingUserData.slice(),sessionId,
             this.state.FollowingUserData.length,10);
     };
+
 
     _navigateToUser =(ToUserId) =>{
         const {userId} = this.props;
@@ -148,27 +183,30 @@ class CreateGroupPanel extends Component{
         });
     };
 
-    _renderItem = (item)=>{
+    _renderFollowingUserItem = (item)=>{
         const { navigate } = this.props.navigation;
         return (
             <CheckboxItem
                 key={item.item.key}
-                checked={this.state.SelectedMap[item.item.key]}
+                checked={item.item.selected}
                 onChange={
                     (ev)=>{
-                        this.setState({
-                            SelectedMap:{
-                                ...this.state.SelectedMap,
-                                [item.item.key]:ev.target.checked
-                            }
-                        });
-                        let newData = this.state.SelectedUsers.slice();
+                        let newData = this.state.FollowingUserData.slice();
+                        newData[item.index]=  {
+                            ...newData[item.index],
+                            selected:ev.target.checked
+                        };
+                        let newList = this.state.SelectedUsers.slice();
                         if(ev.target.checked){
-                            newData.push(item.item.key);
+                            newList.push(item.item.key);
                         }else{
-                            newData.splice(newData.findIndex(v=>v===item.item.key),1);
+                            newList.splice(newList.findIndex((v)=>v===item.item.key),1);
                         }
-                        this.setState({SelectedUsers:newData});
+                        this.setState({
+                            FollowingUserData:newData,
+                            SelectedUsers:newList,
+                            SelectedCount: new Set(newList).size
+                        })
                     }
                 }
             >
@@ -178,7 +216,38 @@ class CreateGroupPanel extends Component{
         ) ;
     };
 
+    _renderRecommendUserItem = (item)=>{
+        const { navigate } = this.props.navigation;
+        return (
+            <CheckboxItem
+                key={item.item.key}
+                checked={item.item.selected}
+                onChange={
+                    (ev)=>{
+                        let newData = this.state.RecommendUserData.slice();
+                        newData[item.index]=  {
+                            ...newData[item.index],
+                            selected:ev.target.checked
+                        };
+                        let newList = this.state.SelectedUsers.slice();
+                        if(ev.target.checked){
+                            newList.push(item.item.key);
+                        }else{
+                            newList.splice(newList.findIndex((v)=>v===item.item.key),1);
+                        }
+                        this.setState({
+                            RecommendUserData:newData,
+                            SelectedUsers:newList,
+                            SelectedCount: new Set(newList).size
+                        })
+                    }
+                }
+            >
+                <Text style={{fontSize:18,Color:"black"}}>{item.item.UserNickName}</Text>
+            </CheckboxItem>
 
+        ) ;
+    };
 
     _updateGroupName = (value)=>{
         this.setState({GroupName:value})
@@ -189,6 +258,7 @@ class CreateGroupPanel extends Component{
             {title:"推荐"},
             {title:"关注"}
         ];
+        // alert(JSON.stringify(this.state.SelectedUsers)+JSON.stringify(this.state.SelectedMap));
         return (
             <View style={{height:'100%',width:'100%',flex:1 ,backgroundColor:'white'}}>
                 <List>
@@ -200,37 +270,32 @@ class CreateGroupPanel extends Component{
                     >
                         群组名称
                     </InputItem>
-                    <List.Item extra={"已选择"+this.state.SelectedUsers.length+"个成员"}>
+                    <List.Item extra={"已选择"+this.state.SelectedCount+"个成员"}>
                         选择好友
                     </List.Item>
                 </List>
                 <Tabs tabs={tabs} >
+                    <View   style={{backgroundColor:'white'}}>
+                        <CommonListPanel
+                            RealData = {this.state.RecommendUserData}
+                            InitNum = {10}
+                            RenderItem = {this._renderRecommendUserItem}
+                            style={{height:'100%'}}
+                            refreshing={this.state.Refreshing}
+                        />
+                    </View>
                     <View style={{backgroundColor:'white'}}>
                         <CommonListPanel
                             RealData = {this.state.FollowingUserData}
                             InitNum = {10}
-                            RenderItem = {this._renderItem}
+                            RenderItem = {this._renderFollowingUserItem}
                             style={{height:'100%'}}
                             refreshing={this.state.Refreshing}
-                            onRefresh={this._refresh}
-                            onEndReached={this._loadMoreData}
-                            onEndReachedThreshold={0.1}
-                        />
-                    </View>
-                    <View   style={{backgroundColor:'white'}}>
-                        <CommonListPanel
-                            RealData = {this.state.Data}
-                            InitNum = {10}
-                            RenderItem = {this._renderItem}
-                            style={{height:'100%'}}
-                            refreshing={this.state.Refreshing}
-                            onRefresh={this._refresh}
-                            onEndReached={this._loadMoreData}
+                            onEndReached={this._loadFollowingUserMoreData}
                             onEndReachedThreshold={0.1}
                         />
                     </View>
                 </Tabs>
-
             </View>
         );
     }
