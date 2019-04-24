@@ -53,12 +53,13 @@ class SugarGuidePanel extends Component{
 
     componentDidMount(){
         const {sessionId} = this.props;
+        alert(makeWebSocketUrl(sessionId));
         this.ws = new WebSocket(makeWebSocketUrl(sessionId));
 
         this.ws.onmessage = (evt) => {
             let data = JSON.parse(evt.data);
             this.setState(previousState => ({
-                messages: GiftedChat.append(previousState.messages, this.makeBotMessage(data.questionId,data.msg)),
+                messages: GiftedChat.append(previousState.messages, this.makeBotMessage(data["questionId"],data["msg"])),
             }));
         };
 

@@ -114,6 +114,8 @@ class UserInfoEditPanel extends Component{
     };
 
     requestSaveInfo = (sessionId,NickName,Gender,Height,Weight,Location,Job,Age) => {
+        const {goBack} = this.props.navigation;
+        const {refresh} = this.props.navigation.state.params;
         httpRequest.post('/accounts/alter', {
             session_id:sessionId,
             username:NickName,
@@ -128,6 +130,8 @@ class UserInfoEditPanel extends Component{
                 let data = response.data;
                 if (data['code'] === 0) {
                     Toast.success('保存成功');
+                    refresh();
+                    goBack();
                 } else {
                     Toast.offline(data['msg']);
                 }

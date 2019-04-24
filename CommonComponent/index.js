@@ -1,6 +1,6 @@
 import React,{PropTypes,Component} from 'react';
 import {View,Text,ScrollView,Image,TouchableWithoutFeedback} from 'react-native';
-import {BaseUrl,wsUrl} from '../config';
+import {BaseUrl,WsUrl} from '../config';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
@@ -109,5 +109,5 @@ export const GridImageURL  = (name)=>{
 };
 
 export const makeWebSocketUrl = (sessionId)=>{
-    return `${wsUrl}/webSocket?session_id=${sessionId}`
+    return `${WsUrl}/home/sugar-guide?session_id=${sessionId}`
 };

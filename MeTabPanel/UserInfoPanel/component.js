@@ -107,6 +107,11 @@ class MyInfoPanel extends Component {
         this.requestGetMyInfo(sessionId);
     }
 
+    _refresh = ()=>{
+        const {sessionId} = this.props;
+        this.requestGetMyInfo(sessionId);
+    };
+
     render(){
         const {navigate} = this.props.navigation;
         return (
@@ -131,7 +136,7 @@ class MyInfoPanel extends Component {
                     <List.Item extra={this.state.Height}>身高</List.Item>
                     <List.Item extra={this.state.Weight}>体重</List.Item>
                     <List.Item >
-                        <Button type="primary" onClick={()=>{navigate('UserInfoEdit')}}>编辑个人信息</Button>
+                        <Button type="primary" onClick={()=>{navigate('UserInfoEdit',{refresh:this._refresh})}}>编辑个人信息</Button>
                     </List.Item>
                 </List>
             </ScrollView>
@@ -280,7 +285,7 @@ class OtherUserInfoPanel extends  Component{
                             TargetUserName: this.state.NickName,
                             TargetUserId:params.UserId,
                             TargetUserImageUrl:this.state.HeadImageUrl
-                            })}}>私信</Button>
+                        })}}>私信</Button>
                     </List.Item>
                 </List>
 
