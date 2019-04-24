@@ -53,8 +53,8 @@ class SugarGuidePanel extends Component{
 
     componentDidMount(){
         const {sessionId} = this.props;
-        alert(makeWebSocketUrl(sessionId));
         this.ws = new WebSocket(makeWebSocketUrl(sessionId));
+
 
         this.ws.onmessage = (evt) => {
             let data = JSON.parse(evt.data);
@@ -63,20 +63,29 @@ class SugarGuidePanel extends Component{
             }));
         };
 
+        this.ws.onclose = (evt)=>{
+            this.ws = null;
+        };
+
         this.ws.onerror = (evt)=>{
             Toast.info('网络好像有问题~',1);
         };
     };
 
     componentWillUnmount(){
-        this.ws.close();
+        if(this.ws!=null){
+            this.ws.close();
+        }
     }
 
     onSend = (messages = [])=> {
         this.setState(previousState => ({
             messages: GiftedChat.append(previousState.messages, messages),
         }));
-        this.ws.send(messages[0].text);
+        if(this.ws!=null){
+            this.ws.send(messages[0].text);
+        }
+
     };
 
     onPress = (context,message)=>{

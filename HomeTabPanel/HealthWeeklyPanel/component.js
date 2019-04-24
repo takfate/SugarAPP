@@ -66,7 +66,7 @@ class HealthWeeklyPanel extends Component {
         const {sessionId} = this.props;
         return (
             <View style={{height:'100%',width:'100%',backgroundColor:'white'}}>
-                <WebView source={{uri:makeCommonImageUrl(`/getHealthWeekly?session_id=${sessionId}`)}} startInLoadingState={true}/>
+                <WebView source={{uri:makeCommonImageUrl(`/home/weekly-newspaper?session_id=${sessionId}`)}} startInLoadingState={true}/>
             </View>
         );
     }
