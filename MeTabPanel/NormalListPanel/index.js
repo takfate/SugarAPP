@@ -972,7 +972,6 @@ export class MyResponseListPanel extends Component{
             ) ;
         }else{
             return (
-
                 <TouchableHighlight
                     onPress={()=>{navigate('PostDetail',{topicId:item.item.TopicId})}}
                 >
@@ -1039,7 +1038,6 @@ export class MyResponseListPanel extends Component{
                     for(let i=0;i<data.data.length;i++){
                         Data.push(this._dataWrapper(data.data[i]));
                     }
-                    console.log(Data);
                     this.setState({
                         Refreshing:false,
                         Data:Data,
@@ -1131,17 +1129,18 @@ export class SubPostDetailPanel extends Component{
 
     requestGetPostDetail = (Data,sessionId,topicId,x,n,postId)=>{
         this.setState({Refreshing:true});
-        httpRequest.post('/getReplyFromXGetN', {
-            session_id:sessionId,
-            topicId:topicId,
-            x:x,
-            n:n
+        httpRequest.get('/bbs/topic/lord-reply', {
+            params:{
+                session_id:sessionId,
+                topic_id:topicId,
+                begin_floor:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
                     let resData=data.data[0];
-
                     Data.push({
                         key:'0',
                         PostId : resData['replyId'],
@@ -1150,7 +1149,6 @@ export class SubPostDetailPanel extends Component{
                         UserImageUrl : resData['iconUrl'],
                         PostTime : resData['replyTime'],
                         Content : resData['content'],
-                        Images : [resData['picture1'],resData['picture2'],resData['picture3'],resData['picture4'],resData['picture5']],
                         Score : resData['likes']
                     });
                     this.requestGetPostCommentList(Data,sessionId,postId,0,10);
@@ -1165,11 +1163,13 @@ export class SubPostDetailPanel extends Component{
     };
 
     requestGetPostCommentList = (Data,sessionId,postId,x,n) =>{
-        httpRequest.post('/getSubReplyFromXGetN', {
-            session_id:sessionId,
-            replyId:postId,
-            x:x,
-            n:n
+        httpRequest.get('/bbs/topic/layer-reply', {
+            params:{
+                session_id:sessionId,
+                topic_lord_reply_id:postId,
+                begin_floor:x,
+                need_number:n
+            }
         })
             .then((response) => {
                 let data = response.data;
@@ -1190,17 +1190,18 @@ export class SubPostDetailPanel extends Component{
             });
     };
 
-    requestNewPostCommment = (sessionId,replyId,Content) =>{
+    requestNewPostComment = (sessionId,replyId,Content) =>{
         Toast.loading('正在发表');
-        httpRequest.post('/addSubReply', {
+        httpRequest.post('/bbs/topic/layer-reply/publish', {
             session_id : sessionId,
-            replyId : replyId,
+            topic_lord_reply_id : replyId,
             content :Content
         })
             .then((response) => {
                 let data = response.data;
                 if (data['code'] === 0) {
                     Toast.success('发表成功',1);
+                    this._loadMoreData();
                     this.setState({newComment:''});
                 } else {
                     Toast.offline(data['msg']);
@@ -1237,7 +1238,7 @@ export class SubPostDetailPanel extends Component{
 
     _submitNewComment = ()=>{
         const {sessionId,PostId} = this.props.navigation.state.params;
-        this.requestNewPostCommment(sessionId,PostId,this.state.newComment);
+        this.requestNewPostComment(sessionId,PostId,this.state.newComment);
         this.setState({newComment:''});
     };
 
