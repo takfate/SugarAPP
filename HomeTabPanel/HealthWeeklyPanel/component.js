@@ -33,33 +33,8 @@ class HealthWeeklyPanel extends Component {
 
     constructor(props){
         super(props);
-        this.state = {
-            html : ''
-        }
     }
-
-    requestGetHealthWeekly = (sessionId) =>{
-        const {goBack} = this.props.navigation;
-        httpRequest.post('/getHealthWeekly', {
-            session_id : sessionId
-        })
-            .then((response) => {
-                let data = response.data;
-                if (data['code'] === 0) {
-
-                } else {
-                    Toast.offline(data['msg']);
-                    goBack();
-                }
-            })
-            .catch((error) => {
-                Toast.fail('网络好像有问题~');
-            });
-    };
-
     componentDidMount(){
-        const {sessionId} = this.props;
-        this.requestGetHealthWeekly(sessionId);
     }
 
     render(){

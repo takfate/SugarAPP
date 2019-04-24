@@ -2,9 +2,9 @@
 
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
-import {View, Text, ScrollView, Image, StyleSheet, RefreshControl} from 'react-native';
+import {View, Text, ScrollView, Image, StyleSheet, RefreshControl, Clipboard} from 'react-native';
 import {Button, NavBar, Icon, Card, List, ListView, WhiteSpace, Progress, Toast} from 'antd-mobile';
-import { GiftedChat } from 'react-native-gifted-chat'
+import {GiftedChat, Send} from 'react-native-gifted-chat'
 import httpRequest from "../../httpRequest";
 import {GridImageURL, makeCommonImageUrl} from "../../CommonComponent";
 
@@ -160,7 +160,26 @@ class ChatPanel extends Component{
             });
     };
 
-    
+    onPress = (context,message)=>{
+        if (message.text) {
+            const options = [
+                '复制内容',
+                '取消',
+            ];
+            const cancelButtonIndex = options.length - 1;
+            context.actionSheet().showActionSheetWithOptions({
+                    options,
+                    cancelButtonIndex,
+                },
+                (buttonIndex) => {
+                    switch (buttonIndex) {
+                        case 0:
+                            Clipboard.setString(message.text);
+                            break;
+                    }
+                });
+        }
+    };
 
     loadMoreHistory = ()=>{
         const {TargetUserId} = this.props.navigation.state.params;
@@ -226,6 +245,18 @@ class ChatPanel extends Component{
                     name:loginUserInfo.NickName,
                     avatar:loginUserInfo.HeadImageUrl
                 }}
+                placeholder='输入您的回答'
+                renderSend={(props)=>{
+                    return (
+                        <Send
+                            {...props}
+                        >
+                            <View style={{marginRight: 10, marginBottom: 10}}>
+                                <Text style={{color:'#0084FF',fontSize:17}}>发送</Text>
+                            </View>
+                        </Send>
+                    );
+                }}
                 style={{width:'100%',height:'100%'}}
                 loadEarlier
                 onLoadEarlier={this.loadMoreHistory}
@@ -233,6 +264,7 @@ class ChatPanel extends Component{
                 showUserAvatar
                 showAvatarForEveryMessage
                 onPressAvatar={this._clickUserAvatar}
+                onLongPress={this.onPress}
             />
 
         );

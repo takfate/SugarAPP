@@ -66,10 +66,6 @@ class SugarGuidePanel extends Component{
         this.ws.onclose = (evt)=>{
             this.ws = null;
         };
-
-        this.ws.onerror = (evt)=>{
-            Toast.info('网络好像有问题~',1);
-        };
     };
 
     componentWillUnmount(){

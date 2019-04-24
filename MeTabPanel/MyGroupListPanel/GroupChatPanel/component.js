@@ -2,10 +2,10 @@
 
 import React,{PropTypes,Component} from 'react';
 import {connect} from 'react-redux';
-import {View, Text, ScrollView, Image, StyleSheet, RefreshControl, TouchableOpacity} from 'react-native';
+import {View, Text, ScrollView, Image, StyleSheet, RefreshControl, TouchableOpacity, Clipboard} from 'react-native';
 import {Button, NavBar, Card, List, ListView, WhiteSpace, Progress, Toast} from 'antd-mobile';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { GiftedChat } from 'react-native-gifted-chat';
+import {GiftedChat, Send} from 'react-native-gifted-chat';
 import httpRequest from "../../../httpRequest";
 import {makeCommonImageUrl} from "../../../CommonComponent";
 
@@ -211,6 +211,27 @@ class GroupChatPanel extends Component{
         });
     }
 
+    onPress = (context,message)=>{
+        if (message.text) {
+            const options = [
+                '复制内容',
+                '取消',
+            ];
+            const cancelButtonIndex = options.length - 1;
+            context.actionSheet().showActionSheetWithOptions({
+                    options,
+                    cancelButtonIndex,
+                },
+                (buttonIndex) => {
+                    switch (buttonIndex) {
+                        case 0:
+                            Clipboard.setString(message.text);
+                            break;
+                    }
+                });
+        }
+    };
+
     componentWillUnmount(){
         clearInterval(this.updateMessageTimer);
     }
@@ -247,6 +268,18 @@ class GroupChatPanel extends Component{
                     name:loginUserInfo.NickName,
                     avatar:loginUserInfo.HeadImageUrl
                 }}
+                placeholder='输入您的回答'
+                renderSend={(props)=>{
+                    return (
+                        <Send
+                            {...props}
+                        >
+                            <View style={{marginRight: 10, marginBottom: 10}}>
+                                <Text style={{color:'#0084FF',fontSize:17}}>发送</Text>
+                            </View>
+                        </Send>
+                    );
+                }}
                 style={{width:'100%',height:'100%'}}
                 loadEarlier
                 onLoadEarlier={this.loadMoreHistory}
@@ -255,6 +288,7 @@ class GroupChatPanel extends Component{
                 showAvatarForEveryMessage
                 renderUsernameOnMessage
                 onPressAvatar={this._clickUserAvatar}
+                onLongPress={this.onPress}
             />
 
         );
